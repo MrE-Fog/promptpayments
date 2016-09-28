@@ -7,4 +7,4 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /                           controllers.Home.index()
 
-GET     /Home/:id      controllers.Home.page(id: Int)
+GET     /FileReport/:id      controllers.Home.page(id: Int)
