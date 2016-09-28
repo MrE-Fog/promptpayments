@@ -1,7 +1,7 @@
 @import components.common.journey.JourneyManager
 
 @(overridePrompt: Option[String] = None)
-<form action="@controllers.common.journey.routes.JourneyBackController.handleBack" method="post">
+<form action="/journeyBack" method="post">
 
   @if(!ctx().args.getOrDefault(JourneyManager.JOURNEY_SUPPRESS_BACK_LINK_CONTEXT_PARAM, Boolean.FALSE).asInstanceOf[java.lang.Boolean]) {
     @journeyFormParams()

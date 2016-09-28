@@ -1,0 +1,12 @@
+@import play.data.FormFactory
+@views.html.common.page.govukTemplateDefaults("File a payment report") {
+    <h1 class="heading-xlarge">File a payment report</h1>
+    <p>Login goes here</p>
+    <form method="post" action="@routes.Home.index()">
+        <fieldset>
+            <label for="companieshousenumber">Companies House Number</label>
+            <input type="text" name="companieshousenumber" id="companieshousenumber">
+        </fieldset>
+        <button type="submit" class="button">Find your company</button>
+    </form>
+}

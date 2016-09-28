@@ -1,6 +1,0 @@
-# Assets from subprojects are accessible from "/public/lib/<subproject-name>"
-# see https://www.playframework.com/documentation/2.5.x/SBTSubProjects
-
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
-
-POST    /journey-back               controllers.common.journey.JourneyBackController.handleBack
