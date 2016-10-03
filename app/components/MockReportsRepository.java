@@ -5,7 +5,10 @@ import models.CompanySummary;
 import models.ReportModel;
 import models.ReportSummary;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 
 /**
  * Created by daniel.rothig on 03/10/2016.
@@ -14,8 +17,11 @@ import java.util.*;
  */
 final class MockReportsRepository implements ReportsRepository {
 
+
     @Override
     public List<CompanySummary> searchCompanies(String company) {
+
+
         ArrayList<CompanySummary> results = new ArrayList<>();
         results.add(new CompanySummary(company+"1", "1234567"));
         results.add(new CompanySummary(company+"2", "1234567"));
@@ -44,3 +50,4 @@ final class MockReportsRepository implements ReportsRepository {
                 new CompanySummary("SomeCompany", company));
     }
 }
+

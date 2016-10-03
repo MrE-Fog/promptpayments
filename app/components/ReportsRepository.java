@@ -12,7 +12,7 @@ import java.util.List;
  *
  * Orchestrates access to report data
  */
-@ImplementedBy(MockReportsRepository.class)
+@ImplementedBy(JdbcReportsRepository.class)
 public interface ReportsRepository {
     List<CompanySummary> searchCompanies(String company);
     CompanyModel getCompanyByCompaniesHouseIdentifier(String identifier);
