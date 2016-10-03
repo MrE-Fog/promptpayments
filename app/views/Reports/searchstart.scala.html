@@ -1,0 +1,17 @@
+@import play.data.FormFactory
+@views.html.common.page.govukTemplateDefaults("Find a payment report") {
+    <h1 class="heading-xlarge">
+        Find a payment report
+    </h1>
+    <p class="lede">
+        Don't just let them sit on our servers. Find yourself a nice report to settle down with by the fire.
+    </p>
+    <p>
+        Reports are filed every six months by participating companies.
+    </p>
+    <a class="button button-start" href="@routes.SearchReport.search()">
+        Search reports
+    </a>
+
+
+}

@@ -1,15 +1,40 @@
 @import play.data.FormFactory
-@views.html.common.page.govukTemplateDefaults("File a payment report") {
-    <h1 class="heading-xlarge">File a payment report</h1>
-    <p class="lede">Dude, where is your payment?</p>
-    <p>Press the button below to get started!</p>
-    <a href="@routes.Home.page(1)" class="button button-start">File a payment report</a>
+@views.html.common.page.govukTemplateDefaults("Payment duty register") {
+    <h1 class="heading-xlarge">
+        Payment duty register
+    </h1>
+    <p class="lede">
+        Lorem ipsum, dolor set amit.
+    </p>
+    <div class="grid-row">
+        <div class="column-one-half">
+            <h3 class="heading-medium">
+                <a href="@routes.FileReport.index()">
+                    File a report
+                </a>
+            </h3>
+            <p>
+                Businesses may publish data on their payment practices here.
+            </p>
+        </div>
+        <div class="column-one-half">
+            <h3 class="heading-medium">
+                <a href="@routes.SearchReport.searchstart()">
+                    Search reports
+                </a>
+            </h3>
+            <p>
+                Find information on the payment practices of a company.
+            </p>
+        </div>
+    </div>
 
-    <h2 class="heading-medium">Before you start</h2>
-    <p>Make sure to:</p>
-    <ul class="list list-bullet">
-        <li>dude</li>
-        <li>man</li>
-        <li>duuude</li>
-    </ul>
+    <h2 class="heading-medium">
+        About the payment duty register
+    </h2>
+    <p>
+        It's a register. For payment data? Duh!! <a href="">Learn more.</a>
+    </p>
+
+
 }
