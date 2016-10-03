@@ -10,4 +10,5 @@ import play.mvc.Result;
  */
 public class Home extends Controller {
     public Result index() {return ok(views.html.Home.index.render()); }
+    public Result about() {return ok(views.html.Home.about.render()); }
 }

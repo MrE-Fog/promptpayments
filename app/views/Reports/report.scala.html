@@ -1,0 +1,15 @@
+@(model: ReportModel)
+@views.html.common.page.govukTemplateDefaults("Find a payment report") {
+    <h1 class="heading-xlarge">
+        Payment report by @model.Company.Name
+    </h1>
+    <p class="lede">Filed on: @model.Info.UiDateString()</p>
+
+    <p>
+        Some text, some text some text
+    </p>
+
+    <p>
+        <a class="link-back" href="@routes.SearchReport.company(model.Company.CompaniesHouseIdentifier)">Back to @model.Company.Name</a>
+    </p>
+}

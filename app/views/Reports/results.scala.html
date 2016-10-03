@@ -1,0 +1,25 @@
+@(searchTerm: String, results: List[CompanySummary])
+@views.html.common.page.govukTemplateDefaults("Find a payment report") {
+    <h1 class="heading-xlarge">
+        Companies matching @searchTerm
+    </h1>
+    @if(results.isEmpty()) {
+    <p class="noresults">No results found.</p>
+    } else {
+    <ul class="searchresults">
+        @for(result <- results) {
+            <li class="searchresult">
+                <h2 class="header-medium">
+                    <a href="@routes.SearchReport.company(result.CompaniesHouseIdentifier)">@result.Name</a>
+                </h2>
+                <p>
+                    Some text, some text some text
+                </p>
+            </li>
+        }
+    </ul>
+    }
+    <p>
+        <a href="@routes.SearchReport.search()" class="link-back">Back to search</a>
+    </p>
+}

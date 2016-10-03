@@ -1,4 +1,4 @@
-name := """zzz-common"""
+name := """promptpayments"""
 
 version := "1.0-SNAPSHOT"
 
@@ -11,6 +11,6 @@ libraryDependencies ++= Seq(
   "org.assertj" % "assertj-core" % "3.5.2" % "test"
 )
 
-lazy val `zzz-common` = (project in file(".")).enablePlugins(PlayJava)
+lazy val `promptpayments` = (project in file(".")).enablePlugins(PlayJava)
 
 scalaVersion := "2.11.7"

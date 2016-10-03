@@ -6,10 +6,13 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # POST    /journeyBack                controllers.common.journey.JourneyBackController.handleBack()
 
 GET     /                           controllers.Home.index()
+GET     /About                      controllers.Home.about()
 
 GET     /Reports      controllers.SearchReport.searchstart()
 GET     /Reports/Search controllers.SearchReport.search()
 POST    /Reports/Search controllers.SearchReport.handleSearch()
+GET     /Reports/Company/:company   controllers.SearchReport.company(company: String)
+GET     /Reports/Company/:company/Report/:report controllers.ViewReport.view(company: String, report: Int)
 
 GET     /FileReport          controllers.FileReport.index()
 GET     /FileReport/:id      controllers.FileReport.page(id: Int)
