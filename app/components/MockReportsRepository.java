@@ -1,10 +1,8 @@
 package components;
 
-import models.CompanyModel;
-import models.CompanySummary;
-import models.ReportModel;
-import models.ReportSummary;
+import models.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -47,7 +45,19 @@ final class MockReportsRepository implements ReportsRepository {
     public ReportModel getReport(String company, int reportId) {
         return new ReportModel(
                 new ReportSummary(1, new GregorianCalendar(2016,5,1).getTime()),
-                new CompanySummary("SomeCompany", company));
+                new BigDecimal(1.0), new BigDecimal(2.0), new BigDecimal(3.0));
+    }
+
+    @Override
+    public List<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers) {
+        List<CompanySummary> rtn = new ArrayList<>();
+        rtn.add(new CompanySummary("SomeCompany", "123"));
+        return rtn;
+    }
+
+    @Override
+    public int TryFileReport(ReportFilingModel reportFilingModel) {
+        return 1;
     }
 }
 

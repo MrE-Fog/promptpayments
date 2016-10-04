@@ -8,14 +8,7 @@
     } else {
     <ul class="searchresults">
         @for(result <- results) {
-            <li class="searchresult">
-                <h2 class="header-medium">
-                    <a href="@routes.SearchReport.company(result.CompaniesHouseIdentifier)">@result.Name</a>
-                </h2>
-                <p>
-                    Some text, some text some text
-                </p>
-            </li>
+            @views.html.shared._companySummary(result, routes.SearchReport.company(result.CompaniesHouseIdentifier))
         }
     </ul>
     }

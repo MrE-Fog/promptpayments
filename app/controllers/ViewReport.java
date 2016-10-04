@@ -2,6 +2,7 @@ package controllers;
 
 import components.ReportsRepository;
 import models.CompanyModel;
+import models.CompanySummary;
 import models.ReportModel;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -18,8 +19,9 @@ public class ViewReport extends Controller {
     @Inject
     private ReportsRepository reportsRepository;
 
-    public Result view(String company, int reportId) {
-        ReportModel report = reportsRepository.getReport(company, reportId);
-        return ok(views.html.Reports.report.render(report));
+    public Result view(String companiesHouseIdentifier, int reportId) {
+        CompanySummary company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier).Info;
+        ReportModel report = reportsRepository.getReport(companiesHouseIdentifier, reportId);
+        return ok(views.html.Reports.report.render(report, company));
     }
 }
