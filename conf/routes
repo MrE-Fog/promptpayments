@@ -8,6 +8,9 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /                           controllers.Home.index()
 GET     /About                      controllers.Home.about()
 
+GET     /Data                       controllers.Home.accessData()
+GET     /Data/Export                       controllers.Home.export()
+
 GET     /Reports      controllers.SearchReport.searchstart()
 GET     /Reports/Search controllers.SearchReport.search()
 POST    /Reports/Search controllers.SearchReport.handleSearch()

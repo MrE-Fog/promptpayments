@@ -5,6 +5,7 @@ import models.CompanyModel;
 import models.CompanySummary;
 import models.ReportFilingModel;
 import models.ReportModel;
+import play.libs.F;
 
 import java.util.List;
 
@@ -21,4 +22,5 @@ public interface ReportsRepository {
     List<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers);
 
     int TryFileReport(ReportFilingModel reportFilingModel);
+    List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months);
 }

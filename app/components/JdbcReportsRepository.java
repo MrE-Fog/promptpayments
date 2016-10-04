@@ -2,10 +2,13 @@ package components;
 
 import models.*;
 import play.db.Database;
+import play.libs.F;
 
 import javax.inject.Inject;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +76,25 @@ final class JdbcReportsRepository implements ReportsRepository {
                 new Object[] {rfm.FilingDateAsDate(), rfm.TargetCompanyCompaniesHouseIdentifier, rfm.NumberOne, rfm.NumberTwo, rfm.NumberThree},
                 x -> x.getInt(1)
         ).get(0);
+    }
+
+    @Override
+    public List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months) {
+        if (months < 1) {
+            return new ArrayList<>();
+        }
+
+        Calendar minDate = new GregorianCalendar();
+        minDate.add(Calendar.MONTH, -1 * months);
+
+        return ExecuteQuery(
+                "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.NumberOne, Report.NumberTwo, Report.NumberThree " +
+                "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
+                "WHERE Report.FilingDate >= ?",
+                new Object[] {minDate.getTime()},
+                x -> new F.Tuple<>(new CompanySummary(x.getString(1), x.getString(2)),
+                        new ReportModel(new ReportSummary(x.getInt(3), x.getDate(4)), x.getBigDecimal(5), x.getBigDecimal(6), x.getBigDecimal(7))));
+
     }
 
     private CompanySummary GetCompanySummaryByIdentifier(String identifier) {

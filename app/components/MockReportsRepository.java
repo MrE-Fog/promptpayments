@@ -1,6 +1,7 @@
 package components;
 
 import models.*;
+import play.libs.F;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -58,6 +59,11 @@ final class MockReportsRepository implements ReportsRepository {
     @Override
     public int TryFileReport(ReportFilingModel reportFilingModel) {
         return 1;
+    }
+
+    @Override
+    public List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months) {
+        return new ArrayList<>();
     }
 }
 
