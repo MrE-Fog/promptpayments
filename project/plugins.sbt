@@ -11,3 +11,5 @@ addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.2")
 // enablePlugins(PlayEbean).
 // addSbtPlugin("com.typesafe.sbt" % "sbt-play-ebean" % "1.0.0")
 
+addSbtPlugin("org.flywaydb" % "flyway-sbt" % "4.0.3")
+resolvers += "Flyway" at "https://flywaydb.org/repo"
