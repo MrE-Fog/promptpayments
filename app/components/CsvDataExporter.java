@@ -5,6 +5,8 @@ import models.CompanySummary;
 import models.ReportModel;
 import play.libs.F;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,7 +23,20 @@ public class CsvDataExporter {
 
     private static String header="Filing date,Company,Company number, Number one, Number two, Number three\n";
 
+    private String cachedCsv;
+    private GregorianCalendar lastCached;
+
+    public CsvDataExporter() {
+        cachedCsv = null;
+        lastCached = new GregorianCalendar();
+        lastCached.setTimeInMillis(0);
+    }
+
     public String GenerateCsv() {
+        if (new GregorianCalendar().getTimeInMillis() - lastCached.getTimeInMillis() < 300000 && cachedCsv != null) {
+            return cachedCsv;
+        }
+
         List<F.Tuple<CompanySummary, ReportModel>> data = reportsRepository.ExportData(24);
 
         Stream<String> stringStream = data.stream().map(x -> String.join(",",
@@ -32,7 +47,10 @@ public class CsvDataExporter {
                 escape(x._2.NumberTwo),
                 escape(x._2.NumberThree)));
 
-        return header + String.join("\n", stringStream.collect(Collectors.toList()));
+        lastCached = new GregorianCalendar();
+        cachedCsv = header + String.join("\n", stringStream.collect(Collectors.toList()));
+
+        return cachedCsv;
     }
 
     private String escape(Object obj) {
