@@ -6,6 +6,7 @@ import models.CompanySummary;
 import models.ReportFilingModel;
 import models.ReportModel;
 import play.libs.F;
+import scala.Option;
 
 import java.util.List;
 
@@ -17,8 +18,8 @@ import java.util.List;
 @ImplementedBy(JdbcReportsRepository.class)
 public interface ReportsRepository {
     List<CompanySummary> searchCompanies(String company);
-    CompanyModel getCompanyByCompaniesHouseIdentifier(String identifier);
-    ReportModel getReport(String company, int reportId);
+    Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier);
+    Option<ReportModel> getReport(String company, int reportId);
     List<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers);
 
     int TryFileReport(ReportFilingModel reportFilingModel);

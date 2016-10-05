@@ -5,6 +5,7 @@ import models.CompanySummary;
 import models.ReportFilingModel;
 import models.ReportModel;
 import play.data.Form;
+import utils.TimeProvider;
 
 import java.util.*;
 
@@ -14,11 +15,19 @@ import java.util.*;
  * Determines which companies a user may file for
  */
 public class CompanyAccessAuthorizer {
-    @Inject
     private ReportsRepository reportsRepository;
 
-    @Inject
     private MockCompaniesHouseCommunicator companiesHouseCommunicator;
+
+    private TimeProvider timeProvider;
+
+    @Inject
+    @SuppressWarnings("WeakerAccess")
+    public CompanyAccessAuthorizer(ReportsRepository reportsRepository, MockCompaniesHouseCommunicator companiesHouseCommunicator, TimeProvider timeProvider) {
+        this.reportsRepository = reportsRepository;
+        this.companiesHouseCommunicator = companiesHouseCommunicator;
+        this.timeProvider = timeProvider;
+    }
 
     public List<CompanySummary> GetCompaniesForUser(String oAuthToken) {
         List<CompanySummary> rtn = new ArrayList<>();
@@ -32,7 +41,7 @@ public class CompanyAccessAuthorizer {
         }
 
         List<CompanySummary> matches = reportsRepository.getCompanySummaries(Collections.singletonList(companiesHouseIdentifier));
-        return new ReportFilingModel(matches.get(0), new Date());
+        return new ReportFilingModel(matches.get(0), timeProvider.Now().getTime());
     }
 
     public int TryFileReport(String bullshitToken, ReportFilingModel reportFilingModel) {

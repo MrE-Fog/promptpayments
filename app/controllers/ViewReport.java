@@ -20,8 +20,8 @@ public class ViewReport extends Controller {
     private ReportsRepository reportsRepository;
 
     public Result view(String companiesHouseIdentifier, int reportId) {
-        CompanySummary company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier).Info;
-        ReportModel report = reportsRepository.getReport(companiesHouseIdentifier, reportId);
+        CompanySummary company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier).get().Info;
+        ReportModel report = reportsRepository.getReport(companiesHouseIdentifier, reportId).get();
         return ok(views.html.Reports.report.render(report, company));
     }
 }

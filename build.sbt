@@ -10,7 +10,8 @@ libraryDependencies ++= Seq(
   "io.mikael" % "urlbuilder" % "2.0.7",
   "org.assertj" % "assertj-core" % "3.5.2" % "test",
   "com.typesafe.play" % "play-java-jdbc_2.11" % "2.5.8",
-  "org.flywaydb" % "flyway-core" % "4.0.3"
+  "org.flywaydb" % "flyway-core" % "4.0.3",
+  "org.mockito" % "mockito-core" % "1.+"
 )
 
 lazy val `promptpayments` = (project in file(".")).enablePlugins(PlayJava)

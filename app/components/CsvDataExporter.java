@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import models.CompanySummary;
 import models.ReportModel;
 import play.libs.F;
+import utils.TimeProvider;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -18,23 +19,26 @@ import java.util.stream.Stream;
  */
 public class CsvDataExporter {
 
-    @Inject
-    private ReportsRepository reportsRepository;
+    private final TimeProvider timeProvider;
+    private final ReportsRepository reportsRepository;
 
     private static String header="Filing date,Company,Company number, Number one, Number two, Number three\n";
     private static final int cacheMinutes = 30;
 
     private String cachedCsv;
-    private GregorianCalendar lastCached;
+    private Calendar lastCached;
 
-    public CsvDataExporter() {
+    @Inject
+    CsvDataExporter(ReportsRepository reportsRepository, TimeProvider timeProvider) {
+        this.reportsRepository = reportsRepository;
+        this.timeProvider = timeProvider;
         cachedCsv = null;
         lastCached = new GregorianCalendar();
         lastCached.setTimeInMillis(0);
     }
 
     public String GenerateCsv() {
-        if (new GregorianCalendar().getTimeInMillis() - lastCached.getTimeInMillis() < cacheMinutes * 60000 && cachedCsv != null) {
+        if (timeProvider.Now().getTimeInMillis() - lastCached.getTimeInMillis() < cacheMinutes * 60000 && cachedCsv != null) {
             return cachedCsv;
         }
 
@@ -48,7 +52,7 @@ public class CsvDataExporter {
                 escape(x._2.NumberTwo),
                 escape(x._2.NumberThree)));
 
-        lastCached = new GregorianCalendar();
+        lastCached = timeProvider.Now();
         cachedCsv = header + String.join("\n", stringStream.collect(Collectors.toList()));
 
         return cachedCsv;

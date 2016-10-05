@@ -1,58 +1,68 @@
 package components;
 
 import models.*;
-import play.db.Database;
 import play.libs.F;
+import scala.Option;
+import utils.TimeProvider;
 
 import javax.inject.Inject;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Created by daniel.rothig on 03/10/2016.
  *
- * Database-backed repository. Currently the constructor injects some fake data
+ * Database-backed repository.
  */
 final class JdbcReportsRepository implements ReportsRepository {
 
-    private Database db;
+    private JdbcCommunicator jdbcCommunicator;
+    private TimeProvider timeProvider;
 
     @Inject
-    public JdbcReportsRepository(Database db) {
-        this.db = db;
-        JdbcSchemaMigrator.InitialiseSchema(db);
+    JdbcReportsRepository(JdbcCommunicator jdbcCommunicator, TimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
+        this.jdbcCommunicator = jdbcCommunicator;
+        this.jdbcCommunicator.InitialiseSchema();
     }
 
     @Override
     public List<CompanySummary> searchCompanies(String company) {
-        return ExecuteQuery(
-                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE LOWER(Name) LIKE LOWER(?)",
-                new String[] { "%"+company+"%"},
+        return jdbcCommunicator.ExecuteQuery(
+                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE LOWER(Name) LIKE LOWER(?) ORDER BY Name",
+                new String[] { "%"+company.trim()+"%"},
                 _CompanySummaryMapper);
     }
 
     @Override
-    public CompanyModel getCompanyByCompaniesHouseIdentifier(String identifier) {
-        CompanySummary summary = GetCompanySummaryByIdentifier(identifier);
+    public Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier) {
+        Option<CompanySummary> summary = GetCompanySummaryByIdentifier(identifier);
+        if (summary.isEmpty()) {
+            return Option.empty();
+        }
 
-        List<ReportSummary> reports = ExecuteQuery(
+        List<ReportSummary> reports = jdbcCommunicator.ExecuteQuery(
                 "SELECT Identifier, FilingDate FROM Report WHERE CompaniesHouseIdentifier = ?",
                 new String[]{identifier},
                 _ReportSummaryMapper);
 
-        return new CompanyModel(summary, reports);
+        return Option.apply(new CompanyModel(summary.get(), reports));
     }
 
     @Override
-    public ReportModel getReport(String company, int reportId) {
-        return ExecuteQuery(
+    public Option<ReportModel> getReport(String company, int reportId) {
+        List<ReportModel> reportModels = jdbcCommunicator.ExecuteQuery(
                 "SELECT TOP 1 Identifier, FilingDate, NumberOne, NumberTwo, NumberThree FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ?",
                 new Object[]{company, reportId},
-                _ReportMapper).get(0);
+                _ReportMapper);
+
+        if (reportModels.isEmpty()) {
+            return Option.empty();
+        } else {
+            return Option.apply(reportModels.get(0));
+        }
     }
 
     @Override
@@ -63,7 +73,7 @@ final class JdbcReportsRepository implements ReportsRepository {
         //ewwwwww!
         String parameters = String.join(", ", companiesHouseIdentifiers.stream().map(chi -> "?").collect(Collectors.toList()));
 
-        return ExecuteQuery(
+        return jdbcCommunicator.ExecuteQuery(
                 String.format("SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier IN (%s)", parameters),
                 companiesHouseIdentifiers.toArray(),
                 _CompanySummaryMapper);
@@ -71,7 +81,11 @@ final class JdbcReportsRepository implements ReportsRepository {
 
     @Override
     public int TryFileReport(ReportFilingModel rfm) {
-        return ExecuteUpdate(
+        if (getCompanyByCompaniesHouseIdentifier(rfm.TargetCompanyCompaniesHouseIdentifier).isEmpty()) {
+            return -1;
+        }
+
+        return jdbcCommunicator.ExecuteUpdate(
                 "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, NumberOne, NumberTwo, NumberThree) VALUES(?,?,?,?,?);",
                 new Object[] {rfm.FilingDateAsDate(), rfm.TargetCompanyCompaniesHouseIdentifier, rfm.NumberOne, rfm.NumberTwo, rfm.NumberThree},
                 x -> x.getInt(1)
@@ -84,10 +98,10 @@ final class JdbcReportsRepository implements ReportsRepository {
             return new ArrayList<>();
         }
 
-        Calendar minDate = new GregorianCalendar();
+        Calendar minDate = timeProvider.Now();
         minDate.add(Calendar.MONTH, -1 * months);
 
-        return ExecuteQuery(
+        return jdbcCommunicator.ExecuteQuery(
                 "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.NumberOne, Report.NumberTwo, Report.NumberThree " +
                 "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
                 "WHERE Report.FilingDate >= ?",
@@ -97,61 +111,25 @@ final class JdbcReportsRepository implements ReportsRepository {
 
     }
 
-    private CompanySummary GetCompanySummaryByIdentifier(String identifier) {
-        return ExecuteQuery(
+    private Option<CompanySummary> GetCompanySummaryByIdentifier(String identifier) {
+        List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
                 "SELECT TOP 1 Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier = ?",
                 new String[]{identifier},
-                _CompanySummaryMapper).get(0);
-    }
-
-    private <T> List<T> ExecuteUpdate(String sql, Object[] parameters, Mapper<T> mapper) {
-        return Execute(sql, parameters, mapper, x -> {
-            x.executeUpdate();
-            return x.getGeneratedKeys();
-        });
-    }
-    private <T> List<T> ExecuteQuery(String sql, Object[] parameters, Mapper<T> mapper) {
-        return Execute(sql, parameters, mapper, PreparedStatement::executeQuery);
-    }
-
-    private <T> List<T> Execute(String sql, Object[] parameters, Mapper<T> mapper, ResultSetGenerator getResultSet) {
-        Connection conn;
-        try {
-            conn = db.getConnection();
-            PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            for (int i = 0; i < parameters.length; i++) {
-                statement.setObject(i + 1, parameters[i]);
-            }
-            ResultSet results = getResultSet.apply(statement);
-            List<T> rtn = new ArrayList<>();
-            while (results.next()) {
-                rtn.add(mapper.map(results));
-            }
-
-            conn.close();
-            return rtn;
-        }
-        catch(Exception e) {
-            play.Logger.error("Can't execute query", e);
-            return new ArrayList<>();
+                _CompanySummaryMapper);
+        if (companySummaries.isEmpty()) {
+            return Option.empty();
+        } else {
+            return Option.apply(companySummaries.get(0));
         }
     }
 
-    private interface Mapper<T> {
-        T map(ResultSet results) throws SQLException;
-    }
-
-    private interface ResultSetGenerator {
-        ResultSet apply(PreparedStatement statement) throws SQLException;
-    }
-
-    private Mapper<CompanySummary> _CompanySummaryMapper =
+        private JdbcCommunicator.Mapper<CompanySummary> _CompanySummaryMapper =
             results -> new CompanySummary(results.getString(1), results.getString(2));
 
-    private Mapper<ReportSummary> _ReportSummaryMapper =
+    private JdbcCommunicator.Mapper<ReportSummary> _ReportSummaryMapper =
             results -> new ReportSummary(results.getInt(1), results.getDate(2));
 
-    private Mapper<ReportModel> _ReportMapper =
+    private JdbcCommunicator.Mapper<ReportModel> _ReportMapper =
             results -> new ReportModel(
                     new ReportSummary(results.getInt(1), results.getDate(2)),
                     results.getBigDecimal(3), results.getBigDecimal(4), results.getBigDecimal(5));

@@ -31,7 +31,7 @@ public class SearchReport extends Controller {
     }
 
     public Result company(String company) {
-        CompanyModel companyModel = reportsRepository.getCompanyByCompaniesHouseIdentifier(company);
+        CompanyModel companyModel = reportsRepository.getCompanyByCompaniesHouseIdentifier(company).get();
         return ok(views.html.Reports.company.render(companyModel));
     }
 }
