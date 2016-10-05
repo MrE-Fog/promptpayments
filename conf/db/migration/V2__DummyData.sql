@@ -1,5 +1,5 @@
-INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Tesco', '120');
-INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Costa', '121');
+INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Nicecorp', '120');
+INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Cookies Ltd.', '121');
 INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Eigencode Ltd.', '122');
 
 INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-02-01');
