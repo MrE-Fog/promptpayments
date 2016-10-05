@@ -22,7 +22,9 @@ public class CsvDataExporter {
     private final TimeProvider timeProvider;
     private final ReportsRepository reportsRepository;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private static String header="Filing date,Company,Company number, Number one, Number two, Number three\n";
+
     private static final int cacheMinutes = 30;
 
     private String cachedCsv;

@@ -102,7 +102,7 @@ final class JdbcReportsRepository implements ReportsRepository {
         minDate.add(Calendar.MONTH, -1 * months);
 
         return jdbcCommunicator.ExecuteQuery(
-                "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.NumberOne, Report.NumberTwo, Report.NumberThree " +
+                "SELECT TOP 100000 Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.NumberOne, Report.NumberTwo, Report.NumberThree " +
                 "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
                 "WHERE Report.FilingDate >= ?",
                 new Object[] {minDate.getTime()},

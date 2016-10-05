@@ -10,7 +10,6 @@ import play.db.Database;
 import play.db.Databases;
 import play.libs.F;
 import utils.TimeProvider;
-import views.html.Reports.company;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -22,17 +21,18 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JdbcReportsRepositoryTest {
 
-    private JdbcReportsRepository jdbcReportsRepository;
+    private ReportsRepository jdbcReportsRepository;
+
     @Before
     public void setUp() throws Exception {
         TimeProvider timeProvider = mock(TimeProvider.class);
         when(timeProvider.Now()).thenReturn(new GregorianCalendar(2016, 10, 1));
-
-        MockRepositoryCreator.CreateMockReportsRepository(timeProvider);
+        jdbcReportsRepository = MockRepositoryCreator.CreateMockReportsRepository(timeProvider);
     }
 
     @Test
@@ -43,12 +43,6 @@ public class JdbcReportsRepositoryTest {
 
         assertTrue(result1.size() == 1);
         assertTrue(result2.size() == 1);
-        //List<CompanySummary> result1 = jdbcReportsRepository.searchCompanies("co");
-        //Capture t = captureExecution(repo -> repo.searchCompanies("matchstring"), new ArrayList<>());
-
-        //assertTrue("Should contain '%matchstring%': " + t.params[0], "%matchstring%".equals(t.params[0]));
-        //assertTrue("Should perform case-insensitive comparison': " + t.sql, t.sql.contains("LOWER(Name) LIKE LOWER(?)"));
-        //assertTrue("Should sort alphabetically': " + t.sql, t.sql.contains("ORDER BY Name"));
     }
 
     @Test

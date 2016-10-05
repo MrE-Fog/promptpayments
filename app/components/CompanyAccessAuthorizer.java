@@ -3,11 +3,10 @@ package components;
 import com.google.inject.Inject;
 import models.CompanySummary;
 import models.ReportFilingModel;
-import models.ReportModel;
-import play.data.Form;
 import utils.TimeProvider;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by daniel.rothig on 04/10/2016.
@@ -30,7 +29,6 @@ public class CompanyAccessAuthorizer {
     }
 
     public List<CompanySummary> GetCompaniesForUser(String oAuthToken) {
-        List<CompanySummary> rtn = new ArrayList<>();
         List<String> companiesHouseIdentifiers = companiesHouseCommunicator.RequestAuthorizedCompaniesForUser(oAuthToken);
         return reportsRepository.getCompanySummaries(companiesHouseIdentifiers);
     }
@@ -51,11 +49,9 @@ public class CompanyAccessAuthorizer {
         return reportsRepository.TryFileReport(reportFilingModel);
     }
 
-    @SuppressWarnings("SimplifiableIfStatement")
     private boolean MayFileReport(String oAuthToken, String companiesHouseIdentifier) {
-        if (companiesHouseIdentifier == null || oAuthToken == null)
-            return false;
-        return companiesHouseCommunicator.RequestAuthorizedCompaniesForUser(oAuthToken).contains(companiesHouseIdentifier);
+        return companiesHouseIdentifier != null && oAuthToken != null
+                && companiesHouseCommunicator.RequestAuthorizedCompaniesForUser(oAuthToken).contains(companiesHouseIdentifier);
     }
 
 }
