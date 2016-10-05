@@ -22,6 +22,7 @@ public class CsvDataExporter {
     private ReportsRepository reportsRepository;
 
     private static String header="Filing date,Company,Company number, Number one, Number two, Number three\n";
+    private static final int cacheMinutes = 30;
 
     private String cachedCsv;
     private GregorianCalendar lastCached;
@@ -33,7 +34,7 @@ public class CsvDataExporter {
     }
 
     public String GenerateCsv() {
-        if (new GregorianCalendar().getTimeInMillis() - lastCached.getTimeInMillis() < 300000 && cachedCsv != null) {
+        if (new GregorianCalendar().getTimeInMillis() - lastCached.getTimeInMillis() < cacheMinutes * 60000 && cachedCsv != null) {
             return cachedCsv;
         }
 
