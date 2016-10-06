@@ -18,8 +18,8 @@ import java.util.List;
  */
 @ImplementedBy(JdbcReportsRepository.class)
 public interface ReportsRepository {
-    List<CompanySummary> searchCompanies(String company);
-    Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier);
+    PagedList<CompanySummary> searchCompanies(String company, int page, int itemsPerPage);
+    Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier, int page, int itemsPerPage);
     Option<ReportModel> getReport(String company, int reportId);
     List<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers);
 

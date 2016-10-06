@@ -20,13 +20,13 @@ public class SearchReport extends PageController {
 
     public Result search() {return ok(page(views.html.Reports.search.render())); }
 
-    public Result handleSearch() {
+    public Result handleSearch(int page) {
         String company = request().body().asFormUrlEncoded().get("companyname")[0];
-        return ok(page(views.html.Reports.results.render(company, reportsRepository.searchCompanies(company))));
+        return ok(page(views.html.Reports.results.render(company, reportsRepository.searchCompanies(company, page, 25))));
     }
 
-    public Result company(String company) {
-        CompanyModel companyModel = reportsRepository.getCompanyByCompaniesHouseIdentifier(company).get();
+    public Result company(String company, int page) {
+        CompanyModel companyModel = reportsRepository.getCompanyByCompaniesHouseIdentifier(company, page, 25).get();
         return ok(page(views.html.Reports.company.render(companyModel)));
     }
 }

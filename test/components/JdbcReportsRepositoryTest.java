@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -31,8 +32,8 @@ public class JdbcReportsRepositoryTest {
     @Test
     public void searchCompanies_CaseInsenstivie() throws Exception {
 
-        List<CompanySummary> result1 = jdbcReportsRepository.searchCompanies("cookies");
-        List<CompanySummary> result2 = jdbcReportsRepository.searchCompanies("CoOkIeS");
+        List<CompanySummary> result1 = jdbcReportsRepository.searchCompanies("cookies", 0, 25);
+        List<CompanySummary> result2 = jdbcReportsRepository.searchCompanies("CoOkIeS", 0, 25);
 
         assertTrue(result1.size() == 1);
         assertTrue(result2.size() == 1);
@@ -40,15 +41,15 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void searchCompanies_TruncatesSurroundingWhitespace() throws Exception {
-        List<CompanySummary> result1 = jdbcReportsRepository.searchCompanies("    Cookies");
-        List<CompanySummary> result2 = jdbcReportsRepository.searchCompanies("\tCookies\t");
+        List<CompanySummary> result1 = jdbcReportsRepository.searchCompanies("    Cookies",0, 25);
+        List<CompanySummary> result2 = jdbcReportsRepository.searchCompanies("\tCookies\t",0, 25);
 
         assertTrue(result1.size() == 1);
         assertTrue(result2.size() == 1);
     }
     @Test
     public void searchCompanies_SearchesWithinString() throws Exception {
-        List<CompanySummary> result = jdbcReportsRepository.searchCompanies("   co");
+        List<CompanySummary> result = jdbcReportsRepository.searchCompanies("   co",0,25);
         assertTrue(result.size() == 3);
 
         List<String> names = result.stream().map(x -> x.Name).collect(Collectors.toList());
@@ -59,7 +60,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void searchCompanies_Alphabetic() throws Exception {
-        List<CompanySummary> result = jdbcReportsRepository.searchCompanies("   co");
+        List<CompanySummary> result = jdbcReportsRepository.searchCompanies("   co",0,25);
         List<CompanySummary> sorted = new ArrayList<>(result);
         sorted.sort((a, b) -> a.Name.compareTo(b.Name));
 
@@ -68,10 +69,82 @@ public class JdbcReportsRepositoryTest {
         assertEquals(result.get(2), sorted.get(2));
     }
 
+    @Test
+    public void searchCompanies_paged() throws Exception {
+        PagedList<CompanySummary> result = jdbcReportsRepository.searchCompanies("   co",0,2);
+        PagedList<CompanySummary> result2 = jdbcReportsRepository.searchCompanies("   co",1,2);
+
+        assertEquals("The number of results should not exceed page size", 2, result.size());
+        assertEquals("Page number should be accurately reported", 0, result.pageNumber());
+        assertEquals("Total size should be accurately reported", 3, result.totalSize());
+        assertEquals("Lower bound should be accurately reported", 0, result.rangeLower());
+        assertEquals("Upper bound should be accurately reported", 1, result.rangeUpper());
+
+        assertEquals("The number of results should not exceed page size", 1, result2.size());
+        assertEquals("Page number should be accurately reported", 1, result2.pageNumber());
+        assertEquals("Total size should be accurately reported", 3, result2.totalSize());
+        assertEquals("Lower bound should be accurately reported", 2, result2.rangeLower());
+        assertEquals("Upper bound should be accurately reported", 2, result2.rangeUpper());
+    }
+
+    @Test
+    public void searchCompanies_paged_alphabetic() throws Exception {
+        PagedList<CompanySummary> result1 = jdbcReportsRepository.searchCompanies("   co",0,2);
+        PagedList<CompanySummary> result2 = jdbcReportsRepository.searchCompanies("   co",1,2);
+
+        assertTrue(result1.get(0).Name.compareTo(result1.get(1).Name) <0);
+        assertTrue(result1.get(1).Name.compareTo(result2.get(0).Name) <0);
+    }
+
+    @Test
+    public void searchCompanies_emptyforzeropagesize() throws Exception {
+        PagedList<CompanySummary> result = jdbcReportsRepository.searchCompanies("   co",0,0);
+        assertEquals(0, result.size());
+        assertEquals(3, result.totalSize());
+        assertEquals(0, result.rangeLower());
+        assertEquals(0, result.rangeUpper());
+    }
+
+    @Test
+    public void getCompany_paged() throws Exception {
+        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 1, 3).get().ReportSummaries;
+
+        assertEquals("The number of results should not exceed page size", 3, result.size());
+        assertEquals("Page number should be accurately reported", 0, result.pageNumber());
+        assertEquals("Total size should be accurately reported", 4, result.totalSize());
+        assertEquals("Lower bound should be accurately reported", 0, result.rangeLower());
+        assertEquals("Upper bound should be accurately reported", 2, result.rangeUpper());
+
+        assertEquals("The number of results should not exceed page size", 1, result2.size());
+        assertEquals("Page number should be accurately reported", 1, result2.pageNumber());
+        assertEquals("Total size should be accurately reported", 4, result2.totalSize());
+        assertEquals("Lower bound should be accurately reported", 3, result2.rangeLower());
+        assertEquals("Upper bound should be accurately reported", 3, result2.rangeUpper());
+    }
+
+    @Test
+    public void getCompany_paged_chronological() throws Exception {
+        PagedList<ReportSummary> result1 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 1, 3).get().ReportSummaries;
+
+        assertTrue(result1.get(0).ExactDate().compareTo(result1.get(1).ExactDate()) > 0);
+        assertTrue(result1.get(1).ExactDate().compareTo(result1.get(2).ExactDate()) > 0);
+        assertTrue(result1.get(2).ExactDate().compareTo(result2.get(0).ExactDate()) > 0);
+    }
+
+    @Test
+    public void getCompany_emptyforzeropagesize() throws Exception {
+        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 0).get().ReportSummaries;
+        assertEquals(0, result.size());
+        assertEquals(4, result.totalSize());
+        assertEquals(0, result.rangeLower());
+        assertEquals(0, result.rangeUpper());
+    }
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("122").get();
+        CompanyModel company = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("122", 0 , 25).get();
 
         assertEquals("Eigencode Ltd.", company.Info.Name);
         assertEquals(1, company.ReportSummaries.size());
@@ -80,7 +153,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_ReportsChronological() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120").get();
+        CompanyModel company = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 25).get();
 
         assertEquals(4, company.ReportSummaries.size());
 
@@ -91,7 +164,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_DoesntExist() throws Exception {
-        assertTrue(jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("124").isEmpty());
+        assertTrue(jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("124", 0,25).isEmpty());
     }
 
 
@@ -176,19 +249,19 @@ class MockRepositoryCreator {
         JdbcReportsRepository jdbcReportsRepository = new JdbcReportsRepository(new JdbcCommunicator(testDb), timeProvider);
 
         String fakeData =
-                "DELETE FROM Report;\n" +
-                        "DELETE FROM Company;\n" +
-                        "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Nicecorp', '120');\n" +
-                        "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Cookies Ltd.', '121');\n" +
-                        "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Eigencode Ltd.', '122');\n" +
-                        "\n" +
-                        "INSERT INTO Report(Identifier, CompaniesHouseIdentifier, FilingDate) VALUES (1, '120', '2010-02-01');\n" +
-                        "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-02-01');\n" +
-                        "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-08-01');\n" +
-                        "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2016-02-01');\n" +
-                        "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('121', '2015-07-01');\n" +
-                        "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('121', '2016-01-01');\n" +
-                        "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('122', '2016-05-01');";
+"DELETE FROM Report;\n" +
+"DELETE FROM Company;\n" +
+"INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Nicecorp', '120');\n" +
+"INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Cookies Ltd.', '121');\n" +
+"INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Eigencode Ltd.', '122');\n" +
+"\n" +
+"INSERT INTO Report(Identifier, CompaniesHouseIdentifier, FilingDate) VALUES (1, '120', '2010-02-01');\n" +
+"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-02-01');\n" +
+"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-08-01');\n" +
+"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2016-02-01');\n" +
+"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('121', '2015-07-01');\n" +
+"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('121', '2016-01-01');\n" +
+"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('122', '2016-05-01');";
         testDb.getConnection().createStatement().execute(fakeData);
 
         return jdbcReportsRepository;

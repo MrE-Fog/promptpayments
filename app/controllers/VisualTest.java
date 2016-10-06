@@ -9,12 +9,11 @@ import play.twirl.api.Html;
 import play.twirl.api.HtmlFormat;
 import scala.collection.JavaConversions;
 import utils.MockUtcTimeProvider;
-import views.html.Home.index;
+import components.PagedList;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 
 /**
  * Created by daniel.rothig on 27/09/2016.
@@ -43,7 +42,7 @@ public class VisualTest extends PageController {
         ReportModel emptyReportModel = new ReportModel(healthyReportSummary);
         CompanySummary healthyCompanySummary = new CompanySummary("Eigencode Ltd.", "123");
 
-        CompanyModel healthyCompanyModel = new CompanyModel(healthyCompanySummary, Arrays.asList(healthyReportSummary, healthyReportSummary, healthyReportSummary));
+        CompanyModel healthyCompanyModel = new CompanyModel(healthyCompanySummary, new PagedList<>(Arrays.asList(healthyReportSummary, healthyReportSummary, healthyReportSummary), 6, 0, 3));
 
         ReportFilingModel newReportFilingModel = new ReportFilingModel();
         newReportFilingModel.setTargetCompanyCompaniesHouseIdentifier("123");
@@ -65,7 +64,7 @@ public class VisualTest extends PageController {
 
                 views.html.Reports.searchstart.render(),
                 views.html.Reports.search.render(),
-                views.html.Reports.results.render("cod", Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary)),
+                views.html.Reports.results.render("cod", new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 0, 3)),
                 views.html.Reports.company.render(healthyCompanyModel),
 
                 views.html.FileReport.index.render(),

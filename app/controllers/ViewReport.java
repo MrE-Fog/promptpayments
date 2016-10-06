@@ -18,7 +18,7 @@ public class ViewReport extends PageController {
     private ReportsRepository reportsRepository;
 
     public Result view(String companiesHouseIdentifier, int reportId) {
-        CompanySummary company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier).get().Info;
+        CompanySummary company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier, 0, 25).get().Info;
         ReportModel report = reportsRepository.getReport(companiesHouseIdentifier, reportId).get();
         return ok(page(views.html.Reports.report.render(report, company)));
     }

@@ -1,6 +1,6 @@
 package models;
 
-import java.util.List;
+import components.PagedList;
 
 /**
  * Created by daniel.rothig on 03/10/2016.
@@ -9,9 +9,9 @@ import java.util.List;
  */
 public class CompanyModel {
     public CompanySummary Info;
-    public List<ReportSummary> ReportSummaries;
+    public PagedList<ReportSummary> ReportSummaries;
 
-    public CompanyModel(CompanySummary info, List<ReportSummary> reportSummaries) {
+    public CompanyModel(CompanySummary info, PagedList<ReportSummary> reportSummaries) {
         Info = info;
         ReportSummaries = reportSummaries;
     }

@@ -43,7 +43,7 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<FilingData> tryMakeReportFilingModel(String token, String companiesHouseIdentifier) {
-        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier);
+        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier, 0, 0);
         if (company.isEmpty()) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
@@ -61,7 +61,7 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<FilingData> tryValidateReportFilingModel(String token, ReportFilingModel model) {
-        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(model.getTargetCompanyCompaniesHouseIdentifier());
+        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(model.getTargetCompanyCompaniesHouseIdentifier(), 0, 0);
         if (company.isEmpty()) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
@@ -76,7 +76,7 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<Integer> tryFileReport(String oAuthToken, ReportFilingModel model) {
-        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(model.getTargetCompanyCompaniesHouseIdentifier());
+        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(model.getTargetCompanyCompaniesHouseIdentifier(), 0, 0);
         if (company.isEmpty()) {
             return OrchestratorResult.fromFailure("Unknown company");
         }

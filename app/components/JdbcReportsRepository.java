@@ -32,26 +32,40 @@ final class JdbcReportsRepository implements ReportsRepository {
     }
 
     @Override
-    public List<CompanySummary> searchCompanies(String company) {
-        return jdbcCommunicator.ExecuteQuery(
-                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE LOWER(Name) LIKE LOWER(?) ORDER BY Name",
-                new String[] { "%"+company.trim()+"%"},
+    public PagedList<CompanySummary> searchCompanies(String company, int page, int itemsPerPage) {
+        List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
+                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE LOWER(Name) LIKE LOWER(?) ORDER BY Name LIMIT ? OFFSET ?",
+                new Object[]{"%" + company.trim() + "%", itemsPerPage, page*itemsPerPage},
                 _CompanySummaryMapper);
+
+        Integer total = jdbcCommunicator.ExecuteQuery(
+                "SELECT COUNT(*) FROM Company WHERE LOWER(Name) LIKE LOWER(?)",
+                new Object[]{"%" + company.trim() + "%"},
+                x -> x.getInt(1)).get(0);
+
+        return new PagedList<>(companySummaries, total, page, itemsPerPage);
     }
 
     @Override
-    public Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier) {
+    public Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier, int page, int itemsPerPage) {
         Option<CompanySummary> summary = GetCompanySummaryByIdentifier(identifier);
         if (summary.isEmpty()) {
             return Option.empty();
         }
 
         List<ReportSummary> reports = jdbcCommunicator.ExecuteQuery(
-                "SELECT Identifier, FilingDate FROM Report WHERE CompaniesHouseIdentifier = ? ORDER BY FilingDate DESC",
-                new String[]{identifier},
+                "SELECT Identifier, FilingDate FROM Report WHERE CompaniesHouseIdentifier = ? ORDER BY FilingDate DESC LIMIT ? OFFSET ?",
+                new Object[]{identifier, itemsPerPage, page * itemsPerPage},
                 _ReportSummaryMapper);
 
-        return Option.apply(new CompanyModel(summary.get(), reports));
+        Integer total = jdbcCommunicator.ExecuteQuery(
+                "SELECT COUNT(*) FROM Report WHERE CompaniesHouseIdentifier = ?",
+                new Object[]{identifier},
+                x -> x.getInt(1)).get(0);
+
+        PagedList<ReportSummary> pagedReports = new PagedList<>(reports, total, page, itemsPerPage);
+
+        return Option.apply(new CompanyModel(summary.get(), pagedReports));
     }
 
     @Override
@@ -87,7 +101,7 @@ final class JdbcReportsRepository implements ReportsRepository {
         if (!filingDate.getTimeZone().equals(TimeZone.getTimeZone("UTC"))) {
             throw new InvalidParameterException("filingDate must be UTC");
         }
-        if (getCompanyByCompaniesHouseIdentifier(rfm.getTargetCompanyCompaniesHouseIdentifier()).isEmpty()) {
+        if (getCompanyByCompaniesHouseIdentifier(rfm.getTargetCompanyCompaniesHouseIdentifier(), 0, 0).isEmpty()) {
             return -1;
         }
 
