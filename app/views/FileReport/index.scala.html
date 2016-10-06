@@ -1,18 +1,16 @@
 @import play.data.FormFactory
-@views.html.common.page.govukTemplateDefaults("File a payment report") {
-    <h1 class="heading-xlarge">File a payment report</h1>
-    <p class="lede">Provide information on the payment practices of your company</p>
-    <p>Press the button below to get started.</p>
-    <a href="@routes.FileReport.page(1)" class="button button-start">File a payment report</a>
+<h1 class="heading-xlarge">File a payment report</h1>
+<p class="lede">Provide information on the payment practices of your company</p>
+<p>Press the button below to get started.</p>
+<a href="@routes.FileReport.page(1)" class="button button-start">File a payment report</a>
 
-    <h2 class="heading-medium">Before you start</h2>
-    <p>Make sure to have everything you need to complete the process:</p>
-    <ul class="list list-bullet">
-        <li>Ensure you have your invoicing data ready. <a href="#">Learn more&hellip;</a></li>
-        <li>You will need your Companies House login credentials</li>
-        <li>Make sure you are authorised by Companies House to file reports for your company</li>
-    </ul>
-    <p>
-       <a href="@routes.Home.index()" class="link-back">Back</a>
-    </p>
-}
+<h2 class="heading-medium">Before you start</h2>
+<p>Make sure to have everything you need to complete the process:</p>
+<ul class="list list-bullet">
+    <li>Ensure you have your invoicing data ready. <a href="#">Learn more&hellip;</a></li>
+    <li>You will need your Companies House login credentials</li>
+    <li>Make sure you are authorised by Companies House to file reports for your company</li>
+</ul>
+<p>
+   <a href="@routes.Home.index()" class="link-back">Back</a>
+</p>

@@ -7,14 +7,13 @@ import orchestrators.FileReportOrchestrator;
 import orchestrators.OrchestratorResult;
 import play.data.Form;
 import play.data.FormFactory;
-import play.mvc.Controller;
 import play.mvc.Result;
 /**
  * Created by daniel.rothig on 27/09/2016.
  *
  * Controller for submitting payment reports
  */
-public class FileReport extends Controller {
+public class FileReport extends PageController {
 
     @Inject
     private FileReportOrchestrator fileReportOrchestrator;
@@ -28,12 +27,12 @@ public class FileReport extends Controller {
     }
 
 
-    public Result index() {return ok(views.html.FileReport.index.render()); }
+    public Result index() {return ok(page(views.html.FileReport.index.render())); }
 
     public Result page(int page) {
         switch (page) {
-            case 1: return ok(views.html.FileReport.page1.render());
-            case 2: return ok(views.html.FileReport.page2.render(fileReportOrchestrator.getCompaniesForUser("bullshitToken").get()));
+            case 1: return ok(page(views.html.FileReport.page1.render()));
+            case 2: return ok(page(views.html.FileReport.page2.render(fileReportOrchestrator.getCompaniesForUser("bullshitToken").get())));
             default: return status(404);
         }
     }
@@ -41,7 +40,7 @@ public class FileReport extends Controller {
     public Result file(String companiesHouseIdentifier) {
         OrchestratorResult<FilingData> data = fileReportOrchestrator.tryMakeReportFilingModel("bullshitToken", companiesHouseIdentifier);
         if (data.success()) {
-            return ok(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date));
+            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
         } else {
             return status(401, data.message());
         }
@@ -50,7 +49,7 @@ public class FileReport extends Controller {
     public Result reviewFiling() {
         OrchestratorResult<FilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
         if (data.success()) {
-            return ok(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date));
+            return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
         } else {
             return status(401, data.message());
         }

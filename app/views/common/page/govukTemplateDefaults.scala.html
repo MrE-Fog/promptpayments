@@ -1,6 +1,6 @@
 @import views.html.common.page.govukTemplate
 
-@(htmlTitle: String, propositionHeading: Option[Html] = None)(content: Html)
+@(htmlTitle: String)(content: Html)
 
 @head = {
 }
@@ -19,7 +19,7 @@
   footerLinks = HtmlFormat.empty,
   headerClass = Html("with-proposition"),
   propositionHeader = Html("<div class=\"header-proposition\"><div class=\"content\"><nav id=\"proposition-menu\"><a id=\"proposition-name\" href=\"/\">"
-    + propositionHeading.getOrElse("Payment duty register") + "</a><ul id=\"proposition-links\"><li><a href=\"" + routes.FileReport.index() + "\">File a report</a></li><li><a href=\"" + routes.SearchReport.searchstart()+ "\">Search reports</a></li><li><a href=\"" + routes.Home.accessData()+ "\">Access raw data</a></li></ul></nav></div></div>"),
+    + "Payment duty register" + "</a><ul id=\"proposition-links\"><li><a href=\"" + routes.FileReport.index() + "\">File a report</a></li><li><a href=\"" + routes.SearchReport.searchstart()+ "\">Search reports</a></li><li><a href=\"" + routes.Home.accessData()+ "\">Access raw data</a></li></ul></nav></div></div>"),
   homepageUrl = None,
   globalHeaderText = None,
   cookieMessage = None,

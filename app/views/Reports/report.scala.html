@@ -1,26 +1,24 @@
 @(model: ReportModel, company: CompanySummary)
-@views.html.common.page.govukTemplateDefaults("Find a payment report") {
-    <h1 class="heading-xlarge">
-        Payment report by @company.Name
-    </h1>
-    <p class="lede">Filed on: @model.Info.UiDateString()</p>
+<h1 class="heading-xlarge">
+    Payment report by @company.Name
+</h1>
+<p class="lede">Filed on: @model.Info.UiDateString()</p>
 
-    <table>
-        <tr>
-            <td>Number One</td>
-            <td>@model.NumberOne</td>
-        </tr>
-        <tr>
-            <td>Number Two</td>
-            <td>@model.NumberTwo</td>
-        </tr>
-        <tr>
-            <td>Number Three</td>
-            <td>@model.NumberThree</td>
-        </tr>
-    </table>
+<table>
+    <tr>
+        <td>Number One</td>
+        <td>@model.NumberOne</td>
+    </tr>
+    <tr>
+        <td>Number Two</td>
+        <td>@model.NumberTwo</td>
+    </tr>
+    <tr>
+        <td>Number Three</td>
+        <td>@model.NumberThree</td>
+    </tr>
+</table>
 
-    <p>
-        <a class="link-back" href="@routes.SearchReport.company(company.CompaniesHouseIdentifier)">Back to @company.Name</a>
-    </p>
-}
+<p>
+    <a class="link-back" href="@routes.SearchReport.company(company.CompaniesHouseIdentifier)">Back to @company.Name</a>
+</p>

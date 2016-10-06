@@ -1,10 +1,8 @@
 package controllers;
 
 import components.ReportsRepository;
-import models.CompanyModel;
 import models.CompanySummary;
 import models.ReportModel;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import javax.inject.Inject;
@@ -14,7 +12,7 @@ import javax.inject.Inject;
  *
  * View filed reports
  */
-public class ViewReport extends Controller {
+public class ViewReport extends PageController {
 
     @Inject
     private ReportsRepository reportsRepository;
@@ -22,6 +20,6 @@ public class ViewReport extends Controller {
     public Result view(String companiesHouseIdentifier, int reportId) {
         CompanySummary company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier).get().Info;
         ReportModel report = reportsRepository.getReport(companiesHouseIdentifier, reportId).get();
-        return ok(views.html.Reports.report.render(report, company));
+        return ok(page(views.html.Reports.report.render(report, company)));
     }
 }

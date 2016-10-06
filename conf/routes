@@ -22,3 +22,5 @@ GET     /FileReport/:id      controllers.FileReport.page(id: Int)
 GET     /FileReport/File/:id     controllers.FileReport.file(id: String)
 POST    /FileReport/ReviewFiling    controllers.FileReport.reviewFiling()
 POST    /FileReport/SubmitFiling    controllers.FileReport.submitFiling()
+
+GET     /VisualTest     controllers.VisualTest.index()

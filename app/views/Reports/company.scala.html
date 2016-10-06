@@ -1,25 +1,23 @@
 @(model: CompanyModel)
-@views.html.common.page.govukTemplateDefaults("Find a payment report") {
-    <h1 class="heading-xlarge">
-        Payment reports filed by @model.Info.Name
-    </h1>
-    @if(model.ReportSummaries.isEmpty()) {
-    <p class="noresults">No reports found.</p>
-    } else {
-    <ul class="searchresults">
-        @for(report <- model.ReportSummaries) {
-            <li class="searchresult">
-                <h2 class="header-medium">
-                    <a href="@routes.ViewReport.view(model.Info.CompaniesHouseIdentifier, report.Identifier)">Report filed on @report.UiDateString()</a>
-                </h2>
-                <p>
-                    Some text, some text some text
-                </p>
-            </li>
-        }
-    </ul>
+<h1 class="heading-xlarge">
+    Payment reports filed by @model.Info.Name
+</h1>
+@if(model.ReportSummaries.isEmpty()) {
+<p class="noresults">No reports found.</p>
+} else {
+<ul class="searchresults">
+    @for(report <- model.ReportSummaries) {
+        <li class="searchresult">
+            <h2 class="header-medium">
+                <a href="@routes.ViewReport.view(model.Info.CompaniesHouseIdentifier, report.Identifier)">Report filed on @report.UiDateString()</a>
+            </h2>
+            <p>
+                Some text, some text some text
+            </p>
+        </li>
     }
-    <p>
-        <a href="@routes.SearchReport.search()" class="link-back">Back</a>
-    </p>
+</ul>
 }
+<p>
+    <a href="@routes.SearchReport.search()" class="link-back">Back</a>
+</p>

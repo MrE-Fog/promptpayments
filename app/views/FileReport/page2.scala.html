@@ -1,20 +1,18 @@
 @(results: List[CompanySummary])
 @import play.data.FormFactory
-@views.html.common.page.govukTemplateDefaults("File a payment report") {
-    <h1 class="heading-xlarge">Welcome!</h1>
-    @if(results.isEmpty()) {
-        <p>You are currently not authorised to file payment reports for any company.</p>
-    } else {
-        <p>You are currently able to file payment reports for the following companies:</p>
+<h1 class="heading-xlarge">Welcome!</h1>
+@if(results.isEmpty()) {
+    <p>You are currently not authorised to file payment reports for any company.</p>
+} else {
+    <p>You are currently able to file payment reports for the following companies:</p>
 
-        <ul class="searchresults">
-        @for(result <- results) {
-            @views.html.shared._companySummary(result, routes.FileReport.file(result.CompaniesHouseIdentifier))
-        }
-        </ul>
+    <ul class="searchresults">
+    @for(result <- results) {
+        @views.html.shared._companySummary(result, routes.FileReport.file(result.CompaniesHouseIdentifier))
     }
-
-    <p>
-        <a href="@routes.FileReport.index()" class="link-back">Start over</a>
-    </p>
+    </ul>
 }
+
+<p>
+    <a href="@routes.FileReport.index()" class="link-back">Start over</a>
+</p>
