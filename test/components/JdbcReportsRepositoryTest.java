@@ -1,28 +1,22 @@
 package components;
 
-import models.CompanyModel;
-import models.CompanySummary;
-import models.ReportFilingModel;
-import models.ReportModel;
+import models.*;
 import org.junit.Before;
 import org.junit.Test;
 import play.db.Database;
 import play.db.Databases;
 import play.libs.F;
+import utils.MockUtcTimeProvider;
 import utils.TimeProvider;
+import utils.UtcTimeProvider;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class JdbcReportsRepositoryTest {
 
@@ -30,8 +24,7 @@ public class JdbcReportsRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        TimeProvider timeProvider = mock(TimeProvider.class);
-        when(timeProvider.Now()).thenReturn(new GregorianCalendar(2016, 10, 1));
+        TimeProvider timeProvider = new MockUtcTimeProvider(2016,10,1);
         jdbcReportsRepository = MockRepositoryCreator.CreateMockReportsRepository(timeProvider);
     }
 
@@ -86,6 +79,17 @@ public class JdbcReportsRepositoryTest {
     }
 
     @Test
+    public void getCompanyByCompaniesHouseIdentifier_ReportsChronological() throws Exception {
+        CompanyModel company = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120").get();
+
+        assertEquals(4, company.ReportSummaries.size());
+
+        assertTrue(company.ReportSummaries.get(0).ExactDate().compareTo(company.ReportSummaries.get(1).ExactDate()) > 0);
+        assertTrue(company.ReportSummaries.get(1).ExactDate().compareTo(company.ReportSummaries.get(2).ExactDate()) > 0);
+        assertTrue(company.ReportSummaries.get(2).ExactDate().compareTo(company.ReportSummaries.get(3).ExactDate()) > 0);
+    }
+
+    @Test
     public void getCompanyByCompaniesHouseIdentifier_DoesntExist() throws Exception {
         assertTrue(jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("124").isEmpty());
     }
@@ -97,6 +101,9 @@ public class JdbcReportsRepositoryTest {
 
         assertEquals("February 2010", report.Info.UiDateString());
         assertEquals(1, report.Info.Identifier);
+        assertEquals(new BigDecimal("0.00"), report.NumberOne);
+        assertEquals(new BigDecimal("0.00"), report.NumberTwo);
+        assertEquals(new BigDecimal("0.00"), report.NumberThree);
     }
 
     @Test
@@ -122,27 +129,35 @@ public class JdbcReportsRepositoryTest {
     @Test
     public void tryFileReport() throws Exception {
 
-        ReportFilingModel rfm = new ReportFilingModel(new CompanySummary("Eigencode Ltd.", "122"), new GregorianCalendar().getTime());
-        rfm.NumberOne = new BigDecimal("1.0");
-        rfm.NumberTwo = new BigDecimal("2.0");
-        rfm.NumberThree = new BigDecimal("3.0");
+        Calendar time = new UtcTimeProvider().Now();
+        ReportFilingModel rfm = new ReportFilingModel();
+        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
+        rfm.setNumberOne(1.0);
+        rfm.setNumberTwo(2.0);
+        rfm.setNumberThree(3.0);
 
-        String expectedUiDateString = rfm.FilingDateUiString();
-        int result = jdbcReportsRepository.TryFileReport(rfm);
+        assertEquals(new BigDecimal("1.00"), rfm.getNumberOneAsDecimal());
+        assertEquals(new BigDecimal("2.00"), rfm.getNumberTwoAsDecimal());
+        assertEquals(new BigDecimal("3.00"), rfm.getNumberThreeAsDecimal());
+
+        int result = jdbcReportsRepository.TryFileReport(rfm, time);
+
+        assertTrue(result > 0);
 
         ReportModel report = jdbcReportsRepository.getReport("122", result).get();
 
         assertEquals(report.Info.Identifier, result);
-        assertEquals(report.Info.UiDateString(), expectedUiDateString);
-        assertEquals(report.NumberOne, rfm.NumberOne);
-        assertEquals(report.NumberTwo, rfm.NumberTwo);
-        assertEquals(report.NumberThree, rfm.NumberThree);
+        assertEquals(time, report.Info.ExactDate());
+        assertEquals(new BigDecimal("1.00"), report.NumberOne);
+        assertEquals(new BigDecimal("2.00"), report.NumberTwo);
+        assertEquals(new BigDecimal("3.00"), report.NumberThree);
     }
 
     @Test
     public void tryFileReport_WhenCompanyUnknown() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel(new CompanySummary("Doesnt exist Ltd.", "124"), new GregorianCalendar().getTime());
-        int result = jdbcReportsRepository.TryFileReport(rfm);
+        ReportFilingModel rfm = new ReportFilingModel();
+        rfm.setTargetCompanyCompaniesHouseIdentifier("124");
+        int result = jdbcReportsRepository.TryFileReport(rfm, new UtcTimeProvider().Now());
         assertEquals(-1 , result);
     }
 

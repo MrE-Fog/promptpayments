@@ -7,7 +7,6 @@ import play.libs.F;
 import utils.TimeProvider;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,12 +34,11 @@ public class CsvDataExporter {
         this.reportsRepository = reportsRepository;
         this.timeProvider = timeProvider;
         cachedCsv = null;
-        lastCached = new GregorianCalendar();
-        lastCached.setTimeInMillis(0);
+        lastCached = null;
     }
 
     public String GenerateCsv() {
-        if (timeProvider.Now().getTimeInMillis() - lastCached.getTimeInMillis() < cacheMinutes * 60000 && cachedCsv != null) {
+        if (lastCached != null && cachedCsv != null && timeProvider.Now().getTimeInMillis() - lastCached.getTimeInMillis() < cacheMinutes * 60000) {
             return cachedCsv;
         }
 

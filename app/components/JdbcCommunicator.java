@@ -7,7 +7,9 @@ import play.db.Database;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by daniel.rothig on 03/10/2016.
@@ -81,8 +83,12 @@ class JdbcCommunicator {
         Columns(ResultSet resultSet) {this.resultSet = resultSet;}
 
         public String getString(int index) throws SQLException {return resultSet.getString(index);}
-        public Date getDate(int index) throws SQLException {return resultSet.getDate(index);}
+        public Calendar getCalendar(int index) throws SQLException {
+            Calendar rtn = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            rtn.setTime(resultSet.getTimestamp(index));
+            return rtn;
+        }
         public int getInt(int index) throws SQLException {return resultSet.getInt(index);}
-        public BigDecimal getBigDecimal(int index) throws SQLException {return resultSet.getBigDecimal(index);}
+        public BigDecimal getBigDecimal(int index) throws SQLException {return utils.DecimalConverter.getBigDecimal(resultSet.getBigDecimal(index));}
     }
 }

@@ -5,7 +5,8 @@ import models.ReportModel;
 import models.ReportSummary;
 import org.junit.Test;
 import play.libs.F;
-import utils.GregorianTimeProvider;
+import utils.MockUtcTimeProvider;
+import utils.UtcTimeProvider;
 import utils.TimeProvider;
 
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ public class CsvDataExporterTest {
     public void generateCsv_RequestsCertainNumberOfMonths() throws Exception {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
 
-        new CsvDataExporter(reportsRepository, new GregorianTimeProvider()).GenerateCsv();
+        new CsvDataExporter(reportsRepository, new UtcTimeProvider()).GenerateCsv();
 
         int expectedRequestedMonths = 24;
         verify(reportsRepository).ExportData(expectedRequestedMonths);
@@ -29,7 +30,7 @@ public class CsvDataExporterTest {
     @Test
     public void generateCsv_CachesResults() throws Exception {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
-        CsvDataExporter csvDataExporter = new CsvDataExporter(reportsRepository, new GregorianTimeProvider());
+        CsvDataExporter csvDataExporter = new CsvDataExporter(reportsRepository, new UtcTimeProvider());
 
         csvDataExporter.GenerateCsv();
         csvDataExporter.GenerateCsv();
@@ -44,10 +45,10 @@ public class CsvDataExporterTest {
 
         CsvDataExporter csvDataExporter = new CsvDataExporter(reportsRepository,timeProvider);
 
-        when(timeProvider.Now()).thenReturn(new GregorianCalendar(2016, 1, 1, 12,0,0));
+        when(timeProvider.Now()).thenReturn(new MockUtcTimeProvider(2016, 1, 1).Now());
         csvDataExporter.GenerateCsv();
 
-        when(timeProvider.Now()).thenReturn(new GregorianCalendar(2016, 1, 1, 13,0,0));
+        when(timeProvider.Now()).thenReturn(new MockUtcTimeProvider(2016, 1, 2).Now());
         csvDataExporter.GenerateCsv();
 
         verify(reportsRepository, times(2)).ExportData(anyInt());
@@ -95,7 +96,7 @@ public class CsvDataExporterTest {
     private String[] getMockedCsvRows() {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
         when(reportsRepository.ExportData(anyInt())).thenReturn(sampleExport());
-        CsvDataExporter csvDataExporter = new CsvDataExporter(reportsRepository, new GregorianTimeProvider());
+        CsvDataExporter csvDataExporter = new CsvDataExporter(reportsRepository, new UtcTimeProvider());
 
         return csvDataExporter.GenerateCsv().split("\n");
     }
@@ -106,24 +107,25 @@ public class CsvDataExporterTest {
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("SomeComp", "123"),
-                new ReportModel(new ReportSummary(1, new GregorianCalendar(2016,1,1).getTime()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                new ReportModel(new ReportSummary(1, new MockUtcTimeProvider(2016,1,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("A, B and C Ltd.", "124"),
-                new ReportModel(new ReportSummary(2, new GregorianCalendar(2016,3,1).getTime()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                new ReportModel(new ReportSummary(2, new MockUtcTimeProvider(2016,3,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("The \"Dungeon\" Ltd.", "125"),
-                new ReportModel(new ReportSummary(3, new GregorianCalendar(2016,2,1).getTime()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                new ReportModel(new ReportSummary(3, new MockUtcTimeProvider(2016,2,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("The Scary, Scary \"Dungeon\" Ltd.", "126"),
-                new ReportModel(new ReportSummary(4, new GregorianCalendar(2016,4,1).getTime()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                new ReportModel(new ReportSummary(4, new MockUtcTimeProvider(2016,4,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
         ));
 
         return rtn;
     }
 }
+

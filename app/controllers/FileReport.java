@@ -1,17 +1,14 @@
 package controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
-import components.CompanyAccessAuthorizer;
-import components.ReportsRepository;
+import models.FilingData;
 import models.ReportFilingModel;
-import models.ReportModel;
+import orchestrators.FileReportOrchestrator;
+import orchestrators.OrchestratorResult;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
-
 /**
  * Created by daniel.rothig on 27/09/2016.
  *
@@ -20,10 +17,8 @@ import play.mvc.Result;
 public class FileReport extends Controller {
 
     @Inject
-    private CompanyAccessAuthorizer companyAccessAuthorizer;
+    private FileReportOrchestrator fileReportOrchestrator;
 
-    @Inject
-    private ReportsRepository reportsRepository;
 
     private Form<ReportFilingModel> reportForm;
 
@@ -38,31 +33,37 @@ public class FileReport extends Controller {
     public Result page(int page) {
         switch (page) {
             case 1: return ok(views.html.FileReport.page1.render());
-            case 2: return ok(views.html.FileReport.page2.render(companyAccessAuthorizer.GetCompaniesForUser("bullshitToken")));
+            case 2: return ok(views.html.FileReport.page2.render(fileReportOrchestrator.getCompaniesForUser("bullshitToken").get()));
             default: return status(404);
         }
     }
 
     public Result file(String companiesHouseIdentifier) {
-        ReportFilingModel model = companyAccessAuthorizer.TryMakeReportFilingModel("bullshitToken", companiesHouseIdentifier);
-        if (model == null) {
-            return status(401);
+        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryMakeReportFilingModel("bullshitToken", companiesHouseIdentifier);
+        if (data.success()) {
+            return ok(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date));
         } else {
-            return ok(views.html.FileReport.file.render(reportForm.fill(model)));
+            return status(401, data.message());
         }
     }
 
     public Result reviewFiling() {
-        return ok(views.html.FileReport.review.render(reportForm.bindFromRequest(request())));
+        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
+        if (data.success()) {
+            return ok(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date));
+        } else {
+            return status(401, data.message());
+        }
     }
 
     public Result submitFiling() {
         ReportFilingModel model = reportForm.bindFromRequest(request()).get();
-        int resultingId = companyAccessAuthorizer.TryFileReport("bullshitToken", model);
-        if (resultingId < 0) {
-            return status(401);
+        OrchestratorResult<Integer> resultingId = fileReportOrchestrator.tryFileReport("bullshitToken", model);
+        if (resultingId.success()) {
+            return redirect(routes.ViewReport.view(model.getTargetCompanyCompaniesHouseIdentifier(), resultingId.get()));
         } else {
-            return redirect(routes.ViewReport.view(model.TargetCompanyCompaniesHouseIdentifier, resultingId));
+            return status(401, resultingId.message());
         }
     }
 }
+

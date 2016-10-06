@@ -39,14 +39,16 @@ public class CompanyAccessAuthorizer {
         }
 
         List<CompanySummary> matches = reportsRepository.getCompanySummaries(Collections.singletonList(companiesHouseIdentifier));
-        return new ReportFilingModel(matches.get(0), timeProvider.Now().getTime());
+        ReportFilingModel rtn = new ReportFilingModel();
+        rtn.setTargetCompanyCompaniesHouseIdentifier(matches.get(0).CompaniesHouseIdentifier);
+        return rtn;
     }
 
-    public int TryFileReport(String bullshitToken, ReportFilingModel reportFilingModel) {
-        if (!MayFileReport(bullshitToken, reportFilingModel.TargetCompanyCompaniesHouseIdentifier)) {
+    public int TryFileReport(String oAuthToken, ReportFilingModel reportFilingModel) {
+        if (!MayFileReport(oAuthToken, reportFilingModel.getTargetCompanyCompaniesHouseIdentifier())) {
             return -1;
         }
-        return reportsRepository.TryFileReport(reportFilingModel);
+        return reportsRepository.TryFileReport(reportFilingModel, timeProvider.Now());
     }
 
     private boolean MayFileReport(String oAuthToken, String companiesHouseIdentifier) {

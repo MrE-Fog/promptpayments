@@ -9,7 +9,7 @@ import java.util.Calendar;
  *
  * Provides time info - abstraction for testing
  */
-@ImplementedBy(GregorianTimeProvider.class)
+@ImplementedBy(UtcTimeProvider.class)
 public interface TimeProvider {
     Calendar Now();
 }

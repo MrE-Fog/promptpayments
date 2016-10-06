@@ -1,36 +1,35 @@
-@(model: Form[ReportFilingModel])
+@(model: Form[ReportFilingModel], company: CompanySummary, date: UiDate)
 @import play.data.FormFactory
 @import views.html.helper
+@import utils._
 @views.html.common.page.govukTemplateDefaults("File a payment report") {
 <h1 class="heading-xlarge">File a report</h1>
 
 <form action="@routes.FileReport.reviewFiling()" method="POST">
-    <input type="hidden" id="TargetCompanyCompaniesHouseIdentifier" name="TargetCompanyCompaniesHouseIdentifier" value="@model.get().TargetCompanyCompaniesHouseIdentifier">
-    <input type="hidden" id="TargetCompanyName" name="TargetCompanyName" value="@model.get().TargetCompanyName">
-    <input type="hidden" id="FilingDate" name="FilingDate" value="@model.get().FilingDate">
+    <input type="hidden" id="TargetCompanyCompaniesHouseIdentifier" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
 
     <fieldset>
         <label class="form-label" for="TargetCompanyNamePublic">Company</label>
-        <input class="form-control" type="text" disabled="disabled" id="TargetCompanyNamePublic" value="@model.get().TargetCompanyName">
+        <input class="form-control" type="text" disabled="disabled" id="TargetCompanyNamePublic" value="@company.Name">
     </fieldset>
 
 
     <fieldset>
         <label class="form-label" for="FilingDate2">Date</label>
-        <input class="form-control" type="text" disabled="disabled" id="FilingDate2" value="@model.get().FilingDateUiString()">
+        <input class="form-control" type="text" disabled="disabled" id="FilingDate2" value="@date.ToFriendlyString()">
     </fieldset>
 
     <fieldset>
         <label class="form-label" for="NumberOne">Number one</label>
-        <input class="form-control" type="text" id="NumberOne" name="NumberOne" value="">
+        <input class="form-control" type="text" id="NumberOne" name="NumberOne" value="@model.get().getNumberOneAsDecimal()">
     </fieldset>
     <fieldset>
         <label class="form-label" for="NumberTwo">Number two</label>
-        <input class="form-control" type="text" id="NumberTwo" name="NumberTwo" value="">
+        <input class="form-control" type="text" id="NumberTwo" name="NumberTwo" value="@model.get().getNumberTwoAsDecimal()">
     </fieldset>
     <fieldset>
         <label class="form-label" for="NumberThree">Number three</label>
-        <input class="form-control" type="text" id="NumberThree" name="NumberThree" value="">
+        <input class="form-control" type="text" id="NumberThree" name="NumberThree" value="@model.get().getNumberThreeAsDecimal()">
     </fieldset>
 
     <input type="submit" class="button" value="Review">

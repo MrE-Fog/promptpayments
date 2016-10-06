@@ -1,5 +1,6 @@
-@(model: Form[ReportFilingModel])
+@(model: Form[ReportFilingModel], company: CompanySummary, date: UiDate)
 @import play.data.FormFactory
+@import models.UiDate
 @views.html.common.page.govukTemplateDefaults("File a payment report") {
     <h1 class="heading-xlarge">File a report</h1>
 
@@ -9,7 +10,7 @@
                 Company
             </td>
             <td>
-                @model.get().TargetCompanyName
+                @company.Name
             </td>
         </tr>
         <tr>
@@ -17,7 +18,7 @@
                 Filing date
             </td>
             <td>
-                @model.get().FilingDate
+                @date.ToFriendlyString()
             </td>
         </tr>
         <tr>
@@ -25,7 +26,7 @@
                 Number One
             </td>
             <td>
-                @model.get().NumberOne
+                @model.get().getNumberOneAsDecimal()
             </td>
         </tr>
         <tr>
@@ -33,7 +34,7 @@
                 Number Two
             </td>
             <td>
-                @model.get().NumberTwo
+                @model.get().getNumberTwoAsDecimal()
             </td>
         </tr>
         <tr>
@@ -41,18 +42,16 @@
                 Number Three
             </td>
             <td>
-                @model.get().NumberThree
+                @model.get().getNumberThreeAsDecimal()
             </td>
         </tr>
     </table>
 
     <form action="@routes.FileReport.submitFiling()" method="POST">
-        <input type="hidden" name="TargetCompanyName" value="@model.get().TargetCompanyName">
-        <input type="hidden" name="TargetCompanyCompaniesHouseIdentifier" value="@model.get().TargetCompanyCompaniesHouseIdentifier">
-        <input type="hidden" name="FilingDate" value="@model.get().FilingDate">
-        <input type="hidden" name="NumberOne" value="@model.get().NumberOne">
-        <input type="hidden" name="NumberTwo" value="@model.get().NumberTwo">
-        <input type="hidden" name="NumberThree" value="@model.get().NumberThree">
+        <input type="hidden" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
+        <input type="hidden" name="NumberOne" value="@model.get().getNumberOneAsDecimal()">
+        <input type="hidden" name="NumberTwo" value="@model.get().getNumberTwoAsDecimal()">
+        <input type="hidden" name="NumberThree" value="@model.get().getNumberThreeAsDecimal()">
 
 
         <input type="submit" class="button" value="Submit">

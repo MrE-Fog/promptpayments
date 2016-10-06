@@ -1,57 +1,20 @@
 package models;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import static utils.DecimalConverter.getBigDecimal;
 
 /**
  * Model to be
  */
 public class ReportFilingModel {
-    public String TargetCompanyName;
-    public String TargetCompanyCompaniesHouseIdentifier;
-    public String FilingDate;
+    private String TargetCompanyCompaniesHouseIdentifier;
 
-    public BigDecimal NumberOne;
-    public BigDecimal NumberTwo;
-    public BigDecimal NumberThree;
-
-    private static DateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
-
-    public ReportFilingModel(CompanySummary targetCompany, Date filingDate) {
-        TargetCompanyName = targetCompany.Name;
-        TargetCompanyCompaniesHouseIdentifier = targetCompany.CompaniesHouseIdentifier;
-        FilingDate = dateFormat.format(filingDate);
-    }
-
-    public ReportFilingModel(){}
-
-    public String FilingDateUiString() {
-        return FilingDate;
-    }
-
-    public Date FilingDateAsDate() {
-        try {
-            return dateFormat.parse(FilingDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Boolean IsComplete() {return false;}
+    private double NumberOne;
+    private double NumberTwo;
+    private double NumberThree;
 
     /* Getters and setters */
-
-    public String getTargetCompanyName() {
-        return TargetCompanyName;
-    }
-
-    public void setTargetCompanyName(String targetCompanyName) {
-        TargetCompanyName = targetCompanyName;
-    }
 
     public String getTargetCompanyCompaniesHouseIdentifier() {
         return TargetCompanyCompaniesHouseIdentifier;
@@ -61,35 +24,40 @@ public class ReportFilingModel {
         TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
     }
 
-    public String getFilingDate() {
-        return FilingDate;
-    }
-
-    public void setFilingDate(String filingDate) {
-        FilingDate = filingDate;
-    }
-
-    public BigDecimal getNumberOne() {
+    public double getNumberOne() {
         return NumberOne;
     }
 
-    public void setNumberOne(BigDecimal numberOne) {
+    public BigDecimal getNumberOneAsDecimal() {
+        return getBigDecimal(NumberOne);
+    }
+
+    public void setNumberOne(double numberOne) {
         NumberOne = numberOne;
     }
 
-    public BigDecimal getNumberTwo() {
+    public double getNumberTwo() {
         return NumberTwo;
     }
 
-    public void setNumberTwo(BigDecimal numberTwo) {
+    public BigDecimal getNumberTwoAsDecimal() {
+        return getBigDecimal(NumberTwo);
+    }
+
+    public void setNumberTwo(double numberTwo) {
         NumberTwo = numberTwo;
     }
 
-    public BigDecimal getNumberThree() {
+    public double getNumberThree() {
         return NumberThree;
     }
 
-    public void setNumberThree(BigDecimal numberThree) {
+    public BigDecimal getNumberThreeAsDecimal() {
+        return getBigDecimal(NumberThree);
+    }
+
+    public void setNumberThree(double numberThree) {
         NumberThree = numberThree;
     }
 }
+

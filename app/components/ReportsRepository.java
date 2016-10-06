@@ -8,6 +8,7 @@ import models.ReportModel;
 import play.libs.F;
 import scala.Option;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public interface ReportsRepository {
     Option<ReportModel> getReport(String company, int reportId);
     List<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers);
 
-    int TryFileReport(ReportFilingModel reportFilingModel);
+    int TryFileReport(ReportFilingModel rfm, Calendar filingDate);
+
     List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months);
 }

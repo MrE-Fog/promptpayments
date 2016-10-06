@@ -6,9 +6,12 @@ import scala.Option;
 import utils.TimeProvider;
 
 import javax.inject.Inject;
+import java.security.InvalidParameterException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +47,7 @@ final class JdbcReportsRepository implements ReportsRepository {
         }
 
         List<ReportSummary> reports = jdbcCommunicator.ExecuteQuery(
-                "SELECT Identifier, FilingDate FROM Report WHERE CompaniesHouseIdentifier = ?",
+                "SELECT Identifier, FilingDate FROM Report WHERE CompaniesHouseIdentifier = ? ORDER BY FilingDate DESC",
                 new String[]{identifier},
                 _ReportSummaryMapper);
 
@@ -80,14 +83,17 @@ final class JdbcReportsRepository implements ReportsRepository {
     }
 
     @Override
-    public int TryFileReport(ReportFilingModel rfm) {
-        if (getCompanyByCompaniesHouseIdentifier(rfm.TargetCompanyCompaniesHouseIdentifier).isEmpty()) {
+    public int TryFileReport(ReportFilingModel rfm, Calendar filingDate) {
+        if (!filingDate.getTimeZone().equals(TimeZone.getTimeZone("UTC"))) {
+            throw new InvalidParameterException("filingDate must be UTC");
+        }
+        if (getCompanyByCompaniesHouseIdentifier(rfm.getTargetCompanyCompaniesHouseIdentifier()).isEmpty()) {
             return -1;
         }
 
         return jdbcCommunicator.ExecuteUpdate(
                 "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, NumberOne, NumberTwo, NumberThree) VALUES(?,?,?,?,?);",
-                new Object[] {rfm.FilingDateAsDate(), rfm.TargetCompanyCompaniesHouseIdentifier, rfm.NumberOne, rfm.NumberTwo, rfm.NumberThree},
+                new Object[] {filingDate.getTime(), rfm.getTargetCompanyCompaniesHouseIdentifier(), rfm.getNumberOneAsDecimal(), rfm.getNumberTwoAsDecimal(), rfm.getNumberThreeAsDecimal()},
                 x -> x.getInt(1)
         ).get(0);
     }
@@ -105,9 +111,9 @@ final class JdbcReportsRepository implements ReportsRepository {
                 "SELECT TOP 100000 Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.NumberOne, Report.NumberTwo, Report.NumberThree " +
                 "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
                 "WHERE Report.FilingDate >= ?",
-                new Object[] {minDate.getTime()},
+                new Object[] {new Timestamp(minDate.getTimeInMillis())},
                 x -> new F.Tuple<>(new CompanySummary(x.getString(1), x.getString(2)),
-                        new ReportModel(new ReportSummary(x.getInt(3), x.getDate(4)), x.getBigDecimal(5), x.getBigDecimal(6), x.getBigDecimal(7))));
+                        new ReportModel(new ReportSummary(x.getInt(3), x.getCalendar(4)), x.getBigDecimal(5), x.getBigDecimal(6), x.getBigDecimal(7))));
 
     }
 
@@ -127,10 +133,10 @@ final class JdbcReportsRepository implements ReportsRepository {
             results -> new CompanySummary(results.getString(1), results.getString(2));
 
     private JdbcCommunicator.Mapper<ReportSummary> _ReportSummaryMapper =
-            results -> new ReportSummary(results.getInt(1), results.getDate(2));
+            results -> new ReportSummary(results.getInt(1), results.getCalendar(2));
 
     private JdbcCommunicator.Mapper<ReportModel> _ReportMapper =
             results -> new ReportModel(
-                    new ReportSummary(results.getInt(1), results.getDate(2)),
+                    new ReportSummary(results.getInt(1), results.getCalendar(2)),
                     results.getBigDecimal(3), results.getBigDecimal(4), results.getBigDecimal(5));
 }

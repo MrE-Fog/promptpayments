@@ -1,15 +1,15 @@
 package utils;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * Created by daniel.rothig on 05/10/2016.
  *
  */
-public class GregorianTimeProvider implements TimeProvider{
+public class UtcTimeProvider implements TimeProvider{
     @Override
     public Calendar Now() {
-        return new GregorianCalendar();
+        return Calendar.getInstance(TimeZone.getTimeZone("UTC"));
     }
 }
