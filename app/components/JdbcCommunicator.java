@@ -3,6 +3,7 @@ package components;
 import com.google.inject.Inject;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.internal.dbsupport.sybase.ase.SybaseASEDbSupport;
+import play.Logger;
 import play.db.Database;
 
 import java.math.BigDecimal;
@@ -61,8 +62,7 @@ class JdbcCommunicator {
             return rtn;
         }
         catch(Exception e) {
-            System.out.println("Can't execute query " + sql);
-            System.out.println(e);
+            Logger.error("Could not run query "+sql,e);
             return new ArrayList<>();
         }
 
