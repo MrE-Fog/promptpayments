@@ -1,5 +1,6 @@
 @import "js";
 @import "../_conditionals.scss";
+@import "../colours/_palette";
 
 button {
   font-family: inherit;
@@ -13,7 +14,6 @@ button.link {
   border: none;
   box-shadow: none;
   color: $link-colour;
-  cursor: hand;
   cursor: pointer;
   padding-left: 0px;
   padding-right: 0px;
@@ -34,7 +34,6 @@ button.link-back {
   background: none;
   border: none;
   box-shadow: none;
-  cursor: hand;
   cursor: pointer;
   text-align: left;
   text-decoration: underline;
@@ -86,7 +85,12 @@ select.ui-autocomplete-base {
 }
 
 .ui-autocomplete-input {
-  width: 100%;
+  width: 70%;
+  margin-right: 15px;
+  @include media (mobile) {
+    width: 100%;
+    margin-right: inherit;
+  }
 }
 
 .link-next-to-button {
@@ -110,4 +114,8 @@ input.hidden {
   padding: 0px;
   outline: none;
   border: 0px;
+}
+
+a.not-visited:visited {
+  color: $link-colour;
 }
