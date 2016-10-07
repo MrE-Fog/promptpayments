@@ -74,6 +74,9 @@ public class CsvDataExporter {
     }
 
     private String escape(Object obj) {
+        if (obj == null) {
+            return "";
+        }
         String raw = obj.toString();
         if (raw.contains(",")) {
             if (raw.contains("\"")) {

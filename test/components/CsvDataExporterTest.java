@@ -28,6 +28,38 @@ public class CsvDataExporterTest {
     }
 
     @Test
+    public void generateCsv_canDealWithNulls() throws Exception {
+        ReportsRepository reportsRepository = mock(ReportsRepository.class);
+        ReportModel reportModel = new ReportModel(
+                new ReportSummary(1, new MockUtcTimeProvider(2016, 6, 1).Now()),
+                null,
+                null,
+                null,
+                null,
+                null,
+                new MockUtcTimeProvider(2016, 0, 1).Now(),
+                new MockUtcTimeProvider(2016, 5, 30).Now(),
+                null,
+                null,
+                false,
+                false,
+                false,
+                false,
+                null);
+
+        when(reportsRepository.ExportData(24)).thenReturn(Arrays.asList(new F.Tuple<>(
+                new CompanySummary(null, null),
+                reportModel)));
+
+        String csv = new CsvDataExporter(reportsRepository, new UtcTimeProvider()).GenerateCsv();
+
+        int expectedRequestedMonths = 24;
+        verify(reportsRepository).ExportData(expectedRequestedMonths);
+        assertTrue(csv.split("\n")[1].contains(",,,,"));
+
+    }
+
+    @Test
     public void generateCsv_CachesResults() throws Exception {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
         CsvDataExporter csvDataExporter = new CsvDataExporter(reportsRepository, new UtcTimeProvider());
