@@ -1,22 +1,17 @@
 package components;
 
-import com.google.inject.Inject;
 import org.flywaydb.core.Flyway;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import play.Configuration;
 import play.db.Database;
 import play.db.Databases;
-import play.db.DefaultDatabase;
-import play.db.NamedDatabase;
 
-import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by daniel.rothig on 05/10/2016.

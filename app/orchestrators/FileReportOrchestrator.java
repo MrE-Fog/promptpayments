@@ -1,7 +1,8 @@
 package orchestrators;
 
 import com.google.inject.Inject;
-import components.CompanyAccessAuthorizer;
+import components.MockCompaniesHouseCommunicator;
+import components.PagedList;
 import components.ReportsRepository;
 import models.CompanyModel;
 import models.CompanySummary;
@@ -19,8 +20,9 @@ import java.util.List;
  * Orchestrator for FileReport
  */
 public class FileReportOrchestrator {
+
     @Inject
-    private CompanyAccessAuthorizer companyAccessAuthorizer;
+    private MockCompaniesHouseCommunicator companiesHouseCommunicator;
 
     @Inject
     private ReportsRepository reportsRepository;
@@ -31,14 +33,15 @@ public class FileReportOrchestrator {
     public FileReportOrchestrator() {
     }
 
-    FileReportOrchestrator(CompanyAccessAuthorizer companyAccessAuthorizer, ReportsRepository reportsRepository, TimeProvider timeProvider) {
-        this.companyAccessAuthorizer = companyAccessAuthorizer;
+    FileReportOrchestrator(MockCompaniesHouseCommunicator companiesHouseCommunicator, ReportsRepository reportsRepository, TimeProvider timeProvider) {
+        this.companiesHouseCommunicator = companiesHouseCommunicator;
         this.reportsRepository = reportsRepository;
         this.timeProvider = timeProvider;
     }
 
-    public OrchestratorResult<List<CompanySummary>> getCompaniesForUser(String token) {
-        List<CompanySummary> companies = companyAccessAuthorizer.GetCompaniesForUser(token);
+    public OrchestratorResult<PagedList<CompanySummary>> getCompaniesForUser(String token, int page, int itemsPerPage) {
+        List<String> companyIdentifiers = companiesHouseCommunicator.RequestAuthorizedCompaniesForUser(token);
+        PagedList<CompanySummary> companies = reportsRepository.getCompanySummaries(companyIdentifiers, page, itemsPerPage);
         return OrchestratorResult.fromSucccess(companies);
     }
 
@@ -48,13 +51,15 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        ReportFilingModel reportFilingModel = companyAccessAuthorizer.TryMakeReportFilingModel(token, companiesHouseIdentifier);
-        if (reportFilingModel == null) {
+        if (!MayFileReport(token,companiesHouseIdentifier)) {
             return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         }
 
+        ReportFilingModel rfm = new ReportFilingModel();
+        rfm.setTargetCompanyCompaniesHouseIdentifier(companiesHouseIdentifier);
+
         return OrchestratorResult.fromSucccess(new FilingData(
-                reportFilingModel,
+                rfm,
                 company.get().Info,
                 new UiDate(timeProvider.Now())
         ));
@@ -81,11 +86,16 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        int i = companyAccessAuthorizer.TryFileReport(oAuthToken, model);
-        if (i == -1) {
+        if (!MayFileReport(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
             return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         }
 
+        int i = reportsRepository.TryFileReport(model, timeProvider.Now());
         return OrchestratorResult.fromSucccess(i);
+    }
+
+    private boolean MayFileReport(String oAuthToken, String companiesHouseIdentifier) {
+        return companiesHouseIdentifier != null && oAuthToken != null
+                && companiesHouseCommunicator.RequestAuthorizedCompaniesForUser(oAuthToken).contains(companiesHouseIdentifier);
     }
 }

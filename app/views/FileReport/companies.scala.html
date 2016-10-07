@@ -1,4 +1,5 @@
-@(results: List[CompanySummary])
+@import components.PagedList
+@(results: PagedList[CompanySummary])
 @import play.data.FormFactory
 <h1 class="heading-xlarge">Welcome!</h1>
 @if(results.isEmpty()) {
@@ -11,6 +12,16 @@
         @views.html.shared._companySummary(result, routes.FileReport.file(result.CompaniesHouseIdentifier))
     }
     </ul>
+
+    <p class="paging">
+        Showing @(results.rangeLower() + 1)&ndash;@(results.rangeUpper()+1) of @results.totalSize() companies.
+        @if(results.canGoBack()) {
+        <a href="@routes.FileReport.companies(results.pageNumber() - 1)">Previous page</a>
+        }
+        @if(results.canGoNext()) {
+        <a href="@routes.FileReport.companies(results.pageNumber() + 1)">Next page</a>
+        }
+    </p>
 }
 
 <p>

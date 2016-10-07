@@ -106,6 +106,47 @@ public class JdbcReportsRepositoryTest {
     }
 
     @Test
+    public void getCompanySummaries_paged() throws Exception {
+        List<String> companies = Arrays.asList("120", "121", "122");
+        PagedList<CompanySummary> result1 = jdbcReportsRepository.getCompanySummaries(companies, 0, 2);
+        PagedList<CompanySummary> result2 = jdbcReportsRepository.getCompanySummaries(companies, 1, 2);
+
+        assertEquals("The number of results should not exceed page size", 2, result1.size());
+        assertEquals("Page number should be accurately reported", 0, result1.pageNumber());
+        assertEquals("Total size should be accurately reported", 3, result1.totalSize());
+        assertEquals("Lower bound should be accurately reported", 0, result1.rangeLower());
+        assertEquals("Upper bound should be accurately reported", 1, result1.rangeUpper());
+
+        assertEquals("The number of results should not exceed page size", 1, result2.size());
+        assertEquals("Page number should be accurately reported", 1, result2.pageNumber());
+        assertEquals("Total size should be accurately reported", 3, result2.totalSize());
+        assertEquals("Lower bound should be accurately reported", 2, result2.rangeLower());
+        assertEquals("Upper bound should be accurately reported", 2, result2.rangeUpper());
+    }
+
+    @Test
+    public void getCompanySummaries_paged_alphabetic() throws Exception {
+        List<String> companies = Arrays.asList("120", "121", "122");
+
+        PagedList<CompanySummary> result1 = jdbcReportsRepository.getCompanySummaries(companies,0,2);
+        PagedList<CompanySummary> result2 = jdbcReportsRepository.getCompanySummaries(companies,1,2);
+
+        assertTrue(result1.get(0).Name.compareTo(result1.get(1).Name) <0);
+        assertTrue(result1.get(1).Name.compareTo(result2.get(0).Name) <0);
+    }
+
+    @Test
+    public void getCompanySummary_emptyforzeropagesize() throws Exception {
+        List<String> companies = Arrays.asList("120", "121", "122");
+
+        PagedList<CompanySummary> result = jdbcReportsRepository.getCompanySummaries(companies,0,0);
+        assertEquals(0, result.size());
+        assertEquals(3, result.totalSize());
+        assertEquals(0, result.rangeLower());
+        assertEquals(0, result.rangeUpper());
+    }
+
+    @Test
     public void getCompany_paged() throws Exception {
         PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 3).get().ReportSummaries;
         PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 1, 3).get().ReportSummaries;
@@ -191,7 +232,7 @@ public class JdbcReportsRepositoryTest {
         identifiers.add("122");
         identifiers.add("124"); //doesn't exist
 
-        List<CompanySummary> companySummaries = jdbcReportsRepository.getCompanySummaries(identifiers);
+        List<CompanySummary> companySummaries = jdbcReportsRepository.getCompanySummaries(identifiers, 0, 100);
         List<String> resultIdentifiers = companySummaries.stream().map(x -> x.CompaniesHouseIdentifier).collect(Collectors.toList());
 
         assertEquals(2, companySummaries.size());

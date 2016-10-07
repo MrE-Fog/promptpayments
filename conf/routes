@@ -18,7 +18,8 @@ GET     /Reports/Company/:company   controllers.SearchReport.company(company: St
 GET     /Reports/Company/:company/Report/:report controllers.ViewReport.view(company: String, report: Int)
 
 GET     /FileReport          controllers.FileReport.index()
-GET     /FileReport/:id      controllers.FileReport.page(id: Int)
+GET     /FileReport/Login    controllers.FileReport.login()
+GET     /FileReport/Companies    controllers.FileReport.companies(page: Int)
 GET     /FileReport/File/:id     controllers.FileReport.file(id: String)
 POST    /FileReport/ReviewFiling    controllers.FileReport.reviewFiling()
 POST    /FileReport/SubmitFiling    controllers.FileReport.submitFiling()

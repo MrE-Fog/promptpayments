@@ -29,12 +29,12 @@ public class FileReport extends PageController {
 
     public Result index() {return ok(page(views.html.FileReport.index.render())); }
 
-    public Result page(int page) {
-        switch (page) {
-            case 1: return ok(page(views.html.FileReport.page1.render()));
-            case 2: return ok(page(views.html.FileReport.page2.render(fileReportOrchestrator.getCompaniesForUser("bullshitToken").get())));
-            default: return status(404);
-        }
+    public Result login() {
+        return ok(page(views.html.FileReport.login.render()));
+    }
+
+    public Result companies(int page) {
+        return ok(page(views.html.FileReport.companies.render(fileReportOrchestrator.getCompaniesForUser("bullshitToken", page, 25).get())));
     }
 
     public Result file(String companiesHouseIdentifier) {

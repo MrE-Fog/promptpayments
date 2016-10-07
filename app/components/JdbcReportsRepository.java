@@ -2,16 +2,14 @@ package components;
 
 import models.*;
 import play.libs.F;
+import scala.Array;
 import scala.Option;
 import utils.TimeProvider;
 
 import javax.inject.Inject;
 import java.security.InvalidParameterException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -83,17 +81,28 @@ final class JdbcReportsRepository implements ReportsRepository {
     }
 
     @Override
-    public List<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers) {
+    public PagedList<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers, int page, int itemsPerPage) {
         if (companiesHouseIdentifiers.isEmpty())
-            return new ArrayList<>();
+            return new PagedList<>(new ArrayList<>(), 0, 0, itemsPerPage);
 
         //ewwwwww!
         String parameters = String.join(", ", companiesHouseIdentifiers.stream().map(chi -> "?").collect(Collectors.toList()));
 
-        return jdbcCommunicator.ExecuteQuery(
-                String.format("SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier IN (%s)", parameters),
-                companiesHouseIdentifiers.toArray(),
+        List<Object> identifiersAndPaging = new ArrayList<>(companiesHouseIdentifiers);
+        identifiersAndPaging.add(itemsPerPage);
+        identifiersAndPaging.add(page * itemsPerPage);
+
+        List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
+                String.format("SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier IN (%s) ORDER BY Name LIMIT ? OFFSET ?", parameters),
+                identifiersAndPaging.toArray(),
                 _CompanySummaryMapper);
+
+        Integer size = jdbcCommunicator.ExecuteQuery(
+                String.format("SELECT COUNT(*) FROM Company WHERE CompaniesHouseIdentifier IN (%s)", parameters),
+                companiesHouseIdentifiers.toArray(),
+                x -> x.getInt(1)).get(0);
+
+        return new PagedList<>(companySummaries, size, page, itemsPerPage);
     }
 
     @Override

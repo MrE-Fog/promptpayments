@@ -1,6 +1,8 @@
 package components;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -8,11 +10,9 @@ import java.util.List;
  *
  * Used for dev and test only
  */
-class MockCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
+public class MockCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
     @Override
     public List<String> RequestAuthorizedCompaniesForUser(String oAuthToken) {
-        List<String> rtn = new ArrayList<>();
-        rtn.add("122");
-        return rtn;
+        return Collections.singletonList("122");
     }
 }
