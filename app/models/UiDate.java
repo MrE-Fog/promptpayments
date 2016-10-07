@@ -13,6 +13,7 @@ import java.util.TimeZone;
  */
 public class UiDate {
     private static final DateFormat _friendlyFormatter = new SimpleDateFormat("MMMM yyyy");
+    private static final DateFormat _dateFormatter = new SimpleDateFormat("d MMMM yyyy");
 
     private Calendar inner;
 
@@ -29,12 +30,22 @@ public class UiDate {
 
 
     public String ToFriendlyString() {
+        Calendar localCalendar = getLocalCalendar();
+
+        return _friendlyFormatter.format(localCalendar.getTime());
+    }
+
+    public String ToDateString() {
+        Calendar localCalendar = getLocalCalendar();
+        return _dateFormatter.format(localCalendar.getTime());
+    }
+
+    private Calendar getLocalCalendar() {
         TimeZone localTimezone = getLocalTimezone();
         long newRaw = inner.getTime().getTime() + localTimezone.getRawOffset() - TimeZone.getTimeZone("UTC").getRawOffset();
 
         Calendar localCalendar = Calendar.getInstance(localTimezone);
         localCalendar.setTimeInMillis(newRaw);
-
-        return _friendlyFormatter.format(localCalendar.getTime());
+        return localCalendar;
     }
 }

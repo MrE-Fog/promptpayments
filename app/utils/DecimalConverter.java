@@ -14,6 +14,8 @@ public class DecimalConverter {
     }
 
     public static BigDecimal getBigDecimal(BigDecimal val) {
+        if (val == null)
+            return null;
         return val.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 }

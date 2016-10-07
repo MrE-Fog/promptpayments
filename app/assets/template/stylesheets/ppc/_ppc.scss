@@ -1,5 +1,5 @@
-.wrapper-scannable {
-    max-width: 640px;
+.scannable-wrapper {
+    /*max-width: 640px;*/
 }
 
 .button {
@@ -8,4 +8,16 @@
 
 .block {
     display: block;
+}
+
+.fieldcaption {
+    font-weight:bold;
+}
+
+.stat {
+    font-size: 1.2em;
+    font-weight:bold;
+}
+.stat .bignumber {
+    font-size: 1.5em;
 }

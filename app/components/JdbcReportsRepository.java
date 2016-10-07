@@ -69,9 +69,9 @@ final class JdbcReportsRepository implements ReportsRepository {
     @Override
     public Option<ReportModel> getReport(String company, int reportId) {
         List<ReportModel> reportModels = jdbcCommunicator.ExecuteQuery(
-                "SELECT TOP 1 Identifier, FilingDate, NumberOne, NumberTwo, NumberThree FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ?",
+                "SELECT TOP 1 Identifier, FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ?",
                 new Object[]{company, reportId},
-                _ReportMapper);
+                _ReportMapper(0));
 
         if (reportModels.isEmpty()) {
             return Option.empty();
@@ -115,8 +115,25 @@ final class JdbcReportsRepository implements ReportsRepository {
         }
 
         return jdbcCommunicator.ExecuteUpdate(
-                "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, NumberOne, NumberTwo, NumberThree) VALUES(?,?,?,?,?);",
-                new Object[] {filingDate.getTime(), rfm.getTargetCompanyCompaniesHouseIdentifier(), rfm.getNumberOneAsDecimal(), rfm.getNumberTwoAsDecimal(), rfm.getNumberThreeAsDecimal()},
+                "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+                new Object[] {
+                        filingDate.getTime(),
+                        rfm.getTargetCompanyCompaniesHouseIdentifier(),
+                        rfm.getAverageTimeToPayAsDecimal(),
+                        rfm.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal(),
+                        rfm.getPercentInvoicesWithin30DaysAsDecimal(),
+                        rfm.getPercentInvoicesWithin60DaysAsDecimal(),
+                        rfm.getPercentInvoicesBeyond60DaysAsDecimal(),
+                        rfm.getStartDate().getTime(),
+                        rfm.getEndDate().getTime(),
+                        rfm.getPaymentTerms(),
+                        rfm.getDisputeResolution(),
+                        rfm.isOfferEInvoicing(),
+                        rfm.isOfferSupplyChainFinance(),
+                        rfm.isRetentionChargesInPolicy(),
+                        rfm.isRetentionChargesInPolicy(),
+                        rfm.getPaymentCodes()
+                },
                 x -> x.getInt(1)
         ).get(0);
     }
@@ -131,12 +148,13 @@ final class JdbcReportsRepository implements ReportsRepository {
         minDate.add(Calendar.MONTH, -1 * months);
 
         return jdbcCommunicator.ExecuteQuery(
-                "SELECT TOP 100000 Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.NumberOne, Report.NumberTwo, Report.NumberThree " +
+                "SELECT TOP 100000 Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes " +
                 "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
                 "WHERE Report.FilingDate >= ?",
                 new Object[] {new Timestamp(minDate.getTimeInMillis())},
-                x -> new F.Tuple<>(new CompanySummary(x.getString(1), x.getString(2)),
-                        new ReportModel(new ReportSummary(x.getInt(3), x.getCalendar(4)), x.getBigDecimal(5), x.getBigDecimal(6), x.getBigDecimal(7))));
+                x -> new F.Tuple<>(
+                        _CompanySummaryMapper.map(x),
+                        _ReportMapper(2).map(x)));
 
     }
 
@@ -158,8 +176,23 @@ final class JdbcReportsRepository implements ReportsRepository {
     private JdbcCommunicator.Mapper<ReportSummary> _ReportSummaryMapper =
             results -> new ReportSummary(results.getInt(1), results.getCalendar(2));
 
-    private JdbcCommunicator.Mapper<ReportModel> _ReportMapper =
-            results -> new ReportModel(
-                    new ReportSummary(results.getInt(1), results.getCalendar(2)),
-                    results.getBigDecimal(3), results.getBigDecimal(4), results.getBigDecimal(5));
+    private JdbcCommunicator.Mapper<ReportModel> _ReportMapper(int offset) {
+        return results -> new ReportModel(
+                new ReportSummary(results.getInt(1 + offset), results.getCalendar(2 + offset)),
+                results.getBigDecimal(3 + offset),
+                results.getBigDecimal(4 + offset),
+                results.getBigDecimal(5 + offset),
+                results.getBigDecimal(6 + offset),
+                results.getBigDecimal(7 + offset),
+                results.getCalendar(8 + offset),
+                results.getCalendar(9 + offset),
+                results.getString(10 + offset),
+                results.getString(11 + offset),
+                results.getBoolean(12 + offset),
+                results.getBoolean(13 + offset),
+                results.getBoolean(14 + offset),
+                results.getBoolean(15 + offset),
+                results.getString(16 + offset));
+    }
+
 }

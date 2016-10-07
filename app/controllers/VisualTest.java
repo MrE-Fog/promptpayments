@@ -34,12 +34,28 @@ public class VisualTest extends PageController {
         Calendar time = new MockUtcTimeProvider(2016,9,1).Now();
         ReportSummary healthyReportSummary = new ReportSummary(1, time);
 
-        ReportModel healthyReportModel = new ReportModel(healthyReportSummary);
-        healthyReportModel.NumberOne = new BigDecimal("1.00");
-        healthyReportModel.NumberTwo = new BigDecimal("2.00");
-        healthyReportModel.NumberThree= new BigDecimal("3.00");
+        ReportModel healthyReportModel = new ReportModel(
+                healthyReportSummary,
+                new BigDecimal("31.00"),
+                new BigDecimal("10.00"),
+                new BigDecimal("80.00"),
+                new BigDecimal("15.00"),
+                new BigDecimal("5.00"),
 
-        ReportModel emptyReportModel = new ReportModel(healthyReportSummary);
+                new MockUtcTimeProvider(2016,0,0).Now(),
+                new MockUtcTimeProvider(2016,5,0).Now(),
+
+                "User-supplied description of payment terms",
+                "User-supplied description of dispute resolution",
+
+                true,
+                true,
+                false,
+                false,
+                "Prompt Payment Code"
+        );
+
+        ReportModel emptyReportModel = new ReportModel(healthyReportSummary, null, null, null, null, null, new MockUtcTimeProvider(2016,0,1).Now(), new MockUtcTimeProvider(2016,5,30).Now(), null, null, false, false, false, false, null);
         CompanySummary healthyCompanySummary = new CompanySummary("Eigencode Ltd.", "123");
 
         CompanyModel healthyCompanyModel = new CompanyModel(healthyCompanySummary, new PagedList<>(Arrays.asList(healthyReportSummary, healthyReportSummary, healthyReportSummary), 6, 0, 3));
@@ -47,12 +63,7 @@ public class VisualTest extends PageController {
         ReportFilingModel newReportFilingModel = new ReportFilingModel();
         newReportFilingModel.setTargetCompanyCompaniesHouseIdentifier("123");
 
-        ReportFilingModel completeReportFilingModel = new ReportFilingModel();
-        completeReportFilingModel.setTargetCompanyCompaniesHouseIdentifier("123");
-        completeReportFilingModel.setNumberOne(1);
-        completeReportFilingModel.setNumberTwo(3);
-        completeReportFilingModel.setNumberThree(2);
-
+        ReportFilingModel completeReportFilingModel = getCompleteFilingModel();
         Html html = HtmlFormat.fill(JavaConversions.asScalaBuffer(Arrays.asList(
 
                 views.html.Home.index.render(),
@@ -71,11 +82,41 @@ public class VisualTest extends PageController {
                 views.html.FileReport.login.render(),
                 views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 3, 3)),
                 views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), healthyCompanySummary, new UiDate(time)),
+                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time)),
                 views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time))
 
         )).toList());
 
         return ok(page(html));
+    }
+
+    private ReportFilingModel getCompleteFilingModel() {
+        ReportFilingModel rfm = new ReportFilingModel();
+        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
+        rfm.setAverageTimeToPay(31.0);
+        rfm.setPercentInvoicesPaidBeyondAgreedTerms(10.0);
+        rfm.setPercentInvoicesWithin30Days(80.0);
+        rfm.setPercentInvoicesWithin60Days(15.0);
+        rfm.setPercentInvoicesBeyond60Days( 5.0);
+
+        rfm.setStartDate_year(2016);
+        rfm.setStartDate_month(0);
+        rfm.setStartDate_day(1);
+
+        rfm.setEndDate_year(2016);
+        rfm.setEndDate_month(5);
+        rfm.setEndDate_day(29);
+
+        rfm.setPaymentTerms("Payment terms");
+        rfm.setDisputeResolution("Dispute resolution");
+        rfm.setPaymentCodes("Payment codes");
+
+        rfm.setOfferEInvoicing(true);
+        rfm.setOfferSupplyChainFinance(true);
+        rfm.setRetentionChargesInPolicy(false);
+        rfm.setRetentionChargesInPast(false);
+
+        return rfm;
     }
 }
 

@@ -22,36 +22,142 @@
     </tr>
     <tr>
         <td>
-            Number One
+            Start date
         </td>
         <td>
-            @model.get().getNumberOneAsDecimal()
+            @model.get().getStartDateString()
         </td>
     </tr>
     <tr>
         <td>
-            Number Two
+            End date
         </td>
         <td>
-            @model.get().getNumberTwoAsDecimal()
+            @model.get().getEndDateString()
         </td>
     </tr>
     <tr>
         <td>
-            Number Three
+            Average number of days until payment
         </td>
         <td>
-            @model.get().getNumberThreeAsDecimal()
+            @model.get().getAverageTimeToPayAsDecimal()
         </td>
     </tr>
+    <tr>
+        <td>
+            Percentage of invoices paid later than agreed terms
+        </td>
+        <td>
+            @model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()%
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Percentage of invoices paid within 30 days
+        </td>
+        <td>
+            @model.get().getPercentInvoicesWithin30DaysAsDecimal()%
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Percentage of invoices paid within 31 to 60 days
+        </td>
+        <td>
+            @model.get().getPercentInvoicesWithin60DaysAsDecimal()%
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Percentage of invoices paid later than 60 days
+        </td>
+        <td>
+            @model.get().getPercentInvoicesBeyond60DaysAsDecimal()%
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Payment terms
+        </td>
+        <td>
+            @model.get().getPaymentTerms()
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Dispute resolution
+        </td>
+        <td>
+            @model.get().getDisputeResolution()
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Offer E-Invoicing
+        </td>
+        <td>
+            @{if (model.get().isOfferEInvoicing() != null) if (model.get().isOfferEInvoicing()) "Yes" else "No"}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Offer supply chain finance
+        </td>
+        <td>
+            @{if (model.get().isOfferSupplyChainFinance() != null) if (model.get().isOfferSupplyChainFinance()) "Yes" else "No"}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Retention charges covered in policy
+        </td>
+        <td>
+            @{if (model.get().isRetentionChargesInPolicy() != null) if (model.get().isRetentionChargesInPolicy()) "Yes" else "No"}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Retention charges made in the past
+        </td>
+        <td>
+            @{if (model.get().isRetentionChargesInPast() != null) if (model.get().isRetentionChargesInPast()) "Yes" else "No"}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Payment code paticipation
+        </td>
+        <td>
+            @model.get().getPaymentCodes()
+        </td>
+    </tr>
+
 </table>
 
 <form action="@routes.FileReport.submitFiling()" method="POST">
     <input type="hidden" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
-    <input type="hidden" name="NumberOne" value="@model.get().getNumberOneAsDecimal()">
-    <input type="hidden" name="NumberTwo" value="@model.get().getNumberTwoAsDecimal()">
-    <input type="hidden" name="NumberThree" value="@model.get().getNumberThreeAsDecimal()">
+    <input type="hidden" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
+    <input type="hidden" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
+    <input type="hidden" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30DaysAsDecimal()">
+    <input type="hidden" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60DaysAsDecimal()">
+    <input type="hidden" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60DaysAsDecimal()">
 
+    <input type="hidden" name="StartDate_year" value="@model.get().getStartDate_year()">
+    <input type="hidden" name="StartDate_month" value="@model.get().getStartDate_month()">
+    <input type="hidden" name="StartDate_day" value="@model.get().getStartDate_day()">
+
+    <input type="hidden" name="EndDate_year" value="@model.get().getEndDate_year()">
+    <input type="hidden" name="EndDate_month" value="@model.get().getEndDate_month()">
+    <input type="hidden" name="EndDate_day" value="@model.get().getEndDate_day()">
+
+    <input type="hidden" name="PaymentTerms" value="@model.get().getPaymentTerms()">
+    <input type="hidden" name="DisputeResolution" value="@model.get().getDisputeResolution()">
+    <input type="hidden" name="OfferEInvoicing" value="@model.get().isOfferEInvoicing()">
+    <input type="hidden" name="OfferSupplyChainFinance" value="@model.get().isOfferSupplyChainFinance()">
+    <input type="hidden" name="RetentionChargesInPolicy" value="@model.get().isRetentionChargesInPolicy()">
+    <input type="hidden" name="RetentionChargesInPast" value="@model.get().isRetentionChargesInPast()">
+    <input type="hidden" name="PaymentCodes" value="@model.get().getPaymentCodes()">
 
     <input type="submit" class="button" value="Submit">
 </form>

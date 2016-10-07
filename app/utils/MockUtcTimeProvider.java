@@ -25,7 +25,7 @@ public class MockUtcTimeProvider implements TimeProvider {
     @Override
     public Calendar Now() {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.set(year, month,day, hour,0,0);
+        cal.set(year, month, day, hour,0,0);
         return cal;
     }
 }

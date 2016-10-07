@@ -213,11 +213,25 @@ public class JdbcReportsRepositoryTest {
     public void getReport() throws Exception {
         ReportModel report = jdbcReportsRepository.getReport("120", 1).get();
 
+        MockUtcTimeProvider expectedStartDate = new MockUtcTimeProvider(2016, 0, 1);
+        MockUtcTimeProvider expectedEndDate = new MockUtcTimeProvider(2016, 4, 31);
+
         assertEquals("February 2010", report.Info.UiDateString());
         assertEquals(1, report.Info.Identifier);
-        assertEquals(new BigDecimal("0.00"), report.NumberOne);
-        assertEquals(new BigDecimal("0.00"), report.NumberTwo);
-        assertEquals(new BigDecimal("0.00"), report.NumberThree);
+        assertEquals(new BigDecimal("31.00"), report.AverageTimeToPay);
+        assertEquals(new BigDecimal("10.00"), report.PercentInvoicesPaidBeyondAgreedTerms);
+        assertEquals(new BigDecimal("80.00"), report.PercentInvoicesWithin30Days);
+        assertEquals(new BigDecimal("15.00"), report.PercentInvoicesWithin60Days);
+        assertEquals(new BigDecimal( "5.00"), report.PercentInvoicesBeyond60Days);
+        assertEquals(new UiDate(expectedStartDate.Now()).ToDateString(), new UiDate(report.StartDate).ToDateString());
+        assertEquals(new UiDate(expectedEndDate.Now()).ToDateString(), new UiDate(report.EndDate).ToDateString());
+        assertEquals("User-specified payment terms", report.PaymentTerms);
+        assertEquals("User-specified dispute resolution", report.DisputeResolution);
+        assertEquals(true, report.OfferEInvoicing);
+        assertEquals(true, report.OfferSupplyChainFinance);
+        assertEquals(false, report.RetentionChargesInPolicy);
+        assertEquals(false, report.RetentionChargesInPast);
+        assertEquals("Prompt Payment Code", report.PaymentCodes);
     }
 
     @Test
@@ -246,13 +260,38 @@ public class JdbcReportsRepositoryTest {
         Calendar time = new UtcTimeProvider().Now();
         ReportFilingModel rfm = new ReportFilingModel();
         rfm.setTargetCompanyCompaniesHouseIdentifier("122");
-        rfm.setNumberOne(1.0);
-        rfm.setNumberTwo(2.0);
-        rfm.setNumberThree(3.0);
+        rfm.setAverageTimeToPay(31.0);
+        rfm.setPercentInvoicesPaidBeyondAgreedTerms(10.0);
+        rfm.setPercentInvoicesWithin30Days(80.0);
+        rfm.setPercentInvoicesWithin60Days(15.0);
+        rfm.setPercentInvoicesBeyond60Days( 5.0);
 
-        assertEquals(new BigDecimal("1.00"), rfm.getNumberOneAsDecimal());
-        assertEquals(new BigDecimal("2.00"), rfm.getNumberTwoAsDecimal());
-        assertEquals(new BigDecimal("3.00"), rfm.getNumberThreeAsDecimal());
+        rfm.setStartDate_year(2016);
+        rfm.setStartDate_month(0);
+        rfm.setStartDate_day(1);
+
+        rfm.setEndDate_year(2016);
+        rfm.setEndDate_month(5);
+        rfm.setEndDate_day(30);
+
+        rfm.setPaymentTerms("Payment terms");
+        rfm.setDisputeResolution("Dispute resolution");
+        rfm.setPaymentCodes("Payment codes");
+
+        rfm.setOfferEInvoicing(true);
+        rfm.setOfferSupplyChainFinance(true);
+        rfm.setRetentionChargesInPolicy(false);
+        rfm.setRetentionChargesInPast(false);
+
+
+        //model validations - should be in their own test class
+        assertEquals(new BigDecimal("31.00"), rfm.getAverageTimeToPayAsDecimal());
+        assertEquals(new BigDecimal("10.00"), rfm.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal());
+        assertEquals(new BigDecimal("80.00"), rfm.getPercentInvoicesWithin30DaysAsDecimal());
+        assertEquals(new BigDecimal("15.00"), rfm.getPercentInvoicesWithin60DaysAsDecimal());
+        assertEquals(new BigDecimal( "5.00"), rfm.getPercentInvoicesBeyond60DaysAsDecimal());
+        assertEquals("1 January 2016", new UiDate(rfm.getStartDate()).ToDateString());
+        assertEquals("30 June 2016", new UiDate(rfm.getEndDate()).ToDateString());
 
         int result = jdbcReportsRepository.TryFileReport(rfm, time);
 
@@ -262,9 +301,21 @@ public class JdbcReportsRepositoryTest {
 
         assertEquals(report.Info.Identifier, result);
         assertEquals(time, report.Info.ExactDate());
-        assertEquals(new BigDecimal("1.00"), report.NumberOne);
-        assertEquals(new BigDecimal("2.00"), report.NumberTwo);
-        assertEquals(new BigDecimal("3.00"), report.NumberThree);
+
+        assertEquals(new BigDecimal("31.00"), report.AverageTimeToPay);
+        assertEquals(new BigDecimal("10.00"), report.PercentInvoicesPaidBeyondAgreedTerms);
+        assertEquals(new BigDecimal("80.00"), report.PercentInvoicesWithin30Days);
+        assertEquals(new BigDecimal("15.00"), report.PercentInvoicesWithin60Days);
+        assertEquals(new BigDecimal( "5.00"), report.PercentInvoicesBeyond60Days);
+        assertEquals("1 January 2016", new UiDate(report.StartDate).ToDateString());
+        assertEquals("30 June 2016", new UiDate(report.EndDate).ToDateString());
+        assertEquals("Payment terms", report.PaymentTerms);
+        assertEquals("Dispute resolution", report.DisputeResolution);
+        assertEquals(true, report.OfferEInvoicing);
+        assertEquals(true, report.OfferSupplyChainFinance);
+        assertEquals(false, report.RetentionChargesInPolicy);
+        assertEquals(false, report.RetentionChargesInPast);
+        assertEquals("Payment codes", report.PaymentCodes);
     }
 
     @Test
@@ -296,7 +347,7 @@ class MockRepositoryCreator {
 "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Cookies Ltd.', '121');\n" +
 "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Eigencode Ltd.', '122');\n" +
 "\n" +
-"INSERT INTO Report(Identifier, CompaniesHouseIdentifier, FilingDate) VALUES (1, '120', '2010-02-01');\n" +
+"INSERT INTO Report(Identifier, CompaniesHouseIdentifier, FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes) VALUES (1, '120', '2010-02-01', 31.00, 10.00, 80, 15, 5, '2016-01-01', '2016-05-31', 'User-specified payment terms', 'User-specified dispute resolution', 1, 1,0,0, 'Prompt Payment Code');\n" +
 "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-02-01');\n" +
 "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-08-01');\n" +
 "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2016-02-01');\n" +

@@ -107,25 +107,44 @@ public class CsvDataExporterTest {
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("SomeComp", "123"),
-                new ReportModel(new ReportSummary(1, new MockUtcTimeProvider(2016,1,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                makeReportModel(1, 2016, 1)
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("A, B and C Ltd.", "124"),
-                new ReportModel(new ReportSummary(2, new MockUtcTimeProvider(2016,3,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                makeReportModel(2, 2016,3)
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("The \"Dungeon\" Ltd.", "125"),
-                new ReportModel(new ReportSummary(3, new MockUtcTimeProvider(2016,2,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                makeReportModel(3, 2016,2)
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("The Scary, Scary \"Dungeon\" Ltd.", "126"),
-                new ReportModel(new ReportSummary(4, new MockUtcTimeProvider(2016,4,1).Now()), new BigDecimal(1.0),new BigDecimal(2.0),new BigDecimal(3.0))
+                makeReportModel(4,2016,4)
         ));
 
         return rtn;
+    }
+
+    private ReportModel makeReportModel(int id, int year, int month) {
+        return new ReportModel(
+                new ReportSummary(id, new MockUtcTimeProvider(year,month,1).Now()),
+                new BigDecimal("31.00"),
+                new BigDecimal("10.00"),
+                new BigDecimal("80.00"),
+                new BigDecimal("15.00"),
+                new BigDecimal( "5.00"),
+                new MockUtcTimeProvider(2016,0,0).Now(),
+                new MockUtcTimeProvider(2016,4,30).Now(),
+                "Payment terms",
+                "Dispute terms",
+                true,
+                true,
+                false,
+                false,
+                "Prompt payment code");
     }
 }
 

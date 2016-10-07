@@ -2,6 +2,7 @@ package components;
 
 import com.google.inject.Inject;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.internal.dbsupport.sybase.ase.SybaseASEDbSupport;
 import play.db.Database;
 
 import java.math.BigDecimal;
@@ -60,7 +61,8 @@ class JdbcCommunicator {
             return rtn;
         }
         catch(Exception e) {
-            play.Logger.error("Can't execute query " + sql, e);
+            System.out.println("Can't execute query " + sql);
+            System.out.println(e);
             return new ArrayList<>();
         }
 
@@ -85,10 +87,15 @@ class JdbcCommunicator {
         public String getString(int index) throws SQLException {return resultSet.getString(index);}
         public Calendar getCalendar(int index) throws SQLException {
             Calendar rtn = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            rtn.setTime(resultSet.getTimestamp(index));
+            Timestamp timestamp = resultSet.getTimestamp(index);
+            if (timestamp != null) {
+                rtn.setTime(timestamp);
+            }
             return rtn;
         }
         public int getInt(int index) throws SQLException {return resultSet.getInt(index);}
         public BigDecimal getBigDecimal(int index) throws SQLException {return utils.DecimalConverter.getBigDecimal(resultSet.getBigDecimal(index));}
+
+        public boolean getBoolean(int index) throws SQLException {return resultSet.getBoolean(index);}
     }
 }

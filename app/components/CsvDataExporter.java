@@ -3,6 +3,7 @@ package components;
 import com.google.inject.Inject;
 import models.CompanySummary;
 import models.ReportModel;
+import models.UiDate;
 import play.libs.F;
 import utils.TimeProvider;
 
@@ -22,7 +23,7 @@ public class CsvDataExporter {
     private final ReportsRepository reportsRepository;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private static String header="Filing date,Company,Company number, Number one, Number two, Number three\n";
+    private static String header="Start date,End date,Filing date,Company,Company number,Average time to pay,% Invoices paid within 30 days,% Invoices paid within 60 days,% Invoices paid later than 60 days,E-Invoicing offered,Supply-chain financing offered,Policy covers charges for remaining on supplier list,Charges have been made for remaining on supplier list,Payment terms,Dispute resolution facilities,Payment codes membership\n";
 
     private static final int cacheMinutes = 30;
 
@@ -45,12 +46,26 @@ public class CsvDataExporter {
         List<F.Tuple<CompanySummary, ReportModel>> data = reportsRepository.ExportData(24);
 
         Stream<String> stringStream = data.stream().map(x -> String.join(",",
+                escape(new UiDate(x._2.StartDate).ToFriendlyString()),
+                escape(new UiDate(x._2.EndDate).ToFriendlyString()),
                 escape(x._2.Info.UiDateString()),
                 escape(x._1.Name),
                 escape(x._1.CompaniesHouseIdentifier),
-                escape(x._2.NumberOne),
-                escape(x._2.NumberTwo),
-                escape(x._2.NumberThree)));
+                escape(x._2.AverageTimeToPay),
+                escape(x._2.PercentInvoicesPaidBeyondAgreedTerms),
+                escape(x._2.PercentInvoicesWithin30Days),
+                escape(x._2.PercentInvoicesWithin60Days),
+                escape(x._2.PercentInvoicesBeyond60Days),
+
+                escape(x._2.OfferEInvoicing),
+                escape(x._2.OfferSupplyChainFinance),
+                escape(x._2.RetentionChargesInPolicy),
+                escape(x._2.RetentionChargesInPast),
+
+                escape(x._2.PaymentTerms),
+                escape(x._2.DisputeResolution),
+                escape(x._2.PaymentCodes)
+        ));
 
         lastCached = timeProvider.Now();
         cachedCsv = header + String.join("\n", stringStream.collect(Collectors.toList()));
