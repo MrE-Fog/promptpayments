@@ -1,22 +1,24 @@
 @(model: ReportModel, company: CompanySummary)
-<h1 class="heading-xlarge">
-    Payment report by @company.Name
-</h1>
-<p class="lede">
-    <span class="fieldcaption">Filed on:</span> @model.Info.UiDateString()
-</p>
-<p>
-    <span class="fieldcaption">Company number:</span> @company.CompaniesHouseIdentifier
-</p>
-<p>
-    <span class="fieldcaption">Reporting period:</span> @model.getStartDateString() &ndash; @model.getEndDateString()
-</p>
-
-<div class="datablock">
-    <h2 class="heading-small">Payment terms</h2>
-    <p>
-        @model.PaymentTerms
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">
+        Payment report by @company.Name
+    </h1>
+    <p class="lede">
+        <span class="fieldcaption">Filed on:</span> @model.Info.UiDateString()
     </p>
+    <p>
+        <span class="fieldcaption">Company number:</span> @company.CompaniesHouseIdentifier
+    </p>
+    <p>
+        <span class="fieldcaption">Reporting period:</span> @model.getStartDateString() &ndash; @model.getEndDateString()
+    </p>
+
+    <div class="datablock">
+        <h2 class="heading-small">Payment terms</h2>
+        <p>
+            @model.PaymentTerms
+        </p>
+    </div>
 </div>
 <div class="grid-row">
     <div class="column-one-third">
@@ -49,38 +51,39 @@
         </div>
     </div>
 </div>
-<div class="datablock">
-    <h2 class="heading-small">Dispute resolution</h2>
-    <p>
-        @model.DisputeResolution
-    </p>
-</div>
-<div class="datablock">
-    <h2 class="heading-small">Use the following payment codes</h2>
-    <p>
-        @model.PaymentCodes
-    </p>
-</div>
+<div class="scannable-wrapper">
+    <div class="datablock">
+        <h2 class="heading-small">Dispute resolution</h2>
+        <p>
+            @model.DisputeResolution
+        </p>
+    </div>
+    <div class="datablock">
+        <h2 class="heading-small">Use the following payment codes</h2>
+        <p>
+            @model.PaymentCodes
+        </p>
+    </div>
 
-<table>
-    <tr>
-        <td>Offers E-Invoicing</td>
-        <td>@{if(model.OfferEInvoicing) "Yes" else "No"}</td>
-    </tr>
-    <tr>
-        <td>Offers supply chain financing</td>
-        <td>@{if(model.OfferSupplyChainFinance) "Yes" else "No"}</td>
-    </tr>
-    <tr>
-        <td>Policies cover payments for remaining on supplier list</td>
-        <td>@{if(model.RetentionChargesInPolicy) "Yes" else "No"}</td>
-    </tr>
-    <tr>
-        <td>Payments have been demanded for remaining on supplier list during the reporting period</td>
-        <td>@{if(model.RetentionChargesInPast) "Yes" else "No"}</td>
-    </tr>
-</table>
-
+    <table>
+        <tr>
+            <td>Offers E-Invoicing</td>
+            <td>@{if(model.OfferEInvoicing) "Yes" else "No"}</td>
+        </tr>
+        <tr>
+            <td>Offers supply chain financing</td>
+            <td>@{if(model.OfferSupplyChainFinance) "Yes" else "No"}</td>
+        </tr>
+        <tr>
+            <td>Policies cover payments for remaining on supplier list</td>
+            <td>@{if(model.RetentionChargesInPolicy) "Yes" else "No"}</td>
+        </tr>
+        <tr>
+            <td>Payments have been demanded for remaining on supplier list during the reporting period</td>
+            <td>@{if(model.RetentionChargesInPast) "Yes" else "No"}</td>
+        </tr>
+    </table>
+</div>
 <p>
     <a class="link-back" href="@routes.SearchReport.company(company.CompaniesHouseIdentifier, 0)">Back to @company.Name</a>
 </p>

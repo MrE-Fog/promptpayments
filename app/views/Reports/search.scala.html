@@ -1,12 +1,14 @@
 @import play.data.FormFactory
-<h1 class="heading-xlarge">
-    Find a payment report
-</h1>
-<form method="POST" action="@routes.SearchReport.handleSearch(0)">
-    <label for="companyname" class="form-label">Company name</label>
-    <input type="text" class="form-control" id="companyname" name="companyname" />
-    <input type="submit" class="button block" value="Find company">
-</form>
-<p>
-    <a href="@routes.SearchReport.searchstart()" class="link-back">Back</a>
-</p>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">
+        Find a payment report
+    </h1>
+    <form method="POST" action="@routes.SearchReport.handleSearch(0)">
+        <label for="companyname" class="form-label">Company name</label>
+        <input type="text" class="form-control" id="companyname" name="companyname" />
+        <input type="submit" class="button block" value="Find company">
+    </form>
+    <p>
+        <a href="@routes.SearchReport.searchstart()" class="link-back">Back</a>
+    </p>
+</div>

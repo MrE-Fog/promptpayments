@@ -18,7 +18,6 @@ public class FileReport extends PageController {
     @Inject
     private FileReportOrchestrator fileReportOrchestrator;
 
-
     private Form<ReportFilingModel> reportForm;
 
     @Inject

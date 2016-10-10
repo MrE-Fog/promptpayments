@@ -1,33 +1,35 @@
 @import components.PagedList
 @(searchTerm: String, results: PagedList[CompanySummary])
-<h1 class="heading-xlarge">
-    Companies matching @searchTerm
-</h1>
-@if(results.isEmpty()) {
-    <p class="noresults">No results found.</p>
-} else {
-    <ul class="searchresults">
-        @for(result <- results) {
-            @views.html.shared._companySummary(result, routes.SearchReport.company(result.CompaniesHouseIdentifier, 0))
-        }
-    </ul>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">
+        Companies matching @searchTerm
+    </h1>
+    @if(results.isEmpty()) {
+        <p class="noresults">No results found.</p>
+    } else {
+        <ul class="searchresults">
+            @for(result <- results) {
+                @views.html.shared._companySummary(result, routes.SearchReport.company(result.CompaniesHouseIdentifier, 0))
+            }
+        </ul>
 
-    <p class="paging">
-        Showing @(results.rangeLower() + 1)&ndash;@(results.rangeUpper()+1) of @results.totalSize() matching companies.
-        @if(results.canGoBack()) {
-            <form method="POST" action="@routes.SearchReport.handleSearch(results.pageNumber()-1)">
-                <input type="hidden" class="form-control" name="companyname" value="@searchTerm" />
-                <input type="submit" class="button block" value="Previous page">
-            </form>
-        }
-        @if(results.canGoNext()) {
-            <form method="POST" action="@routes.SearchReport.handleSearch(results.pageNumber()+1)">
-                <input type="hidden" class="form-control" name="companyname" value="@searchTerm"/>
-                <input type="submit" class="button block" value="Next page">
-            </form>
-        }
-    </p>
-}
+        <p class="paging">
+            Showing @(results.rangeLower() + 1)&ndash;@(results.rangeUpper()+1) of @results.totalSize() matching companies.
+            @if(results.canGoBack()) {
+                <form method="POST" action="@routes.SearchReport.handleSearch(results.pageNumber()-1)">
+                    <input type="hidden" class="form-control" name="companyname" value="@searchTerm" />
+                    <input type="submit" class="button block" value="Previous page">
+                </form>
+            }
+            @if(results.canGoNext()) {
+                <form method="POST" action="@routes.SearchReport.handleSearch(results.pageNumber()+1)">
+                    <input type="hidden" class="form-control" name="companyname" value="@searchTerm"/>
+                    <input type="submit" class="button block" value="Next page">
+                </form>
+            }
+        </p>
+    }
+</div>
 <p>
     <a href="@routes.SearchReport.search()" class="link-back">Back to search</a>
 </p>

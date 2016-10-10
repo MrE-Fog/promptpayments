@@ -2,152 +2,154 @@
 @import play.data.FormFactory
 @import views.html.helper
 @import utils._
-<h1 class="heading-xlarge">File a report</h1>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">File a report</h1>
 
-<form action="@routes.FileReport.reviewFiling()" method="POST">
-    <input type="hidden" id="TargetCompanyCompaniesHouseIdentifier" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
+    <form action="@routes.FileReport.reviewFiling()" method="POST">
+        <input type="hidden" id="TargetCompanyCompaniesHouseIdentifier" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
 
-    <fieldset>
-        <label class="form-label" for="TargetCompanyNamePublic">Company</label>
-        <input class="form-control" type="text" disabled="disabled" id="TargetCompanyNamePublic" value="@company.Name">
-    </fieldset>
-
-
-    <fieldset>
-        <label class="form-label" for="FilingDate2">Filing date</label>
-        <input class="form-control" type="text" disabled="disabled" id="FilingDate2" value="@date.ToFriendlyString()">
-    </fieldset>
-
-    <fieldset>
-        <label class="form-label" for="StartDate_year">Start date</label>
-        <input class="form-control" type="text" id="StartDate_year" name="StartDate_year" value="@model.get().getStartDate_year()">
-        <select class="form-control" id="StartDate_month" name="StartDate_month" value="@model.get().getStartDate_month()">
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
-        </select>
-        <input class="form-control" type="text" id="StartDate_day" name="StartDate_day" value="@model.get().getStartDate_day()">
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="EndDate_year">End date</label>
-        <input class="form-control" type="text" id="EndDate_year" name="EndDate_year" value="@model.get().getEndDate_year()">
-        <select class="form-control" id="EndDate_month" name="EndDate_month" value="@model.get().getEndDate_month()">
-            <option value="0">January</option>
-            <option value="1">February</option>
-            <option value="2">March</option>
-            <option value="3">April</option>
-            <option value="4">May</option>
-            <option value="5">June</option>
-            <option value="6">July</option>
-            <option value="7">August</option>
-            <option value="8">September</option>
-            <option value="9">October</option>
-            <option value="10">November</option>
-            <option value="11">December</option>
-        </select>
-        <input class="form-control" type="text" id="EndDate_day" name="EndDate_day" value="@model.get().getEndDate_day()">
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="RecordOne">Average time to pay</label>
-        <input class="form-control" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="RecordTwo">Percentage of invoices paid later than agreed terms</label>
-        <input class="form-control" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="RecordThree">Percentage of invoices paid within 30 days</label>
-        <input class="form-control" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30DaysAsDecimal()">
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="RecordFour">Percentage of invoices paid within 31 to 60 days</label>
-        <input class="form-control" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60DaysAsDecimal()">
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="RecordFive">Percentage of invoices paid later than 60 days</label>
-        <input class="form-control" type="text" id="RecordFive" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60DaysAsDecimal()">
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="RecordSix">Payment terms</label>
-        <textarea class="form-control" id="RecordSix" name="PaymentTerms">@model.get().getPaymentTerms()</textarea>
-    </fieldset>
-    <fieldset>
-        <label class="form-label" for="RecordSeven">Dispute resolution</label>
-        <textarea class="form-control" id="RecordSeven" name="DisputeResolution">@model.get().getDisputeResolution()</textarea>
-    </fieldset>
+        <fieldset>
+            <label class="form-label" for="TargetCompanyNamePublic">Company</label>
+            <input class="form-control" type="text" disabled="disabled" id="TargetCompanyNamePublic" value="@company.Name">
+        </fieldset>
 
 
-    <fieldset class="inline">
-        <label class="form-label">
-            Do you offer E-Invoicing?
-        </label>
-        <label class="block-label" for="OfferEInvoicing-yes">
-            <input id="OfferEInvoicing-yes" name="OfferEInvoicing" type="radio" value="1" @{if (model.get().isOfferEInvoicing() != null && model.get().isOfferEInvoicing()) "checked='checked'"}>
-            Yes
-        </label>
-        <label class="block-label" for="OfferEInvoicing-no">
-            <input id="OfferEInvoicing-no" name="OfferEInvoicing" type="radio" value="0" @{if (model.get().isOfferEInvoicing() != null && !model.get().isOfferEInvoicing()) "checked='checked'"}>
-            No
-        </label>
-    </fieldset>
+        <fieldset>
+            <label class="form-label" for="FilingDate2">Filing date</label>
+            <input class="form-control" type="text" disabled="disabled" id="FilingDate2" value="@date.ToFriendlyString()">
+        </fieldset>
 
-    <fieldset class="inline">
+        <fieldset>
+            <label class="form-label" for="StartDate_year">Start date</label>
+            <input class="form-control" type="text" id="StartDate_year" name="StartDate_year" value="@model.get().getStartDate_year()">
+            <select class="form-control" id="StartDate_month" name="StartDate_month" value="@model.get().getStartDate_month()">
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+            <input class="form-control" type="text" id="StartDate_day" name="StartDate_day" value="@model.get().getStartDate_day()">
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="EndDate_year">End date</label>
+            <input class="form-control" type="text" id="EndDate_year" name="EndDate_year" value="@model.get().getEndDate_year()">
+            <select class="form-control" id="EndDate_month" name="EndDate_month" value="@model.get().getEndDate_month()">
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+            <input class="form-control" type="text" id="EndDate_day" name="EndDate_day" value="@model.get().getEndDate_day()">
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="RecordOne">Average time to pay</label>
+            <input class="form-control" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="RecordTwo">Percentage of invoices paid later than agreed terms</label>
+            <input class="form-control" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="RecordThree">Percentage of invoices paid within 30 days</label>
+            <input class="form-control" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30DaysAsDecimal()">
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="RecordFour">Percentage of invoices paid within 31 to 60 days</label>
+            <input class="form-control" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60DaysAsDecimal()">
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="RecordFive">Percentage of invoices paid later than 60 days</label>
+            <input class="form-control" type="text" id="RecordFive" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60DaysAsDecimal()">
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="RecordSix">Payment terms</label>
+            <textarea class="form-control" id="RecordSix" name="PaymentTerms">@model.get().getPaymentTerms()</textarea>
+        </fieldset>
+        <fieldset>
+            <label class="form-label" for="RecordSeven">Dispute resolution</label>
+            <textarea class="form-control" id="RecordSeven" name="DisputeResolution">@model.get().getDisputeResolution()</textarea>
+        </fieldset>
 
-        <label class="form-label">
-            Do you offer supply chain finance options?
-        </label>
-        <label class="block-label" for="OfferSupplyChainFinance-yes">
-            <input id="OfferSupplyChainFinance-yes" name="OfferSupplyChainFinance" type="radio" value="1" @{if (model.get().isOfferSupplyChainFinance != null && model.get().isOfferSupplyChainFinance()) "checked='checked'"}>
-            Yes
-        </label>
-        <label class="block-label" for="OfferSupplyChainFinance-no">
-            <input id="OfferSupplyChainFinance-no" name="OfferSupplyChainFinance" type="radio" value="0" @{if(model.get().isOfferSupplyChainFinance != null && !model.get().isOfferSupplyChainFinance()) "checked='checked'"}>
-            No
-        </label>
-    </fieldset>
-    <fieldset class="inline">
-        <label class="form-label">
-            Policy cover retention charges
-        </label>
-        <label class="block-label" for="RetentionChargesInPolicy-yes">
-            <input id="RetentionChargesInPolicy-yes" name="RetentionChargesInPolicy" type="radio" value="1" @{if(model.get().isRetentionChargesInPolicy() !=null && model.get().isRetentionChargesInPolicy()) "checked='checked'"}>
-            Yes
-        </label>
-        <label class="block-label" for="RetentionChargesInPolicy-no">
-            <input id="RetentionChargesInPolicy-no" name="RetentionChargesInPolicy" type="radio" value="0" @{if(model.get().isRetentionChargesInPolicy() !=null && !model.get().isRetentionChargesInPolicy()) "checked='checked'"}>
-            No
-        </label>
-    </fieldset>
-    <fieldset class="inline">
-        <label class="form-label">
-            Ever raised retention charges?
-        </label>
-        <label class="block-label" for="RetentionChargesInPast-yes">
-            <input id="RetentionChargesInPast-yes" name="RetentionChargesInPast" type="radio" value="1" @{if(model.get().isRetentionChargesInPast() !=null && model.get().isRetentionChargesInPast()) "checked='checked'"}>
-            Yes
-        </label>
-        <label class="block-label" for="RetentionChargesInPast-no">
-            <input id="RetentionChargesInPast-no" name="RetentionChargesInPast" type="radio" value="0" @{if(model.get().isRetentionChargesInPast() !=null && !model.get().isRetentionChargesInPast()) "checked='checked'"}>
-            No
-        </label>
-    </fieldset>
 
-    <fieldset>
-        <label class="form-label" for="RecordEight">Payment codes</label>
-        <textarea class="form-control" id="RecordEight" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
-    </fieldset>
+        <fieldset class="inline">
+            <label class="form-label">
+                Do you offer E-Invoicing?
+            </label>
+            <label class="block-label" for="OfferEInvoicing-yes">
+                <input id="OfferEInvoicing-yes" name="OfferEInvoicing" type="radio" value="1" @{if (model.get().isOfferEInvoicing() != null && model.get().isOfferEInvoicing()) "checked='checked'"}>
+                Yes
+            </label>
+            <label class="block-label" for="OfferEInvoicing-no">
+                <input id="OfferEInvoicing-no" name="OfferEInvoicing" type="radio" value="0" @{if (model.get().isOfferEInvoicing() != null && !model.get().isOfferEInvoicing()) "checked='checked'"}>
+                No
+            </label>
+        </fieldset>
 
-    <input type="submit" class="button" value="Review">
-</form>
+        <fieldset class="inline">
+
+            <label class="form-label">
+                Do you offer supply chain finance options?
+            </label>
+            <label class="block-label" for="OfferSupplyChainFinance-yes">
+                <input id="OfferSupplyChainFinance-yes" name="OfferSupplyChainFinance" type="radio" value="1" @{if (model.get().isOfferSupplyChainFinance != null && model.get().isOfferSupplyChainFinance()) "checked='checked'"}>
+                Yes
+            </label>
+            <label class="block-label" for="OfferSupplyChainFinance-no">
+                <input id="OfferSupplyChainFinance-no" name="OfferSupplyChainFinance" type="radio" value="0" @{if(model.get().isOfferSupplyChainFinance != null && !model.get().isOfferSupplyChainFinance()) "checked='checked'"}>
+                No
+            </label>
+        </fieldset>
+        <fieldset class="inline">
+            <label class="form-label">
+                Policy cover retention charges
+            </label>
+            <label class="block-label" for="RetentionChargesInPolicy-yes">
+                <input id="RetentionChargesInPolicy-yes" name="RetentionChargesInPolicy" type="radio" value="1" @{if(model.get().isRetentionChargesInPolicy() !=null && model.get().isRetentionChargesInPolicy()) "checked='checked'"}>
+                Yes
+            </label>
+            <label class="block-label" for="RetentionChargesInPolicy-no">
+                <input id="RetentionChargesInPolicy-no" name="RetentionChargesInPolicy" type="radio" value="0" @{if(model.get().isRetentionChargesInPolicy() !=null && !model.get().isRetentionChargesInPolicy()) "checked='checked'"}>
+                No
+            </label>
+        </fieldset>
+        <fieldset class="inline">
+            <label class="form-label">
+                Ever raised retention charges?
+            </label>
+            <label class="block-label" for="RetentionChargesInPast-yes">
+                <input id="RetentionChargesInPast-yes" name="RetentionChargesInPast" type="radio" value="1" @{if(model.get().isRetentionChargesInPast() !=null && model.get().isRetentionChargesInPast()) "checked='checked'"}>
+                Yes
+            </label>
+            <label class="block-label" for="RetentionChargesInPast-no">
+                <input id="RetentionChargesInPast-no" name="RetentionChargesInPast" type="radio" value="0" @{if(model.get().isRetentionChargesInPast() !=null && !model.get().isRetentionChargesInPast()) "checked='checked'"}>
+                No
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <label class="form-label" for="RecordEight">Payment codes</label>
+            <textarea class="form-control" id="RecordEight" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
+        </fieldset>
+
+        <input type="submit" class="button" value="Review">
+    </form>
+</div>
 <p>
     <a href="@routes.FileReport.index()" class="link-back">Start over</a>
 </p>
