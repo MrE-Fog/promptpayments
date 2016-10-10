@@ -2,14 +2,13 @@ package models;
 
 import org.junit.Test;
 import utils.MockUtcTimeProvider;
-import utils.ReflectiveObjectTester;
-import utils.ReportModelExamples;
 
 import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by daniel.rothig on 10/10/2016.

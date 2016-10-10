@@ -18,7 +18,7 @@ public class ReflectiveObjectTester {
      * Scans the class for gettable fields and makes a field-by-field equality check
      * @param one the model object
      * @param two the compared object
-     * @throws Exception
+     * @throws Exception when an assertion fails
      */
     public static <T> void assertFieldEquivalence(T one, T two) throws Exception {
         for (Field field : one.getClass().getDeclaredFields()) {
@@ -29,14 +29,12 @@ public class ReflectiveObjectTester {
         }
     }
 
-
-
     /**
      * One by one, sets properties in ONE to the corresponding values in TWO and tests
      * @param one the object to be manipulated
      * @param two the object containing the new values, all of which have to be different to the initial values in @one
      * @param assumedTestedFields Number of fields which shoudld be covered in this test
-     * @throws Exception
+     * @throws Exception when an assertion fails
      */
     public static <T> void assertSetAndGetAllFields(T one, T two, int assumedTestedFields) throws Exception {
         int testedFields = 0;
@@ -60,32 +58,37 @@ public class ReflectiveObjectTester {
     }
 
     private static Setter getSetter(Field field) {
-        if (canAccess(field.getModifiers())) return field::set;
+        if (canSet(field.getModifiers())) return field::set;
 
         try {
             Method setter = field.getDeclaringClass().getMethod("set"+field.getName(), field.getType());
-            return canAccess(setter.getModifiers()) ? setter::invoke : null;
+            return canSet(setter.getModifiers()) ? setter::invoke : null;
         } catch (NoSuchMethodException ignored) { }
 
         return null;
     }
 
-    private static boolean canAccess(int modifiers) {
+    private static boolean canGet(int modifiers) {
         return (modifiers & Modifier.PUBLIC) == Modifier.PUBLIC
                 && (modifiers & Modifier.STATIC) != Modifier.STATIC
                 && (modifiers & Modifier.ABSTRACT) != Modifier.ABSTRACT;
     }
 
+    private static boolean canSet(int modifiers) {
+        return canGet(modifiers)
+                && (modifiers & Modifier.FINAL) != Modifier.FINAL;
+    }
+
     private static Getter getGetter(Field field) throws NoSuchMethodException {
-        if (canAccess(field.getModifiers())) return field::get;
+        if (canGet(field.getModifiers())) return field::get;
 
         try {
             Method getter = field.getDeclaringClass().getMethod("get"+field.getName());
-            return canAccess(getter.getModifiers()) ? getter::invoke : null;
+            return canGet(getter.getModifiers()) ? getter::invoke : null;
         } catch (NoSuchMethodException ignored) { }
         try {
             Method getter = field.getDeclaringClass().getMethod("is"+field.getName());
-            return canAccess(getter.getModifiers()) ? getter::invoke : null;
+            return canGet(getter.getModifiers()) ? getter::invoke : null;
         } catch (NoSuchMethodException ignored) { }
 
         return null;

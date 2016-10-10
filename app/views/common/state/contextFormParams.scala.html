@@ -1,8 +1,0 @@
-@import utils.common.ViewUtil
-
-@()
-@for(p <- ViewUtil.currentParamManager().getAllContextParams) {
-  <input type="hidden" name="@p.getName" value="@p.getValue" />
-}
-
-@views.html.helper.CSRF.formField
