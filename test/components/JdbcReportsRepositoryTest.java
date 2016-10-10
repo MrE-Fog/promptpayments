@@ -3,15 +3,14 @@ package components;
 import models.*;
 import org.junit.Before;
 import org.junit.Test;
-import play.db.Database;
-import play.db.Databases;
 import play.libs.F;
 import utils.MockUtcTimeProvider;
+import utils.ReportModelExamples;
 import utils.TimeProvider;
 import utils.UtcTimeProvider;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
+import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -103,6 +102,12 @@ public class JdbcReportsRepositoryTest {
         assertEquals(3, result.totalSize());
         assertEquals(0, result.rangeLower());
         assertEquals(0, result.rangeUpper());
+    }
+
+    @Test
+    public void getCompanySummaries_withEmptyInput() throws Exception {
+        PagedList<CompanySummary> companySummaries = jdbcReportsRepository.getCompanySummaries(new ArrayList<>(), 0, 25);
+        assertEquals(0, companySummaries.size());
     }
 
     @Test
@@ -216,6 +221,8 @@ public class JdbcReportsRepositoryTest {
         MockUtcTimeProvider expectedStartDate = new MockUtcTimeProvider(2016, 0, 1);
         MockUtcTimeProvider expectedEndDate = new MockUtcTimeProvider(2016, 4, 31);
 
+        assertEquals("Ensure that ALL fields are tested below", 15,ReportModel.class.getDeclaredFields().length);
+
         assertEquals("February 2010", report.Info.UiDateString());
         assertEquals(1, report.Info.Identifier);
         assertEquals(new BigDecimal("31.00"), report.AverageTimeToPay);
@@ -255,49 +262,29 @@ public class JdbcReportsRepositoryTest {
     }
 
     @Test
+    public void tryFileReport_withNoUtc() throws Exception {
+        try {
+            Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            gmt.set(2016,9,1);
+
+            jdbcReportsRepository.TryFileReport(ReportModelExamples.makeFullReportFilingModel("120"),gmt);
+        } catch (InvalidParameterException e) {
+            return;
+        }
+        fail();
+    }
+    @Test
     public void tryFileReport() throws Exception {
-
         Calendar time = new UtcTimeProvider().Now();
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
-        rfm.setAverageTimeToPay(31.0);
-        rfm.setPercentInvoicesPaidBeyondAgreedTerms(10.0);
-        rfm.setPercentInvoicesWithin30Days(80.0);
-        rfm.setPercentInvoicesWithin60Days(15.0);
-        rfm.setPercentInvoicesBeyond60Days( 5.0);
-
-        rfm.setStartDate_year(2016);
-        rfm.setStartDate_month(0);
-        rfm.setStartDate_day(1);
-
-        rfm.setEndDate_year(2016);
-        rfm.setEndDate_month(5);
-        rfm.setEndDate_day(30);
-
-        rfm.setPaymentTerms("Payment terms");
-        rfm.setDisputeResolution("Dispute resolution");
-        rfm.setPaymentCodes("Payment codes");
-
-        rfm.setOfferEInvoicing(true);
-        rfm.setOfferSupplyChainFinance(true);
-        rfm.setRetentionChargesInPolicy(false);
-        rfm.setRetentionChargesInPast(false);
-
-
-        //model validations - should be in their own test class
-        assertEquals(new BigDecimal("31.00"), rfm.getAverageTimeToPayAsDecimal());
-        assertEquals(new BigDecimal("10.00"), rfm.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal());
-        assertEquals(new BigDecimal("80.00"), rfm.getPercentInvoicesWithin30DaysAsDecimal());
-        assertEquals(new BigDecimal("15.00"), rfm.getPercentInvoicesWithin60DaysAsDecimal());
-        assertEquals(new BigDecimal( "5.00"), rfm.getPercentInvoicesBeyond60DaysAsDecimal());
-        assertEquals("1 January 2016", new UiDate(rfm.getStartDate()).ToDateString());
-        assertEquals("30 June 2016", new UiDate(rfm.getEndDate()).ToDateString());
+        ReportFilingModel rfm = ReportModelExamples.makeFullReportFilingModel("122");
 
         int result = jdbcReportsRepository.TryFileReport(rfm, time);
 
         assertTrue(result > 0);
 
         ReportModel report = jdbcReportsRepository.getReport("122", result).get();
+
+        assertEquals("Ensure that ALL fields are tested below", 15,ReportModel.class.getDeclaredFields().length);
 
         assertEquals(report.Info.Identifier, result);
         assertEquals(time, report.Info.ExactDate());
@@ -320,10 +307,15 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void tryFileReport_WhenCompanyUnknown() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("124");
+        ReportFilingModel rfm = ReportModelExamples.makeFullReportFilingModel("124");
         int result = jdbcReportsRepository.TryFileReport(rfm, new UtcTimeProvider().Now());
         assertEquals(-1 , result);
+    }
+
+    @Test
+    public void exportData_withInvalidRange() throws Exception {
+        List<F.Tuple<CompanySummary, ReportModel>> tuples = jdbcReportsRepository.ExportData(-1);
+        assertEquals(0, tuples.size());
     }
 
     @Test
@@ -334,28 +326,3 @@ public class JdbcReportsRepositoryTest {
     }
 }
 
-class MockRepositoryCreator {
-    static ReportsRepository CreateMockReportsRepository(TimeProvider timeProvider) throws SQLException {
-        Database testDb = Databases.inMemory("test", "jdbc:h2:mem:playtest;MODE=PostgreSQL;DB_CLOSE_DELAY=-1", new HashMap<>());
-
-        JdbcReportsRepository jdbcReportsRepository = new JdbcReportsRepository(new JdbcCommunicator(testDb), timeProvider);
-
-        String fakeData =
-"DELETE FROM Report;\n" +
-"DELETE FROM Company;\n" +
-"INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Nicecorp', '120');\n" +
-"INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Cookies Ltd.', '121');\n" +
-"INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Eigencode Ltd.', '122');\n" +
-"\n" +
-"INSERT INTO Report(Identifier, CompaniesHouseIdentifier, FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes) VALUES (1, '120', '2010-02-01', 31.00, 10.00, 80, 15, 5, '2016-01-01', '2016-05-31', 'User-specified payment terms', 'User-specified dispute resolution', 1, 1,0,0, 'Prompt Payment Code');\n" +
-"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-02-01');\n" +
-"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2015-08-01');\n" +
-"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('120', '2016-02-01');\n" +
-"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('121', '2015-07-01');\n" +
-"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('121', '2016-01-01');\n" +
-"INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('122', '2016-05-01');";
-        testDb.getConnection().createStatement().execute(fakeData);
-
-        return jdbcReportsRepository;
-    }
-}

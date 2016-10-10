@@ -30,24 +30,9 @@ public class CsvDataExporterTest {
     @Test
     public void generateCsv_canDealWithNulls() throws Exception {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
-        ReportModel reportModel = new ReportModel(
-                new ReportSummary(1, new MockUtcTimeProvider(2016, 6, 1).Now()),
-                null,
-                null,
-                null,
-                null,
-                null,
-                new MockUtcTimeProvider(2016, 0, 1).Now(),
-                new MockUtcTimeProvider(2016, 5, 30).Now(),
-                null,
-                null,
-                false,
-                false,
-                false,
-                false,
-                null);
+        ReportModel reportModel = getEmptyReportModel();
 
-        when(reportsRepository.ExportData(24)).thenReturn(Arrays.asList(new F.Tuple<>(
+        when(reportsRepository.ExportData(24)).thenReturn(Collections.singletonList(new F.Tuple<>(
                 new CompanySummary(null, null),
                 reportModel)));
 
@@ -178,5 +163,25 @@ public class CsvDataExporterTest {
                 false,
                 "Prompt payment code");
     }
+
+    private ReportModel getEmptyReportModel() {
+        return new ReportModel(
+                new ReportSummary(1, new MockUtcTimeProvider(2016, 6, 1).Now()),
+                null,
+                null,
+                null,
+                null,
+                null,
+                new MockUtcTimeProvider(2016, 0, 1).Now(),
+                new MockUtcTimeProvider(2016, 5, 30).Now(),
+                null,
+                null,
+                false,
+                false,
+                false,
+                false,
+                null);
+    }
+
 }
 

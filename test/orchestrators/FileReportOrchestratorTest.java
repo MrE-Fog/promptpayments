@@ -54,8 +54,7 @@ public class FileReportOrchestratorTest {
 
     @Test
     public void tryMakeReportFilingModel() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
+        ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
 
         when(reportsRepository.getCompanyByCompaniesHouseIdentifier("122", 0, 0)).thenReturn(Option.apply(companyModel));
         
@@ -78,21 +77,21 @@ public class FileReportOrchestratorTest {
 
         verify(reportsRepository, times(1)).getCompanyByCompaniesHouseIdentifier("122", 0, 0);
 
-        assertFalse(filingData.success());
+        assertFailureResponse(filingData);
     }
+
 
     @Test
     public void tryMakeReportFilingModel_noauthority() throws Exception {
         when(reportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 0)).thenReturn(Option.apply(noAuthorityCompanyModel));
         OrchestratorResult<FilingData> filingData = orchestrator.tryMakeReportFilingModel("somestuff", "120");
         verify(reportsRepository, times(1)).getCompanyByCompaniesHouseIdentifier("120", 0, 0);
-        assertFalse(filingData.success());
+        assertFailureResponse(filingData);
     }
 
     @Test
     public void tryValidateReportFilingModel() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
+        ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
         when(reportsRepository.getCompanyByCompaniesHouseIdentifier("122", 0, 0)).thenReturn(Option.apply(companyModel));
 
         OrchestratorResult<FilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
@@ -107,20 +106,18 @@ public class FileReportOrchestratorTest {
 
     @Test
     public void tryValidateReportFilingModel_nocompany() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
+        ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
         when(reportsRepository.getCompanyByCompaniesHouseIdentifier("122", 0, 0)).thenReturn(Option.empty());
         OrchestratorResult<FilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
 
         verify(reportsRepository, times(1)).getCompanyByCompaniesHouseIdentifier("122", 0, 0);
 
-        assertFalse(filingData.success());
+        assertFailureResponse(filingData);
     }
 
     @Test
     public void tryFileReport() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
+        ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
 
         when(reportsRepository.getCompanyByCompaniesHouseIdentifier("122", 0, 0)).thenReturn(Option.apply(companyModel));
         when(reportsRepository.TryFileReport(eq(rfm), any())).thenReturn(42);
@@ -136,8 +133,7 @@ public class FileReportOrchestratorTest {
 
     @Test
     public void tryFileReport_noCompany() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
+        ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
 
         when(reportsRepository.getCompanyByCompaniesHouseIdentifier("122", 0, 0)).thenReturn(Option.empty());
         when(reportsRepository.TryFileReport(eq(rfm), any())).thenReturn(-1);
@@ -147,13 +143,12 @@ public class FileReportOrchestratorTest {
         verify(reportsRepository, times(1)).getCompanyByCompaniesHouseIdentifier("122", 0, 0);
         verify(reportsRepository, times(0)).TryFileReport(any(), any());
 
-        assertFalse(filingData.success());
+        assertFailureResponse(filingData);
     }
 
     @Test
     public void tryFileReport_noauthority() throws Exception {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("120");
+        ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("120");
 
         when(reportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 0)).thenReturn(Option.apply(noAuthorityCompanyModel));
 
@@ -162,7 +157,19 @@ public class FileReportOrchestratorTest {
         verify(reportsRepository, times(1)).getCompanyByCompaniesHouseIdentifier("120", 0, 0);
         verify(reportsRepository, times(0)).TryFileReport(any(), any());
 
-        assertFalse(filingData.success());
+        assertFailureResponse(filingData);
     }
+
+    private void assertFailureResponse(OrchestratorResult filingData) {
+        assertFalse(filingData.success());
+        assertTrue(filingData.message().length() > 0);
+        try {
+            filingData.get();
+        } catch (IllegalStateException e ) {
+            return;
+        }
+        fail("get() should throw");
+    }
+
 
 }

@@ -60,8 +60,7 @@ public class VisualTest extends PageController {
 
         CompanyModel healthyCompanyModel = new CompanyModel(healthyCompanySummary, new PagedList<>(Arrays.asList(healthyReportSummary, healthyReportSummary, healthyReportSummary), 6, 0, 3));
 
-        ReportFilingModel newReportFilingModel = new ReportFilingModel();
-        newReportFilingModel.setTargetCompanyCompaniesHouseIdentifier("123");
+        ReportFilingModel newReportFilingModel = ReportFilingModel.MakeEmptyModelForTarget("123");
 
         ReportFilingModel completeReportFilingModel = getCompleteFilingModel();
         Html html = HtmlFormat.fill(JavaConversions.asScalaBuffer(Arrays.asList(
@@ -91,32 +90,30 @@ public class VisualTest extends PageController {
     }
 
     private ReportFilingModel getCompleteFilingModel() {
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier("122");
-        rfm.setAverageTimeToPay(31.0);
-        rfm.setPercentInvoicesPaidBeyondAgreedTerms(10.0);
-        rfm.setPercentInvoicesWithin30Days(80.0);
-        rfm.setPercentInvoicesWithin60Days(15.0);
-        rfm.setPercentInvoicesBeyond60Days( 5.0);
+        return new ReportFilingModel(
+                "122",
+                31,
+                10,
+                80,
+                15,
+                5,
 
-        rfm.setStartDate_year(2016);
-        rfm.setStartDate_month(0);
-        rfm.setStartDate_day(1);
+                2016,
+                0,
+                1,
 
-        rfm.setEndDate_year(2016);
-        rfm.setEndDate_month(5);
-        rfm.setEndDate_day(29);
+                2016,
+                5,
+                29,
 
-        rfm.setPaymentTerms("Payment terms");
-        rfm.setDisputeResolution("Dispute resolution");
-        rfm.setPaymentCodes("Payment codes");
+                "Payment terms",
+                "Dispute resolution",
+                "Payment codes",
 
-        rfm.setOfferEInvoicing(true);
-        rfm.setOfferSupplyChainFinance(true);
-        rfm.setRetentionChargesInPolicy(false);
-        rfm.setRetentionChargesInPast(false);
-
-        return rfm;
+                true,
+                true,
+                false,
+                false);
     }
 }
 

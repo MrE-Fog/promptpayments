@@ -36,7 +36,6 @@ public class ReportModel {
     public String getStartDateString() {
         return new UiDate(StartDate).ToDateString();
     }
-
     public String getEndDateString() {
         return new UiDate(EndDate).ToDateString();
     }

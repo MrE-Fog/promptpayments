@@ -21,18 +21,11 @@ import java.util.List;
  */
 public class FileReportOrchestrator {
 
-    @Inject
     private MockCompaniesHouseCommunicator companiesHouseCommunicator;
-
-    @Inject
     private ReportsRepository reportsRepository;
-
-    @Inject
     private TimeProvider timeProvider;
 
-    public FileReportOrchestrator() {
-    }
-
+    @Inject
     FileReportOrchestrator(MockCompaniesHouseCommunicator companiesHouseCommunicator, ReportsRepository reportsRepository, TimeProvider timeProvider) {
         this.companiesHouseCommunicator = companiesHouseCommunicator;
         this.reportsRepository = reportsRepository;
@@ -55,8 +48,7 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         }
 
-        ReportFilingModel rfm = new ReportFilingModel();
-        rfm.setTargetCompanyCompaniesHouseIdentifier(companiesHouseIdentifier);
+        ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget(companiesHouseIdentifier);
 
         return OrchestratorResult.fromSucccess(new FilingData(
                 rfm,

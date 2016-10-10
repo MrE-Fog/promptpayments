@@ -52,6 +52,38 @@ public class ReportFilingModel {
     public String getEndDateString() {return new UiDate(getEndDate()).ToDateString(); }
     /* Getters and setters */
 
+    private ReportFilingModel() {
+
+    }
+
+    public static ReportFilingModel MakeEmptyModelForTarget(String targetCompanyCompaniesHouseIdentifier) {
+        ReportFilingModel rtn = new ReportFilingModel();
+        rtn.TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
+        return rtn;
+    }
+
+    public ReportFilingModel(String targetCompanyCompaniesHouseIdentifier, double averageTimeToPay, double percentInvoicesPaidBeyondAgreedTerms, double percentInvoicesWithin30Days, double percentInvoicesWithin60Days, double percentInvoicesBeyond60Days, int startDate_year, int startDate_month, int startDate_day, int endDate_year, int endDate_month, int endDate_day, String paymentTerms, String disputeResolution, String paymentCodes, Boolean offerEInvoicing, Boolean offerSupplyChainFinance, Boolean retentionChargesInPolicy, Boolean retentionChargesInPast) {
+        TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
+        AverageTimeToPay = averageTimeToPay;
+        PercentInvoicesPaidBeyondAgreedTerms = percentInvoicesPaidBeyondAgreedTerms;
+        PercentInvoicesWithin30Days = percentInvoicesWithin30Days;
+        PercentInvoicesWithin60Days = percentInvoicesWithin60Days;
+        PercentInvoicesBeyond60Days = percentInvoicesBeyond60Days;
+        StartDate_year = startDate_year;
+        StartDate_month = startDate_month;
+        StartDate_day = startDate_day;
+        EndDate_year = endDate_year;
+        EndDate_month = endDate_month;
+        EndDate_day = endDate_day;
+        PaymentTerms = paymentTerms;
+        DisputeResolution = disputeResolution;
+        PaymentCodes = paymentCodes;
+        OfferEInvoicing = offerEInvoicing;
+        OfferSupplyChainFinance = offerSupplyChainFinance;
+        RetentionChargesInPolicy = retentionChargesInPolicy;
+        RetentionChargesInPast = retentionChargesInPast;
+    }
+
     public String getTargetCompanyCompaniesHouseIdentifier() {
         return TargetCompanyCompaniesHouseIdentifier;
     }

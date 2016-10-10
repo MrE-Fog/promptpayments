@@ -7,6 +7,7 @@ import org.junit.Test;
 import play.db.Database;
 import play.db.Databases;
 
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,6 +58,19 @@ public class JdbcCommunicatorTest {
 
         assertEquals("A result should be returned", 1, result.size());
         assertEquals(String.format("The result should be 42 but is %s",result.get(0)), new Integer(42), result.get(0));
+    }
+
+    @Test
+    public void executeUpdate() throws Exception {
+        JdbcCommunicator communicator = new JdbcCommunicator(testDb);
+        communicator.InitialiseSchema();
+
+        List<Integer> insertedKeys = communicator.ExecuteUpdate("INSERT INTO Report (CompaniesHouseIdentifier, Identifier, FilingDate) VALUES (?,?,?);",
+                new Object[]{"120", 999, new GregorianCalendar().getTime()},
+                x -> x.getInt(1));
+
+        assertEquals(1, insertedKeys.size());
+        assertEquals(new Integer(999), insertedKeys.get(0));
     }
 
     @Test
