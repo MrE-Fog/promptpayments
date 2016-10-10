@@ -1,0 +1,7 @@
+@import utils.common.SelectOption
+@(name: String, value: String, options: List[SelectOption])
+<select class="form-control" id="@name" name="@name">
+  @for(option <- options) {
+    <option value="@option.value" @{if (option.value == value) "selected='selected'"}>@option.prompt</option>
+  }
+</select>

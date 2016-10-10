@@ -8,6 +8,13 @@ import orchestrators.OrchestratorResult;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Result;
+import utils.DatePickerHelper;
+import utils.TimeProvider;
+import utils.common.SelectOption;
+
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by daniel.rothig on 27/09/2016.
  *
@@ -17,6 +24,9 @@ public class FileReport extends PageController {
 
     @Inject
     private FileReportOrchestrator fileReportOrchestrator;
+
+    @Inject
+    private TimeProvider timeProvider;
 
     private Form<ReportFilingModel> reportForm;
 
@@ -39,7 +49,7 @@ public class FileReport extends PageController {
     public Result file(String companiesHouseIdentifier) {
         OrchestratorResult<FilingData> data = fileReportOrchestrator.tryMakeReportFilingModel("bullshitToken", companiesHouseIdentifier);
         if (data.success()) {
-            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
+            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
         } else {
             return status(401, data.message());
         }
@@ -49,6 +59,15 @@ public class FileReport extends PageController {
         OrchestratorResult<FilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
         if (data.success()) {
             return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
+        } else {
+            return status(401, data.message());
+        }
+    }
+
+    public Result editFiling() {
+        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
+        if (data.success()) {
+            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
         } else {
             return status(401, data.message());
         }

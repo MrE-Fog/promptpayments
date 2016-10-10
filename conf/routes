@@ -21,6 +21,7 @@ GET     /FileReport          controllers.FileReport.index()
 GET     /FileReport/Login    controllers.FileReport.login()
 GET     /FileReport/Companies    controllers.FileReport.companies(page: Int)
 GET     /FileReport/File/:id     controllers.FileReport.file(id: String)
+POST     /FileReport/Edit/      controllers.FileReport.editFiling()
 POST    /FileReport/ReviewFiling    controllers.FileReport.reviewFiling()
 POST    /FileReport/SubmitFiling    controllers.FileReport.submitFiling()
 

@@ -1,7 +1,10 @@
-@(model: Form[ReportFilingModel], company: CompanySummary, date: UiDate)
+@import utils._
+@(model: Form[ReportFilingModel], company: CompanySummary, date: UiDate, datePicker: DatePickerHelper)
 @import play.data.FormFactory
 @import views.html.helper
+@import views.html.shared._
 @import utils._
+
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">File a report</h1>
 
@@ -20,42 +23,16 @@
         </fieldset>
 
         <fieldset>
-            <label class="form-label" for="StartDate_year">Start date</label>
-            <input class="form-control" type="text" id="StartDate_year" name="StartDate_year" value="@model.get().getStartDate_year()">
-            <select class="form-control" id="StartDate_month" name="StartDate_month" value="@model.get().getStartDate_month()">
-                <option value="0">January</option>
-                <option value="1">February</option>
-                <option value="2">March</option>
-                <option value="3">April</option>
-                <option value="4">May</option>
-                <option value="5">June</option>
-                <option value="6">July</option>
-                <option value="7">August</option>
-                <option value="8">September</option>
-                <option value="9">October</option>
-                <option value="10">November</option>
-                <option value="11">December</option>
-            </select>
-            <input class="form-control" type="text" id="StartDate_day" name="StartDate_day" value="@model.get().getStartDate_day()">
+            <label class="form-label">Start date</label>
+            @_formSelect("StartDate_day", model.get().getStartDate_day().toString(), datePicker.days)
+            @_formSelect("StartDate_month", model.get().getStartDate_month().toString(), datePicker.months)
+            @_formSelect("StartDate_year", model.get().getStartDate_year().toString(), datePicker.years)
         </fieldset>
         <fieldset>
-            <label class="form-label" for="EndDate_year">End date</label>
-            <input class="form-control" type="text" id="EndDate_year" name="EndDate_year" value="@model.get().getEndDate_year()">
-            <select class="form-control" id="EndDate_month" name="EndDate_month" value="@model.get().getEndDate_month()">
-                <option value="0">January</option>
-                <option value="1">February</option>
-                <option value="2">March</option>
-                <option value="3">April</option>
-                <option value="4">May</option>
-                <option value="5">June</option>
-                <option value="6">July</option>
-                <option value="7">August</option>
-                <option value="8">September</option>
-                <option value="9">October</option>
-                <option value="10">November</option>
-                <option value="11">December</option>
-            </select>
-            <input class="form-control" type="text" id="EndDate_day" name="EndDate_day" value="@model.get().getEndDate_day()">
+            <label class="form-label">End date</label>
+            @_formSelect("EndDate_day", model.get().getEndDate_day().toString(), datePicker.days)
+            @_formSelect("EndDate_month", model.get().getEndDate_month().toString(), datePicker.months)
+            @_formSelect("EndDate_year", model.get().getEndDate_year().toString(), datePicker.years)
         </fieldset>
         <fieldset>
             <label class="form-label" for="RecordOne">Average time to pay</label>

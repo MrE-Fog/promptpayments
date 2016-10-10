@@ -14,11 +14,11 @@ import static utils.DecimalConverter.getBigDecimal;
 public class ReportFilingModel {
     private String TargetCompanyCompaniesHouseIdentifier;
 
-    private double AverageTimeToPay;
-    private double PercentInvoicesPaidBeyondAgreedTerms;
-    private double PercentInvoicesWithin30Days;
-    private double PercentInvoicesWithin60Days;
-    private double PercentInvoicesBeyond60Days;
+    private Double AverageTimeToPay;
+    private Double PercentInvoicesPaidBeyondAgreedTerms;
+    private Double PercentInvoicesWithin30Days;
+    private Double PercentInvoicesWithin60Days;
+    private Double PercentInvoicesBeyond60Days;
 
     private int StartDate_year;
     private int StartDate_month;

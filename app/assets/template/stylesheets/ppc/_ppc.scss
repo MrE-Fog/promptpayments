@@ -14,6 +14,17 @@
     font-weight:bold;
 }
 
+fieldset {
+    margin-bottom: 2em;
+}
+
+#StartDate_day, #StartDate_month, #StartDate_year,
+#EndDate_day, #EndDate_month, #EndDate_year {
+    display: inline;
+    width: 5em;
+    margin-right: 10px;
+}
+
 .stat {
     font-size: 1.2em;
     font-weight:bold;

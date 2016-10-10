@@ -8,8 +8,10 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 import play.twirl.api.HtmlFormat;
 import scala.collection.JavaConversions;
+import utils.DatePickerHelper;
 import utils.MockUtcTimeProvider;
 import components.PagedList;
+import utils.TimeProvider;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -23,11 +25,14 @@ import java.util.Calendar;
 public class VisualTest extends PageController {
 
     private Form<ReportFilingModel> reportForm;
+    private TimeProvider timeProvider;
 
     @Inject
-    public VisualTest(FormFactory formFactory) {
+    public VisualTest(FormFactory formFactory, TimeProvider timeProvider) {
         reportForm = formFactory.form(ReportFilingModel.class);
+        this.timeProvider = timeProvider;
     }
+
 
     public Result index() {
 
@@ -80,8 +85,8 @@ public class VisualTest extends PageController {
                 views.html.FileReport.index.render(),
                 views.html.FileReport.login.render(),
                 views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 3, 3)),
-                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), healthyCompanySummary, new UiDate(time)),
-                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time)),
+                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time))
 
         )).toList());
