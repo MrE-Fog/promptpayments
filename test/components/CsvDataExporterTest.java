@@ -6,6 +6,7 @@ import models.ReportSummary;
 import org.junit.Test;
 import play.libs.F;
 import utils.MockUtcTimeProvider;
+import utils.ReportModelExamples;
 import utils.UtcTimeProvider;
 import utils.TimeProvider;
 
@@ -30,7 +31,7 @@ public class CsvDataExporterTest {
     @Test
     public void generateCsv_canDealWithNulls() throws Exception {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
-        ReportModel reportModel = getEmptyReportModel();
+        ReportModel reportModel = ReportModelExamples.makeEmptyReportModel();
 
         when(reportsRepository.ExportData(24)).thenReturn(Collections.singletonList(new F.Tuple<>(
                 new CompanySummary(null, null),
@@ -124,63 +125,25 @@ public class CsvDataExporterTest {
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("SomeComp", "123"),
-                makeReportModel(1, 2016, 1)
+                ReportModelExamples.makeReportModel(1, 2016, 1)
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("A, B and C Ltd.", "124"),
-                makeReportModel(2, 2016,3)
+                ReportModelExamples.makeReportModel(2, 2016, 3)
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("The \"Dungeon\" Ltd.", "125"),
-                makeReportModel(3, 2016,2)
+                ReportModelExamples.makeReportModel(3, 2016, 2)
         ));
 
         rtn.add(new F.Tuple<>(
                 new CompanySummary("The Scary, Scary \"Dungeon\" Ltd.", "126"),
-                makeReportModel(4,2016,4)
+                ReportModelExamples.makeReportModel(4, 2016, 4)
         ));
 
         return rtn;
-    }
-
-    private ReportModel makeReportModel(int id, int year, int month) {
-        return new ReportModel(
-                new ReportSummary(id, new MockUtcTimeProvider(year,month,1).Now()),
-                new BigDecimal("31.00"),
-                new BigDecimal("10.00"),
-                new BigDecimal("80.00"),
-                new BigDecimal("15.00"),
-                new BigDecimal( "5.00"),
-                new MockUtcTimeProvider(2016,0,0).Now(),
-                new MockUtcTimeProvider(2016,4,30).Now(),
-                "Payment terms",
-                "Dispute terms",
-                true,
-                true,
-                false,
-                false,
-                "Prompt payment code");
-    }
-
-    private ReportModel getEmptyReportModel() {
-        return new ReportModel(
-                new ReportSummary(1, new MockUtcTimeProvider(2016, 6, 1).Now()),
-                null,
-                null,
-                null,
-                null,
-                null,
-                new MockUtcTimeProvider(2016, 0, 1).Now(),
-                new MockUtcTimeProvider(2016, 5, 30).Now(),
-                null,
-                null,
-                false,
-                false,
-                false,
-                false,
-                null);
     }
 
 }

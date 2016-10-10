@@ -2,6 +2,8 @@ package models;
 
 import org.junit.Test;
 import utils.MockUtcTimeProvider;
+import utils.ReflectiveObjectTester;
+import utils.ReportModelExamples;
 
 import java.security.InvalidParameterException;
 import java.util.Calendar;
