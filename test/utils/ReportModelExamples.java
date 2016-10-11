@@ -34,8 +34,8 @@ public class ReportModelExamples {
                 "Payment codes",
 
                 true,
-                true,
                 false,
+                true,
                 false);
     }
 

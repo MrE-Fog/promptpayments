@@ -39,5 +39,11 @@ public class ReportFilingModelTest {
 
         ReflectiveObjectTester.assertSetAndGetAllFields(one, two, 19);
     }
+
+    @Test
+    public void ormConstructor() throws Exception {
+        new ReportFilingModel();
+        assertNotEquals(null, ReportFilingModel.class.getDeclaredConstructor().getAnnotation(Deprecated.class));
+    }
 }
 

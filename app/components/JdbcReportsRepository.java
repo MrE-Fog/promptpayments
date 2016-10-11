@@ -131,7 +131,7 @@ final class JdbcReportsRepository implements ReportsRepository {
                         rfm.isOfferEInvoicing(),
                         rfm.isOfferSupplyChainFinance(),
                         rfm.isRetentionChargesInPolicy(),
-                        rfm.isRetentionChargesInPolicy(),
+                        rfm.isRetentionChargesInPast(),
                         rfm.getPaymentCodes()
                 },
                 x -> x.getInt(1)

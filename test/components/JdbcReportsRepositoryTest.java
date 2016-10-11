@@ -299,8 +299,8 @@ public class JdbcReportsRepositoryTest {
         assertEquals("Payment terms", report.PaymentTerms);
         assertEquals("Dispute resolution", report.DisputeResolution);
         assertEquals(true, report.OfferEInvoicing);
-        assertEquals(true, report.OfferSupplyChainFinance);
-        assertEquals(false, report.RetentionChargesInPolicy);
+        assertEquals(false, report.OfferSupplyChainFinance);
+        assertEquals(true, report.RetentionChargesInPolicy);
         assertEquals(false, report.RetentionChargesInPast);
         assertEquals("Payment codes", report.PaymentCodes);
     }

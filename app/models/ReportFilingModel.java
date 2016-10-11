@@ -52,7 +52,11 @@ public class ReportFilingModel {
     public String getEndDateString() {return new UiDate(getEndDate()).ToDateString(); }
     /* Getters and setters */
 
-    private ReportFilingModel() {
+    /**
+     * @deprecated ORM ONLY
+     */
+    @Deprecated
+    public ReportFilingModel() {
 
     }
 
@@ -140,43 +144,43 @@ public class ReportFilingModel {
         EndDate_day = endDate_day;
     }
 
-    public double getAverageTimeToPay() {
+    public Double getAverageTimeToPay() {
         return AverageTimeToPay;
     }
 
-    public void setAverageTimeToPay(double averageTimeToPay) {
+    public void setAverageTimeToPay(Double averageTimeToPay) {
         AverageTimeToPay = averageTimeToPay;
     }
 
-    public double getPercentInvoicesPaidBeyondAgreedTerms() {
+    public Double getPercentInvoicesPaidBeyondAgreedTerms() {
         return PercentInvoicesPaidBeyondAgreedTerms;
     }
 
-    public void setPercentInvoicesPaidBeyondAgreedTerms(double percentInvoicesPaidBeyondAgreedTerms) {
+    public void setPercentInvoicesPaidBeyondAgreedTerms(Double percentInvoicesPaidBeyondAgreedTerms) {
         PercentInvoicesPaidBeyondAgreedTerms = percentInvoicesPaidBeyondAgreedTerms;
     }
 
-    public double getPercentInvoicesWithin30Days() {
+    public Double getPercentInvoicesWithin30Days() {
         return PercentInvoicesWithin30Days;
     }
 
-    public void setPercentInvoicesWithin30Days(double percentInvoicesWithin30Days) {
+    public void setPercentInvoicesWithin30Days(Double percentInvoicesWithin30Days) {
         PercentInvoicesWithin30Days = percentInvoicesWithin30Days;
     }
 
-    public double getPercentInvoicesWithin60Days() {
+    public Double getPercentInvoicesWithin60Days() {
         return PercentInvoicesWithin60Days;
     }
 
-    public void setPercentInvoicesWithin60Days(double percentInvoicesWithin60Days) {
+    public void setPercentInvoicesWithin60Days(Double percentInvoicesWithin60Days) {
         PercentInvoicesWithin60Days = percentInvoicesWithin60Days;
     }
 
-    public double getPercentInvoicesBeyond60Days() {
+    public Double getPercentInvoicesBeyond60Days() {
         return PercentInvoicesBeyond60Days;
     }
 
-    public void setPercentInvoicesBeyond60Days(double percentInvoicesBeyond60Days) {
+    public void setPercentInvoicesBeyond60Days(Double percentInvoicesBeyond60Days) {
         PercentInvoicesBeyond60Days = percentInvoicesBeyond60Days;
     }
 
