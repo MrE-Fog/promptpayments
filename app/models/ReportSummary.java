@@ -20,7 +20,7 @@ public class ReportSummary {
         return new UiDate(FilingDate).ToFriendlyString();
     }
 
-    public Calendar ExactDate() {return FilingDate; }
+    public Calendar getFilingDate() {return FilingDate; }
 
     public ReportSummary(int identifier, Calendar filingDate) {
         if (!filingDate.getTimeZone().equals(TimeZone.getTimeZone("UTC"))) {

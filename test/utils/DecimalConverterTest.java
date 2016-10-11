@@ -2,6 +2,8 @@ package utils;
 
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.Assert.*;
 
 /**
@@ -13,5 +15,11 @@ public class DecimalConverterTest {
     @Test
     public void constructor() throws Exception {
         new DecimalConverter();
+    }
+
+    @Test
+    public void nullConversions() throws Exception {
+        assertNull(DecimalConverter.getBigDecimal((Double) null));
+        assertNull(DecimalConverter.getBigDecimal((BigDecimal) null));
     }
 }

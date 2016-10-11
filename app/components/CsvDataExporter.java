@@ -23,7 +23,7 @@ public class CsvDataExporter {
     private final ReportsRepository reportsRepository;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private static String header="Start date,End date,Filing date,Company,Company number,Average time to pay,% Invoices paid within 30 days,% Invoices paid within 60 days,% Invoices paid later than 60 days,E-Invoicing offered,Supply-chain financing offered,Policy covers charges for remaining on supplier list,Charges have been made for remaining on supplier list,Payment terms,Dispute resolution facilities,Payment codes membership\n";
+    private static String header="Start date,End date,Filing date,Company,Company number,Average time to pay,% Invoices paid late,% Invoices paid within 30 days,% Invoices paid within 60 days,% Invoices paid later than 60 days,E-Invoicing offered,Supply-chain financing offered,Policy covers charges for remaining on supplier list,Charges have been made for remaining on supplier list,Payment terms,Dispute resolution facilities,Payment codes membership\n";
 
     private static final int cacheMinutes = 30;
 

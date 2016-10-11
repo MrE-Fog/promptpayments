@@ -13,6 +13,6 @@ import scala.Option;
  */
 class PageController extends Controller {
     protected Html page(Html content) {
-        return views.html.common.page.govukTemplateDefaults.render("Payment duty register", content);
+        return views.html.common.page.govukTemplateDefaults.render("Payment practices duty", content);
     }
 }

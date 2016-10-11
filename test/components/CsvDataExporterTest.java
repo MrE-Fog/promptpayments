@@ -5,10 +5,7 @@ import models.ReportModel;
 import models.ReportSummary;
 import org.junit.Test;
 import play.libs.F;
-import utils.MockUtcTimeProvider;
-import utils.ReportModelExamples;
-import utils.UtcTimeProvider;
-import utils.TimeProvider;
+import utils.*;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -78,6 +75,24 @@ public class CsvDataExporterTest {
 
         assertEquals(5, csv.length);
         assertTrue("The header row should include the words \"Filing date\"", csv[0].contains("Filing date"));
+    }
+
+    @Test
+    public void generateCsv_HasTheExpectedColumns() throws Exception {
+        assertEquals("ReportModel appears to have changed - ensure that CsvDataExporter::generateCsv covers all desirable columns",
+                15, ReflectiveObjectTester.countGettables(ReportModel.class));
+        assertEquals("CompanySummary appears to have changed - ensure that CsvDataExporter::generateCsv covers all desirable columns",
+                2, ReflectiveObjectTester.countGettables(CompanySummary.class));
+        assertEquals("ReportSummary appears to have changed - ensure that CsvDataExporter::generateCsv covers all desirable columns",
+                2, ReflectiveObjectTester.countGettables(ReportSummary.class));
+
+        String[] csv = getMockedCsvRows();
+        int expectedColumnCount = 17;
+        assertEquals("Header row doesn't have the right number of columns",
+                expectedColumnCount, csv[0].split(",").length);
+        assertEquals("Data row doesn't have the right number of columns",
+                expectedColumnCount, csv[1].split(",").length);
+
     }
 
     @Test

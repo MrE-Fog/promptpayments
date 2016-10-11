@@ -174,9 +174,9 @@ public class JdbcReportsRepositoryTest {
         PagedList<ReportSummary> result1 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 3).get().ReportSummaries;
         PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 1, 3).get().ReportSummaries;
 
-        assertTrue(result1.get(0).ExactDate().compareTo(result1.get(1).ExactDate()) > 0);
-        assertTrue(result1.get(1).ExactDate().compareTo(result1.get(2).ExactDate()) > 0);
-        assertTrue(result1.get(2).ExactDate().compareTo(result2.get(0).ExactDate()) > 0);
+        assertTrue(result1.get(0).getFilingDate().compareTo(result1.get(1).getFilingDate()) > 0);
+        assertTrue(result1.get(1).getFilingDate().compareTo(result1.get(2).getFilingDate()) > 0);
+        assertTrue(result1.get(2).getFilingDate().compareTo(result2.get(0).getFilingDate()) > 0);
     }
 
     @Test
@@ -203,9 +203,9 @@ public class JdbcReportsRepositoryTest {
 
         assertEquals(4, company.ReportSummaries.size());
 
-        assertTrue(company.ReportSummaries.get(0).ExactDate().compareTo(company.ReportSummaries.get(1).ExactDate()) > 0);
-        assertTrue(company.ReportSummaries.get(1).ExactDate().compareTo(company.ReportSummaries.get(2).ExactDate()) > 0);
-        assertTrue(company.ReportSummaries.get(2).ExactDate().compareTo(company.ReportSummaries.get(3).ExactDate()) > 0);
+        assertTrue(company.ReportSummaries.get(0).getFilingDate().compareTo(company.ReportSummaries.get(1).getFilingDate()) > 0);
+        assertTrue(company.ReportSummaries.get(1).getFilingDate().compareTo(company.ReportSummaries.get(2).getFilingDate()) > 0);
+        assertTrue(company.ReportSummaries.get(2).getFilingDate().compareTo(company.ReportSummaries.get(3).getFilingDate()) > 0);
     }
 
     @Test
@@ -287,7 +287,7 @@ public class JdbcReportsRepositoryTest {
         assertEquals("Ensure that ALL fields are tested below", 15,ReportModel.class.getDeclaredFields().length);
 
         assertEquals(report.Info.Identifier, result);
-        assertEquals(time, report.Info.ExactDate());
+        assertEquals(time, report.Info.getFilingDate());
 
         assertEquals(new BigDecimal("31.00"), report.AverageTimeToPay);
         assertEquals(new BigDecimal("10.00"), report.PercentInvoicesPaidBeyondAgreedTerms);
