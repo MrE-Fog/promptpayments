@@ -61,8 +61,8 @@ public class ReportModelExamples {
                 "Affronting Payment codes",
 
                 false,
-                false,
                 true,
+                false,
                 true);
     }
 
