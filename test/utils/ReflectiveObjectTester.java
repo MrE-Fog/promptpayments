@@ -1,11 +1,13 @@
 package utils;
 
+import models.ReportFilingModel;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by daniel.rothig on 10/10/2016.
@@ -13,6 +15,61 @@ import static org.junit.Assert.assertNotEquals;
  * Utility that uses reflection to test auto-generated getters, setters and public fields of Plain Old Container Objects
  */
 public class ReflectiveObjectTester {
+
+    /*
+
+    Types of POCO:
+
+    I)  Mutable
+        - should have getters and setters for all fields
+        - should have equality operators
+    II) Immutable - should have a constructor for all fields; are either public
+     */
+
+
+    public static void assertGoodImmutablePoco(Class clazz) throws Exception {
+        assertEquals("Immutable POCOs should have only one constructor", 1, clazz.getDeclaredConstructors().length);
+
+        assertEquals("Constructor should take enough arguments to populate all fields",
+                clazz.getDeclaredFields().length, clazz.getDeclaredConstructors()[0].getParameters().length);
+
+        assertTrue("Immutable POCOs should have at least one field", clazz.getDeclaredFields().length > 0);
+
+        for (Field field : clazz.getDeclaredFields()) {
+            assertNotNull(String.format("Field %s should be gettable", field.getName()),
+                    getGetter(field));
+            assertNull(String.format("Field %should not be settable", field.getName()),
+                    getSetter(field));
+        }
+    }
+
+    public static void assertGoodMutablePoco(Class clazz) throws Exception {
+        assertEquals("Immutable POCOs should have only one constructor", 1, clazz.getDeclaredConstructors().length);
+
+        assertTrue("Constructor should either be inaccessible or deprecated",
+                   clazz.getDeclaredConstructors()[0].getAnnotation(Deprecated.class) != null
+                || (clazz.getDeclaredConstructors()[0].getModifiers() & Modifier.PRIVATE) == Modifier.PRIVATE
+                || (clazz.getDeclaredConstructors()[0].getModifiers() & Modifier.PROTECTED) == Modifier.PROTECTED);
+
+        assertEquals("Constructor should take no arguments (static maker methods should be used instead)",
+                0, clazz.getDeclaredConstructors()[0].getParameters().length);
+
+        assertTrue("Mutable POCOs should have at least one field", clazz.getDeclaredFields().length > 0);
+
+        for (Field field : clazz.getDeclaredFields()) {
+            assertNotNull(String.format("Field %s should be gettable", field.getName()),
+                    getGetter(field));
+            assertNotNull(String.format("Field %should not be settable", field.getName()),
+                    getSetter(field));
+        }
+    }
+
+    public static long countGettables(Class clazz) {
+        return Arrays.stream(clazz.getDeclaredFields()).filter(x -> getGetter(x) != null).count();
+    }
+    public static long countSettables(Class clazz) {
+        return Arrays.stream(clazz.getDeclaredFields()).filter(x -> getSetter(x) != null).count();
+    }
 
     /**
      * Scans the class for gettable fields and makes a field-by-field equality check
@@ -79,7 +136,7 @@ public class ReflectiveObjectTester {
                 && (modifiers & Modifier.FINAL) != Modifier.FINAL;
     }
 
-    private static Getter getGetter(Field field) throws NoSuchMethodException {
+    private static Getter getGetter(Field field) {
         if (canGet(field.getModifiers())) return field::get;
 
         try {

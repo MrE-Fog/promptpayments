@@ -2,6 +2,7 @@ package models;
 
 import org.junit.Test;
 import utils.MockUtcTimeProvider;
+import utils.ReflectiveObjectTester;
 
 import java.security.InvalidParameterException;
 import java.util.Calendar;
@@ -68,6 +69,10 @@ public class ReportModelTest {
         fail();
     }
 
+    @Test
+    public void isGoodImmutablePoco() throws Exception {
+        ReflectiveObjectTester.assertGoodImmutablePoco(ReportModel.class);
+    }
 
     private static ReportModel getReportModel(Calendar filingDate, Calendar start, Calendar end) {
         return new ReportModel(

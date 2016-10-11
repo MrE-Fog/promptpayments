@@ -41,6 +41,20 @@ public class ReportFilingModelTest {
     }
 
     @Test
+    public void isGoodMutablePoco() throws Exception {
+        ReflectiveObjectTester.assertGoodMutablePoco(ReportFilingModel.class);
+    }
+
+    @Test
+    public void coversReportModel() throws Exception {
+        assertEquals("ReportFilingModel doesn't seem to cover all properties of ReportModel",
+                ReflectiveObjectTester.countGettables(ReportModel.class) - 1, //excluding Info
+                ReflectiveObjectTester.countGettables(ReportFilingModel.class) - 4 - 1); //excluding date split and CompaniesHouseIdentifier
+
+
+    }
+
+    @Test
     public void ormConstructor() throws Exception {
         new ReportFilingModel();
         assertNotEquals(null, ReportFilingModel.class.getDeclaredConstructor().getAnnotation(Deprecated.class));

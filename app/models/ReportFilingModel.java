@@ -66,26 +66,30 @@ public class ReportFilingModel {
         return rtn;
     }
 
-    public ReportFilingModel(String targetCompanyCompaniesHouseIdentifier, double averageTimeToPay, double percentInvoicesPaidBeyondAgreedTerms, double percentInvoicesWithin30Days, double percentInvoicesWithin60Days, double percentInvoicesBeyond60Days, int startDate_year, int startDate_month, int startDate_day, int endDate_year, int endDate_month, int endDate_day, String paymentTerms, String disputeResolution, String paymentCodes, Boolean offerEInvoicing, Boolean offerSupplyChainFinance, Boolean retentionChargesInPolicy, Boolean retentionChargesInPast) {
-        TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
-        AverageTimeToPay = averageTimeToPay;
-        PercentInvoicesPaidBeyondAgreedTerms = percentInvoicesPaidBeyondAgreedTerms;
-        PercentInvoicesWithin30Days = percentInvoicesWithin30Days;
-        PercentInvoicesWithin60Days = percentInvoicesWithin60Days;
-        PercentInvoicesBeyond60Days = percentInvoicesBeyond60Days;
-        StartDate_year = startDate_year;
-        StartDate_month = startDate_month;
-        StartDate_day = startDate_day;
-        EndDate_year = endDate_year;
-        EndDate_month = endDate_month;
-        EndDate_day = endDate_day;
-        PaymentTerms = paymentTerms;
-        DisputeResolution = disputeResolution;
-        PaymentCodes = paymentCodes;
-        OfferEInvoicing = offerEInvoicing;
-        OfferSupplyChainFinance = offerSupplyChainFinance;
-        RetentionChargesInPolicy = retentionChargesInPolicy;
-        RetentionChargesInPast = retentionChargesInPast;
+    public static ReportFilingModel makeReportFilingModel(String targetCompanyCompaniesHouseIdentifier, double averageTimeToPay, double percentInvoicesPaidBeyondAgreedTerms, double percentInvoicesWithin30Days, double percentInvoicesWithin60Days, double percentInvoicesBeyond60Days, int startDate_year, int startDate_month, int startDate_day, int endDate_year, int endDate_month, int endDate_day, String paymentTerms, String disputeResolution, String paymentCodes, Boolean offerEInvoicing, Boolean offerSupplyChainFinance, Boolean retentionChargesInPolicy, Boolean retentionChargesInPast) {
+        ReportFilingModel rfm = new ReportFilingModel();
+
+        rfm.TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
+        rfm.AverageTimeToPay = averageTimeToPay;
+        rfm.PercentInvoicesPaidBeyondAgreedTerms = percentInvoicesPaidBeyondAgreedTerms;
+        rfm.PercentInvoicesWithin30Days = percentInvoicesWithin30Days;
+        rfm.PercentInvoicesWithin60Days = percentInvoicesWithin60Days;
+        rfm.PercentInvoicesBeyond60Days = percentInvoicesBeyond60Days;
+        rfm.StartDate_year = startDate_year;
+        rfm.StartDate_month = startDate_month;
+        rfm.StartDate_day = startDate_day;
+        rfm.EndDate_year = endDate_year;
+        rfm.EndDate_month = endDate_month;
+        rfm.EndDate_day = endDate_day;
+        rfm.PaymentTerms = paymentTerms;
+        rfm.DisputeResolution = disputeResolution;
+        rfm.PaymentCodes = paymentCodes;
+        rfm.OfferEInvoicing = offerEInvoicing;
+        rfm.OfferSupplyChainFinance = offerSupplyChainFinance;
+        rfm.RetentionChargesInPolicy = retentionChargesInPolicy;
+        rfm.RetentionChargesInPast = retentionChargesInPast;
+
+        return rfm;
     }
 
     public String getTargetCompanyCompaniesHouseIdentifier() {

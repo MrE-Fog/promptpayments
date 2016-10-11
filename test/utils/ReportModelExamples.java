@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  */
 public class ReportModelExamples {
     public static ReportFilingModel makeFullReportFilingModel(String companiesHouseIdentifier) {
-        return new ReportFilingModel(
+        return ReportFilingModel.makeReportFilingModel(
                 companiesHouseIdentifier,
                 31.0,
                 10.0,
@@ -40,7 +40,7 @@ public class ReportModelExamples {
     }
 
     public static ReportFilingModel makeDifferentFullReportFilingModel(String companiesHouseIdentifier) {
-        return new ReportFilingModel(
+        return ReportFilingModel.makeReportFilingModel(
                 companiesHouseIdentifier,
                 61.0,
                 20.0,

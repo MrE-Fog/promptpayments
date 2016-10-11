@@ -95,7 +95,7 @@ public class VisualTest extends PageController {
     }
 
     private ReportFilingModel getCompleteFilingModel() {
-        return new ReportFilingModel(
+        return ReportFilingModel.makeReportFilingModel(
                 "122",
                 31,
                 10,
