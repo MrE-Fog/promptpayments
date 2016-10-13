@@ -1,25 +1,31 @@
 @import components.PagedList
-@(results: PagedList[CompanySummary])
+@(results: PagedList[CompanySummary], query: String)
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">Welcome!</h1>
     @if(results.isEmpty()) {
-        <p>You are currently not authorised to file payment reports for any company.</p>
+        <p>No companies found.</p>
     } else {
-        <p>You are currently able to file payment reports for the following companies:</p>
+        <p>Matching companies:</p>
 
         <ul class="searchresults">
         @for(result <- results) {
-            @views.html.shared._companySummary(result, routes.FileReport.file(result.CompaniesHouseIdentifier))
+            @views.html.shared._companySummary(result, routes.FileReport.login(result.CompaniesHouseIdentifier))
         }
         </ul>
 
         <p class="paging">
             Showing @(results.rangeLower() + 1)&ndash;@(results.rangeUpper()+1) of @results.totalSize() companies.
             @if(results.canGoBack()) {
-            <a href="@routes.FileReport.companies(results.pageNumber() - 1)">Previous page</a>
+            <form action="@routes.FileReport.companies(results.pageNumber() - 1)" method="POST">
+                <input type="hidden" name="companyname" value="@query">
+                <input class="button" type="submit" value="Previous page">
+            </form>
             }
             @if(results.canGoNext()) {
-            <a href="@routes.FileReport.companies(results.pageNumber() + 1)">Next page</a>
+            <form action="@routes.FileReport.companies(results.pageNumber() + 1)" method="POST">
+                <input type="hidden" name="companyname" value="@query">
+                <input class="button" type="submit" value="Next page">
+            </form>
             }
         </p>
     }

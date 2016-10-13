@@ -1,7 +1,9 @@
 package components;
 
 import com.google.inject.ImplementedBy;
+import models.CompanySummary;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -9,7 +11,10 @@ import java.util.List;
  *
  * Performs queries to Companies House
  */
-@ImplementedBy(MockCompaniesHouseCommunicator.class)
-interface CompaniesHouseCommunicator {
-    List<String> RequestAuthorizedCompaniesForUser(String oAuthToken);
+@ImplementedBy(ApiCompaniesHouseCommunicator.class)
+public interface CompaniesHouseCommunicator {
+    boolean mayFileForCompany(String oAuthToken, String companiesHouseIdentifier);
+    PagedList<CompanySummary> searchCompanies(String search, int page, int itemsPerPage) throws IOException;
+    CompanySummary tryGetCompany(String s);
 }
+

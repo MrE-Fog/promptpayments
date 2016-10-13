@@ -1,18 +1,16 @@
 package orchestrators;
 
 import com.google.inject.Inject;
-import components.MockCompaniesHouseCommunicator;
+import components.CompaniesHouseCommunicator;
 import components.PagedList;
 import components.ReportsRepository;
-import models.CompanyModel;
 import models.CompanySummary;
 import models.FilingData;
 import models.ReportFilingModel;
-import scala.Option;
 import utils.TimeProvider;
 import models.UiDate;
 
-import java.util.List;
+import java.io.IOException;
 
 /**
  * Created by daniel.rothig on 06/10/2016.
@@ -20,31 +18,24 @@ import java.util.List;
  * Orchestrator for FileReport
  */
 public class FileReportOrchestrator {
-
-    private MockCompaniesHouseCommunicator companiesHouseCommunicator;
+    private CompaniesHouseCommunicator companiesHouseCommunicator;
     private ReportsRepository reportsRepository;
     private TimeProvider timeProvider;
 
     @Inject
-    FileReportOrchestrator(MockCompaniesHouseCommunicator companiesHouseCommunicator, ReportsRepository reportsRepository, TimeProvider timeProvider) {
+    FileReportOrchestrator(CompaniesHouseCommunicator companiesHouseCommunicator, ReportsRepository reportsRepository, TimeProvider timeProvider) {
         this.companiesHouseCommunicator = companiesHouseCommunicator;
         this.reportsRepository = reportsRepository;
         this.timeProvider = timeProvider;
     }
 
-    public OrchestratorResult<PagedList<CompanySummary>> getCompaniesForUser(String token, int page, int itemsPerPage) {
-        List<String> companyIdentifiers = companiesHouseCommunicator.RequestAuthorizedCompaniesForUser(token);
-        PagedList<CompanySummary> companies = reportsRepository.getCompanySummaries(companyIdentifiers, page, itemsPerPage);
-        return OrchestratorResult.fromSucccess(companies);
-    }
-
     public OrchestratorResult<FilingData> tryMakeReportFilingModel(String token, String companiesHouseIdentifier) {
-        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier, 0, 0);
-        if (company.isEmpty()) {
+        CompanySummary company = companiesHouseCommunicator.tryGetCompany(companiesHouseIdentifier);
+        if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        if (!MayFileReport(token,companiesHouseIdentifier)) {
+        if (!companiesHouseCommunicator.mayFileForCompany(token,companiesHouseIdentifier)) {
             return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         }
 
@@ -52,14 +43,14 @@ public class FileReportOrchestrator {
 
         return OrchestratorResult.fromSucccess(new FilingData(
                 rfm,
-                company.get().Info,
+                company,
                 new UiDate(timeProvider.Now())
         ));
     }
 
     public OrchestratorResult<FilingData> tryValidateReportFilingModel(String token, ReportFilingModel model) {
-        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(model.getTargetCompanyCompaniesHouseIdentifier(), 0, 0);
-        if (company.isEmpty()) {
+        CompanySummary company = companiesHouseCommunicator.tryGetCompany(model.getTargetCompanyCompaniesHouseIdentifier());
+        if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
@@ -67,27 +58,31 @@ public class FileReportOrchestrator {
 
         return OrchestratorResult.fromSucccess(new FilingData(
                 model,
-                company.get().Info,
+                company,
                 new UiDate(timeProvider.Now())
         ));
     }
 
     public OrchestratorResult<Integer> tryFileReport(String oAuthToken, ReportFilingModel model) {
-        Option<CompanyModel> company = reportsRepository.getCompanyByCompaniesHouseIdentifier(model.getTargetCompanyCompaniesHouseIdentifier(), 0, 0);
-        if (company.isEmpty()) {
+        CompanySummary company = companiesHouseCommunicator.tryGetCompany(model.getTargetCompanyCompaniesHouseIdentifier());
+        if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        if (!MayFileReport(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
+        if (!companiesHouseCommunicator.mayFileForCompany(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
             return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         }
 
-        int i = reportsRepository.TryFileReport(model, timeProvider.Now());
+        int i = reportsRepository.TryFileReport(model, company, timeProvider.Now());
         return OrchestratorResult.fromSucccess(i);
     }
 
-    private boolean MayFileReport(String oAuthToken, String companiesHouseIdentifier) {
-        return companiesHouseIdentifier != null && oAuthToken != null
-                && companiesHouseCommunicator.RequestAuthorizedCompaniesForUser(oAuthToken).contains(companiesHouseIdentifier);
+    public OrchestratorResult<PagedList<CompanySummary>> findRegisteredCompanies(String company, int page, int itemsPerPage) {
+        try {
+            return OrchestratorResult.fromSucccess(companiesHouseCommunicator.searchCompanies(company, page, itemsPerPage));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return OrchestratorResult.fromFailure("Internal error: Couldn't search companies");
+        }
     }
 }

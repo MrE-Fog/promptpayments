@@ -1,0 +1,14 @@
+@import play.data.FormFactory
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">
+        Find your company
+    </h1>
+    <form method="POST" action="@routes.FileReport.companies(0)">
+        <label for="companyname" class="form-label">Company name or number</label>
+        <input type="text" class="form-control" id="companyname" name="companyname" />
+        <input type="submit" class="button block" value="Find company">
+    </form>
+    <p>
+        <a href="@routes.Home.index()" class="link-back">Back</a>
+    </p>
+</div>

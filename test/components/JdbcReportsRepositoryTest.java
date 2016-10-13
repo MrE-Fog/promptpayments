@@ -267,7 +267,7 @@ public class JdbcReportsRepositoryTest {
             Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
             gmt.set(2016,9,1);
 
-            jdbcReportsRepository.TryFileReport(ReportModelExamples.makeFullReportFilingModel("120"),gmt);
+            jdbcReportsRepository.TryFileReport(ReportModelExamples.makeFullReportFilingModel("120"), new CompanySummary("Some Company", "122"), gmt);
         } catch (InvalidParameterException e) {
             return;
         }
@@ -278,7 +278,7 @@ public class JdbcReportsRepositoryTest {
         Calendar time = new UtcTimeProvider().Now();
         ReportFilingModel rfm = ReportModelExamples.makeFullReportFilingModel("122");
 
-        int result = jdbcReportsRepository.TryFileReport(rfm, time);
+        int result = jdbcReportsRepository.TryFileReport(rfm, new CompanySummary("Some Company", "122"), time);
 
         assertTrue(result > 0);
 
@@ -308,8 +308,28 @@ public class JdbcReportsRepositoryTest {
     @Test
     public void tryFileReport_WhenCompanyUnknown() throws Exception {
         ReportFilingModel rfm = ReportModelExamples.makeFullReportFilingModel("124");
-        int result = jdbcReportsRepository.TryFileReport(rfm, new UtcTimeProvider().Now());
-        assertEquals(-1 , result);
+        CompanySummary newCorp = new CompanySummary("New corp", "124");
+        int result = jdbcReportsRepository.TryFileReport(rfm, newCorp, new UtcTimeProvider().Now());
+        assertTrue(result > 0);
+
+        PagedList<CompanySummary> insertedCompanies = jdbcReportsRepository.getCompanySummaries(Collections.singletonList("124"), 0, 25);
+        assertEquals(1, insertedCompanies.size());
+        assertEquals("124", insertedCompanies.get(0).CompaniesHouseIdentifier);
+        assertEquals("New corp", insertedCompanies.get(0).Name);
+    }
+
+    @Test
+    public void tryFileReport_MistmatchingModels() throws Exception {
+        try {
+            jdbcReportsRepository.TryFileReport(
+                    ReportFilingModel.MakeEmptyModelForTarget("120"),
+                    new CompanySummary("mismatching company","121"),
+                    new UtcTimeProvider().Now()
+            );
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        fail("if models mismatch, TryFileReport should fail");
     }
 
     @Test

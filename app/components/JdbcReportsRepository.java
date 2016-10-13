@@ -2,7 +2,6 @@ package components;
 
 import models.*;
 import play.libs.F;
-import scala.Array;
 import scala.Option;
 import utils.TimeProvider;
 
@@ -106,13 +105,24 @@ final class JdbcReportsRepository implements ReportsRepository {
     }
 
     @Override
-    public int TryFileReport(ReportFilingModel rfm, Calendar filingDate) {
+    public int TryFileReport(ReportFilingModel rfm, CompanySummary company, Calendar filingDate) {
         if (!filingDate.getTimeZone().equals(TimeZone.getTimeZone("UTC"))) {
             throw new InvalidParameterException("filingDate must be UTC");
         }
-        if (getCompanyByCompaniesHouseIdentifier(rfm.getTargetCompanyCompaniesHouseIdentifier(), 0, 0).isEmpty()) {
-            return -1;
+        if (!rfm.getTargetCompanyCompaniesHouseIdentifier().equals(company.CompaniesHouseIdentifier)) {
+            throw new IllegalArgumentException(String.format("company (%s) and report filing model (%s) don't match", rfm.getTargetCompanyCompaniesHouseIdentifier(), company.CompaniesHouseIdentifier));
         }
+
+
+        jdbcCommunicator.ExecuteUpdate(
+                "INSERT INTO Company (Name, CompaniesHouseIdentifier) SELECT ?, ? WHERE NOT EXISTS (SELECT CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier = ?); ",
+                new Object[] {
+                        company.Name,
+                        company.CompaniesHouseIdentifier,
+                        company.CompaniesHouseIdentifier
+                },
+                x -> x.getInt(1)
+        );
 
         return jdbcCommunicator.ExecuteUpdate(
                 "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",

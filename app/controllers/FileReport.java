@@ -1,6 +1,8 @@
 package controllers;
 
 import com.google.inject.Inject;
+import components.PagedList;
+import models.CompanySummary;
 import models.FilingData;
 import models.ReportFilingModel;
 import orchestrators.FileReportOrchestrator;
@@ -38,16 +40,25 @@ public class FileReport extends PageController {
 
     public Result index() {return ok(page(views.html.FileReport.index.render())); }
 
-    public Result login() {
-        return ok(page(views.html.FileReport.login.render()));
+    public Result findCompanies() {return ok(page(views.html.FileReport.findCompanies.render())); }
+
+    public Result login(String companiesHouseIdentifier) {
+        return ok(page(views.html.FileReport.login.render(companiesHouseIdentifier)));
     }
 
     public Result companies(int page) {
-        return ok(page(views.html.FileReport.companies.render(fileReportOrchestrator.getCompaniesForUser("bullshitToken", page, 25).get())));
+        String company = request().body().asFormUrlEncoded().get("companyname")[0];
+        OrchestratorResult<PagedList<CompanySummary>> companies = fileReportOrchestrator.findRegisteredCompanies(company, page, 25);
+        if (companies.success()) {
+            return ok(page(views.html.FileReport.companies.render(companies.get(), company)));
+        } else {
+            return status(501, companies.message());
+        }
     }
 
-    public Result file(String companiesHouseIdentifier) {
-        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryMakeReportFilingModel("bullshitToken", companiesHouseIdentifier);
+    public Result file() {
+        String company = request().body().asFormUrlEncoded().get("companieshouseidentifier")[0];
+        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryMakeReportFilingModel("bullshitToken", company);
         if (data.success()) {
             return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
         } else {

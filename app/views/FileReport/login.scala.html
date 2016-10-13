@@ -1,7 +1,10 @@
-@import play.data.FormFactory
+@(companiesHouseIdentifier: String)
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">File a payment report</h1>
     <p>Login goes here</p>
-    <p><a class="button" href="@routes.FileReport.companies(0)">Log in</a></p>
+    <form action="@routes.FileReport.file()" method="POST">
+        <input type="hidden" name="companieshouseidentifier" value="@companiesHouseIdentifier">
+        <input type="submit" class="button" value="Log in">
+    </form>
     <p><a href="@routes.Home.index()" class="link-back">Back</a></p>
 </div>

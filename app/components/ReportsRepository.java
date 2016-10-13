@@ -23,7 +23,7 @@ public interface ReportsRepository {
     Option<ReportModel> getReport(String company, int reportId);
     PagedList<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers, int page, int itemsPerPage);
 
-    int TryFileReport(ReportFilingModel rfm, Calendar filingDate);
+    int TryFileReport(ReportFilingModel rfm, CompanySummary company, Calendar filingDate);
 
     List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months);
 }
