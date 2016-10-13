@@ -1,10 +1,10 @@
 CREATE TABLE Company(
-    CompaniesHouseIdentifier nvarchar(30) PRIMARY KEY,
-    Name nvarchar(256)
+    CompaniesHouseIdentifier varchar(30) PRIMARY KEY,
+    Name varchar(256)
 );
 CREATE TABLE Report(
     Identifier SERIAL PRIMARY KEY,
-     CompaniesHouseIdentifier nvarchar(30) NOT NULL REFERENCES Company(CompaniesHouseIdentifier),
+     CompaniesHouseIdentifier varchar(30) NOT NULL REFERENCES Company(CompaniesHouseIdentifier),
      FilingDate TIMESTAMP NOT NULL,
 
      AverageTimeToPay NUMERIC(256,2),
@@ -16,13 +16,13 @@ CREATE TABLE Report(
      StartDate TIMESTAMP,
      EndDate TIMESTAMP,
 
-     PaymentTerms NVARCHAR(500),
-     DisputeResolution NVARCHAR(500),
+     PaymentTerms VARCHAR(500),
+     DisputeResolution VARCHAR(500),
 
-     OfferEInvoicing BIT DEFAULT 0,
-     OfferSupplyChainFinance BIT DEFAULT 0,
-     RetentionChargesInPolicy BIT DEFAULT 0,
-     RetentionChargesInPast BIT DEFAULT 0,
+     OfferEInvoicing BOOLEAN DEFAULT FALSE,
+     OfferSupplyChainFinance BOOLEAN DEFAULT FALSE,
+     RetentionChargesInPolicy BOOLEAN DEFAULT FALSE,
+     RetentionChargesInPast BOOLEAN DEFAULT FALSE,
 
-     PaymentCodes NVARCHAR(500)
+     PaymentCodes VARCHAR(500)
 );

@@ -7,9 +7,7 @@ import org.junit.Test;
 import play.db.Database;
 import play.db.Databases;
 
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,6 +21,7 @@ public class JdbcCommunicatorTest {
 
     private Database testDb;
     private Flyway flyway;
+    private JdbcCommunicator communicator;
 
     @Before
     public void setUp() throws Exception {
@@ -32,6 +31,9 @@ public class JdbcCommunicatorTest {
         flyway.setDataSource(testDb.getDataSource());
         flyway.setLocations("db/migration");
         flyway.clean();
+
+        communicator = new JdbcCommunicator(testDb);
+        communicator.InitialiseSchema();
     }
 
     @After
@@ -41,9 +43,6 @@ public class JdbcCommunicatorTest {
 
     @Test
     public void initialiseSchema() throws Exception {
-        JdbcCommunicator communicator = new JdbcCommunicator(testDb);
-
-        communicator.InitialiseSchema();
         assertTrue("There should at least one migration, but there arent", flyway.info().all().length > 0);
         assertEquals(String.format("All migrations should be applied, but only %s got applied", flyway.info().applied().length),
                 flyway.info().all().length, flyway.info().applied().length);
@@ -51,9 +50,6 @@ public class JdbcCommunicatorTest {
 
     @Test
     public void execute() throws Exception {
-        JdbcCommunicator communicator = new JdbcCommunicator(testDb);
-        communicator.InitialiseSchema();
-
         List<Integer> result = communicator.ExecuteQuery("SELECT ?", new Object[] {42}, x -> x.getInt(1));
 
         assertEquals("A result should be returned", 1, result.size());
@@ -62,9 +58,6 @@ public class JdbcCommunicatorTest {
 
     @Test
     public void executeUpdate() throws Exception {
-        JdbcCommunicator communicator = new JdbcCommunicator(testDb);
-        communicator.InitialiseSchema();
-
         List<Integer> insertedKeys = communicator.ExecuteUpdate("INSERT INTO Report (CompaniesHouseIdentifier, Identifier, FilingDate) VALUES (?,?,?);",
                 new Object[]{"120", 999, new GregorianCalendar().getTime()},
                 x -> x.getInt(1));
@@ -75,12 +68,18 @@ public class JdbcCommunicatorTest {
 
     @Test
     public void execute_ReturnsEmptyResultOnError() {
-        JdbcCommunicator communicator = new JdbcCommunicator(testDb);
-        communicator.InitialiseSchema();
-
         List<Integer> result = communicator.ExecuteQuery("SELECT ?", new Object[]{}, x -> x.getInt(1));
 
         assertEquals("An exception should result in an empty result set", 0, result.size());
     }
 
+    @Test
+    public void execute_CanHandleDate() throws Exception {
+        Date date = new Date();
+        List<Calendar> result = communicator.ExecuteQuery("SELECT ?", new Object[]{date}, x -> x.getCalendar(1));
+
+        assertEquals(date, result.get(0).getTime());
+
+
+    }
 }

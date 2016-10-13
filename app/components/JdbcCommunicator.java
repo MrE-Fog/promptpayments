@@ -2,10 +2,13 @@ package components;
 
 import com.google.inject.Inject;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.MigrationInfo;
+import org.flywaydb.core.api.callback.FlywayCallback;
 import org.flywaydb.core.internal.dbsupport.sybase.ase.SybaseASEDbSupport;
 import play.Logger;
 import play.db.Database;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -45,12 +48,16 @@ class JdbcCommunicator {
     }
 
     private <T> List<T> Execute(String sql, Object[] parameters, Mapper<T> mapper, ResultSetGenerator getResultSet) {
-        Connection conn;
+        Connection conn = null;
         try {
             conn = db.getConnection();
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             for (int i = 0; i < parameters.length; i++) {
-                statement.setObject(i + 1, parameters[i]);
+                if (parameters[i] instanceof  java.util.Date) {
+                    statement.setTimestamp(i + 1, new Timestamp(((java.util.Date) parameters[i]).getTime()));
+                } else {
+                    statement.setObject(i + 1, parameters[i]);
+                }
             }
             ResultSet results = getResultSet.apply(statement);
             List<T> rtn = new ArrayList<>();
@@ -63,6 +70,14 @@ class JdbcCommunicator {
         }
         catch(Exception e) {
             Logger.error("Could not run query "+sql,e);
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e1) {
+                    Logger.error("Could not close connection :(");
+                }
+            }
+
             return new ArrayList<>();
         }
 

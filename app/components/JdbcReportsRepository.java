@@ -68,7 +68,7 @@ final class JdbcReportsRepository implements ReportsRepository {
     @Override
     public Option<ReportModel> getReport(String company, int reportId) {
         List<ReportModel> reportModels = jdbcCommunicator.ExecuteQuery(
-                "SELECT TOP 1 Identifier, FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ?",
+                "SELECT Identifier, FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ? LIMIT 1",
                 new Object[]{company, reportId},
                 _ReportMapper(0));
 
@@ -158,9 +158,10 @@ final class JdbcReportsRepository implements ReportsRepository {
         minDate.add(Calendar.MONTH, -1 * months);
 
         return jdbcCommunicator.ExecuteQuery(
-                "SELECT TOP 100000 Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes " +
+                "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes " +
                 "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
-                "WHERE Report.FilingDate >= ?",
+                "WHERE Report.FilingDate >= ?" +
+                "LIMIT 100000",
                 new Object[] {new Timestamp(minDate.getTimeInMillis())},
                 x -> new F.Tuple<>(
                         _CompanySummaryMapper.map(x),
@@ -170,7 +171,7 @@ final class JdbcReportsRepository implements ReportsRepository {
 
     private Option<CompanySummary> GetCompanySummaryByIdentifier(String identifier) {
         List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
-                "SELECT TOP 1 Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier = ?",
+                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier = ? LIMIT 1",
                 new String[]{identifier},
                 _CompanySummaryMapper);
         if (companySummaries.isEmpty()) {

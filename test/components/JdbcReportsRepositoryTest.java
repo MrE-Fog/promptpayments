@@ -1,6 +1,7 @@
 package components;
 
 import models.*;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import play.libs.F;
@@ -11,6 +12,7 @@ import utils.UtcTimeProvider;
 
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,11 +23,21 @@ import static org.junit.Assert.assertTrue;
 public class JdbcReportsRepositoryTest {
 
     private ReportsRepository jdbcReportsRepository;
+    private MockRepositoryCreator mockRepositoryCreator;
+
+    public JdbcReportsRepositoryTest() throws Exception {
+    }
 
     @Before
     public void setUp() throws Exception {
         TimeProvider timeProvider = new MockUtcTimeProvider(2016,10,1);
-        jdbcReportsRepository = MockRepositoryCreator.CreateMockReportsRepository(timeProvider);
+        mockRepositoryCreator = new MockRepositoryCreator(timeProvider);
+        jdbcReportsRepository = mockRepositoryCreator.getMockRepository();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        mockRepositoryCreator.shutdown();
     }
 
     @Test
