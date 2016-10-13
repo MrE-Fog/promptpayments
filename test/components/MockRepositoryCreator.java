@@ -26,12 +26,12 @@ class MockRepositoryCreator {
 
     public MockRepositoryCreator(TimeProvider timeProvider) {
         Map<String, String> config = new HashMap<>();
-        config.put("user", "play");
+        config.put("user", System.getenv("JDBC_DATABASE_USERNAME"));
 
         testDb = Databases.createFrom(
                 "play",
                 "org.postgresql.Driver",
-                "jdbc:" + System.getenv("DATABASE_URL"),
+                System.getenv("JDBC_DATABASE_URL"),
                 config);
 
         try {
