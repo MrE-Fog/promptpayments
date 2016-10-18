@@ -1,4 +1,12 @@
 @(model: ReportModel, company: CompanySummary)
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">Home</a></li>
+        <li><a href="@routes.SearchReport.searchstart()">Find reports</a></li>
+        <li><a href="@routes.SearchReport.company(company.CompaniesHouseIdentifier,0)">@company.Name</a></li>
+        <li><a href="@routes.ViewReport.view(company.CompaniesHouseIdentifier, model.Info.Identifier)">@model.Info.UiDateString()</a></li>
+    </ol>
+</div>
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">
         Payment report by @company.Name

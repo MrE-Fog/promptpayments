@@ -1,4 +1,11 @@
 @(model: CompanyModel)
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">Home</a></li>
+        <li><a href="@routes.SearchReport.searchstart()">Find reports</a></li>
+        <li><a href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier,0)">@model.Info.Name</a></li>
+    </ol>
+</div>
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">
         Payment reports filed by @model.Info.Name

@@ -1,5 +1,11 @@
 @import components.PagedList
 @(searchTerm: String, results: PagedList[CompanySummary])
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">Home</a></li>
+        <li><a href="@routes.SearchReport.searchstart()">Find reports</a></li>
+    </ol>
+</div>
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">
         Companies matching @searchTerm
