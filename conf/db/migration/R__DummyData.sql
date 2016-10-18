@@ -1,3 +1,6 @@
+DELETE FROM Company;
+DELETE FROM Report;
+
 INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Nicecorp', '120');
 INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Cookies Ltd.', '121');
 INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Eigencode Ltd.', '122');

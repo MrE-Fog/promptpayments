@@ -3,10 +3,9 @@ package models;
 import utils.DecimalConverter;
 
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import static utils.DecimalConverter.getBigDecimal;
 
 /**
  * Model to be populated by web form
@@ -14,11 +13,11 @@ import static utils.DecimalConverter.getBigDecimal;
 public class ReportFilingModel {
     private String TargetCompanyCompaniesHouseIdentifier;
 
-    private Double AverageTimeToPay;
-    private Double PercentInvoicesPaidBeyondAgreedTerms;
-    private Double PercentInvoicesWithin30Days;
-    private Double PercentInvoicesWithin60Days;
-    private Double PercentInvoicesBeyond60Days;
+    private String AverageTimeToPay;
+    private String PercentInvoicesPaidBeyondAgreedTerms;
+    private String PercentInvoicesWithin30Days;
+    private String PercentInvoicesWithin60Days;
+    private String PercentInvoicesBeyond60Days;
 
     private int StartDate_year;
     private int StartDate_month;
@@ -39,21 +38,45 @@ public class ReportFilingModel {
 
     /* Formatted getters */
 
-    public BigDecimal getAverageTimeToPayAsDecimal() {return DecimalConverter.getBigDecimal(AverageTimeToPay); }
-    public BigDecimal getPercentInvoicesPaidBeyondAgreedTermsAsDecimal() {return DecimalConverter.getBigDecimal(PercentInvoicesPaidBeyondAgreedTerms); }
-    public BigDecimal getPercentInvoicesWithin30DaysAsDecimal() {return DecimalConverter.getBigDecimal(PercentInvoicesWithin30Days); }
-    public BigDecimal getPercentInvoicesWithin60DaysAsDecimal() {return DecimalConverter.getBigDecimal(PercentInvoicesWithin60Days); }
-    public BigDecimal getPercentInvoicesBeyond60DaysAsDecimal() {return DecimalConverter.getBigDecimal(PercentInvoicesBeyond60Days); }
+    public BigDecimal getAverageTimeToPayAsDecimal() {
+        return DecimalConverter.getBigDecimal(AverageTimeToPay);
+    }
 
-    public Calendar getStartDate() {return makeUtcDate(StartDate_year, StartDate_month, StartDate_day);}
-    public Calendar getEndDate() {return makeUtcDate(EndDate_year, EndDate_month, EndDate_day);}
+    public BigDecimal getPercentInvoicesPaidBeyondAgreedTermsAsDecimal() {
+        return DecimalConverter.getBigDecimal(PercentInvoicesPaidBeyondAgreedTerms);
+    }
 
-    public String getStartDateString() {return new UiDate(getStartDate()).ToDateString(); }
-    public String getEndDateString() {return new UiDate(getEndDate()).ToDateString(); }
-    /* Getters and setters */
+    public BigDecimal getPercentInvoicesWithin30DaysAsDecimal() {
+        return DecimalConverter.getBigDecimal(PercentInvoicesWithin30Days);
+    }
+
+    public BigDecimal getPercentInvoicesWithin60DaysAsDecimal() {
+        return DecimalConverter.getBigDecimal(PercentInvoicesWithin60Days);
+    }
+
+    public BigDecimal getPercentInvoicesBeyond60DaysAsDecimal() {
+        return DecimalConverter.getBigDecimal(PercentInvoicesBeyond60Days);
+    }
+
+    public Calendar getStartDate() {
+        return tryMakeUtcDate(StartDate_year, StartDate_month, StartDate_day);
+    }
+
+    public Calendar getEndDate() {
+        return tryMakeUtcDate(EndDate_year, EndDate_month, EndDate_day);
+    }
+
+    public String getStartDateString() {
+        return new UiDate(getStartDate()).ToDateString();
+    }
+
+    public String getEndDateString() {
+        return new UiDate(getEndDate()).ToDateString();
+    }
+
 
     /**
-     * @deprecated ORM ONLY
+     * @deprecated ORM ONLY, use MakeEmptyModelForTarget() instead.
      */
     @Deprecated
     public ReportFilingModel() {
@@ -70,11 +93,11 @@ public class ReportFilingModel {
         ReportFilingModel rfm = new ReportFilingModel();
 
         rfm.TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
-        rfm.AverageTimeToPay = averageTimeToPay;
-        rfm.PercentInvoicesPaidBeyondAgreedTerms = percentInvoicesPaidBeyondAgreedTerms;
-        rfm.PercentInvoicesWithin30Days = percentInvoicesWithin30Days;
-        rfm.PercentInvoicesWithin60Days = percentInvoicesWithin60Days;
-        rfm.PercentInvoicesBeyond60Days = percentInvoicesBeyond60Days;
+        rfm.AverageTimeToPay = "" + averageTimeToPay;
+        rfm.PercentInvoicesPaidBeyondAgreedTerms = "" + percentInvoicesPaidBeyondAgreedTerms;
+        rfm.PercentInvoicesWithin30Days = "" + percentInvoicesWithin30Days;
+        rfm.PercentInvoicesWithin60Days = "" + percentInvoicesWithin60Days;
+        rfm.PercentInvoicesBeyond60Days = "" + percentInvoicesBeyond60Days;
         rfm.StartDate_year = startDate_year;
         rfm.StartDate_month = startDate_month;
         rfm.StartDate_day = startDate_day;
@@ -91,6 +114,8 @@ public class ReportFilingModel {
 
         return rfm;
     }
+
+    /* Getters and setters */
 
     public String getTargetCompanyCompaniesHouseIdentifier() {
         return TargetCompanyCompaniesHouseIdentifier;
@@ -148,43 +173,43 @@ public class ReportFilingModel {
         EndDate_day = endDate_day;
     }
 
-    public Double getAverageTimeToPay() {
+    public String getAverageTimeToPay() {
         return AverageTimeToPay;
     }
 
-    public void setAverageTimeToPay(Double averageTimeToPay) {
+    public void setAverageTimeToPay(String averageTimeToPay) {
         AverageTimeToPay = averageTimeToPay;
     }
 
-    public Double getPercentInvoicesPaidBeyondAgreedTerms() {
+    public String getPercentInvoicesPaidBeyondAgreedTerms() {
         return PercentInvoicesPaidBeyondAgreedTerms;
     }
 
-    public void setPercentInvoicesPaidBeyondAgreedTerms(Double percentInvoicesPaidBeyondAgreedTerms) {
+    public void setPercentInvoicesPaidBeyondAgreedTerms(String percentInvoicesPaidBeyondAgreedTerms) {
         PercentInvoicesPaidBeyondAgreedTerms = percentInvoicesPaidBeyondAgreedTerms;
     }
 
-    public Double getPercentInvoicesWithin30Days() {
+    public String getPercentInvoicesWithin30Days() {
         return PercentInvoicesWithin30Days;
     }
 
-    public void setPercentInvoicesWithin30Days(Double percentInvoicesWithin30Days) {
+    public void setPercentInvoicesWithin30Days(String percentInvoicesWithin30Days) {
         PercentInvoicesWithin30Days = percentInvoicesWithin30Days;
     }
 
-    public Double getPercentInvoicesWithin60Days() {
+    public String getPercentInvoicesWithin60Days() {
         return PercentInvoicesWithin60Days;
     }
 
-    public void setPercentInvoicesWithin60Days(Double percentInvoicesWithin60Days) {
+    public void setPercentInvoicesWithin60Days(String percentInvoicesWithin60Days) {
         PercentInvoicesWithin60Days = percentInvoicesWithin60Days;
     }
 
-    public Double getPercentInvoicesBeyond60Days() {
+    public String getPercentInvoicesBeyond60Days() {
         return PercentInvoicesBeyond60Days;
     }
 
-    public void setPercentInvoicesBeyond60Days(Double percentInvoicesBeyond60Days) {
+    public void setPercentInvoicesBeyond60Days(String percentInvoicesBeyond60Days) {
         PercentInvoicesBeyond60Days = percentInvoicesBeyond60Days;
     }
 
@@ -244,10 +269,16 @@ public class ReportFilingModel {
         RetentionChargesInPast = retentionChargesInPast;
     }
 
-    private Calendar makeUtcDate(int year, int month, int day) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        calendar.set(year,month,day);
-        return calendar;
+    private Calendar tryMakeUtcDate(int year, int month, int day) {
+        try {
+            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            calendar.setLenient(false);
+            calendar.set(year, month, day);
+            calendar.getTime(); // this throws if the year-month-day combination is invalid.
+            return calendar;
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 }
 

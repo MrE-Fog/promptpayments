@@ -4,11 +4,8 @@ import com.google.inject.Inject;
 import components.CompaniesHouseCommunicator;
 import components.PagedList;
 import components.ReportsRepository;
-import models.CompanySummary;
-import models.FilingData;
-import models.ReportFilingModel;
+import models.*;
 import utils.TimeProvider;
-import models.UiDate;
 
 import java.io.IOException;
 
@@ -48,16 +45,17 @@ public class FileReportOrchestrator {
         ));
     }
 
-    public OrchestratorResult<FilingData> tryValidateReportFilingModel(String token, ReportFilingModel model) {
+    public OrchestratorResult<ValidatedFilingData> tryValidateReportFilingModel(String token, ReportFilingModel model) {
         CompanySummary company = companiesHouseCommunicator.tryGetCompany(model.getTargetCompanyCompaniesHouseIdentifier());
         if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        // Any form validation would go here.
+        ReportFilingModelValidation validation = new ReportFilingModelValidationImpl(model, timeProvider.Now());
 
-        return OrchestratorResult.fromSucccess(new FilingData(
+        return OrchestratorResult.fromSucccess(new ValidatedFilingData(
                 model,
+                validation,
                 company,
                 new UiDate(timeProvider.Now())
         ));

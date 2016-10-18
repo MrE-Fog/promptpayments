@@ -115,7 +115,7 @@ public class FileReportOrchestratorTest {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
         when(communicator.tryGetCompany("122")).thenReturn(companyModel.Info);
 
-        OrchestratorResult<FilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
+        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
 
         verify(communicator,times(1)).tryGetCompany("122");
 
@@ -129,7 +129,7 @@ public class FileReportOrchestratorTest {
     public void tryValidateReportFilingModel_newcompany() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("1234");
         when(communicator.tryGetCompany("1234")).thenReturn(new CompanySummary("Newcorp", "1234"));
-        OrchestratorResult<FilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
+        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
 
         verify(communicator, times(1)).tryGetCompany("1234");
 
@@ -141,7 +141,7 @@ public class FileReportOrchestratorTest {
     public void tryValidateReportFilingModel_nocompany() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
         when(communicator.tryGetCompany("122")).thenReturn(null);
-        OrchestratorResult<FilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
+        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
 
         verify(communicator, times(1)).tryGetCompany("122");
 

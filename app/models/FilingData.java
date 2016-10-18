@@ -1,7 +1,7 @@
 package models;
 
 /**
- * POCO to populate FileReport.file() and FileReport.reviewFiling()
+ * POCO to populate FileReport.file()
  */
 public class FilingData {
     public final ReportFilingModel model;
@@ -14,3 +14,4 @@ public class FilingData {
         this.date = date;
     }
 }
+

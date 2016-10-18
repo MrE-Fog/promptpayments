@@ -2,9 +2,7 @@ package controllers;
 
 import com.google.inject.Inject;
 import components.PagedList;
-import models.CompanySummary;
-import models.FilingData;
-import models.ReportFilingModel;
+import models.*;
 import orchestrators.FileReportOrchestrator;
 import orchestrators.OrchestratorResult;
 import play.data.Form;
@@ -62,25 +60,29 @@ public class FileReport extends PageController {
         String company = request().body().asFormUrlEncoded().get("companieshouseidentifier")[0];
         OrchestratorResult<FilingData> data = fileReportOrchestrator.tryMakeReportFilingModel("bullshitToken", company);
         if (data.success()) {
-            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
+            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), new AllOkReportFilingModelValidation(), data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
         } else {
             return status(401, data.message());
         }
     }
 
     public Result reviewFiling() {
-        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
+        OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
         if (data.success()) {
-            return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
+            if (data.get().validation.isValid()) {
+                return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
+            } else {
+                return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().validation, data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
+            }
         } else {
             return status(401, data.message());
         }
     }
 
     public Result editFiling() {
-        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
+        OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
         if (data.success()) {
-            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
+            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().validation, data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
         } else {
             return status(401, data.message());
         }
