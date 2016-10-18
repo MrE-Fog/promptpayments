@@ -17,6 +17,13 @@
 fieldset {
     margin-bottom: 2em;
 }
+.error-wrapper fieldset {
+    padding-left:20px;
+}
+
+.error fieldset {
+    padding-left:0;
+}
 
 #StartDate_day, #StartDate_month, #StartDate_year,
 #EndDate_day, #EndDate_month, #EndDate_year {

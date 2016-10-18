@@ -24,7 +24,7 @@
         </p>
     </div>
 }
-<form action="@routes.FileReport.reviewFiling()" method="POST">
+<form action="@routes.FileReport.reviewFiling()" method="POST" class="@{if (!validation.isValid()) "error-wrapper"}">
     <input type="hidden" id="TargetCompanyCompaniesHouseIdentifier" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
 
     <fieldset class="form-group">
