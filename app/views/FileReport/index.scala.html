@@ -1,18 +1,36 @@
-@import play.data.FormFactory
-<div class="scannable-wrapper">
-    <h1 class="heading-xlarge">File a payment report</h1>
-    <p class="lede">Provide information on the payment practices of your company</p>
-    <p>Press the button below to get started.</p>
-    <a href="@routes.FileReport.findCompanies()" class="button button-start">File a payment report</a>
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">Home</a></li>
+        <li><a href="@routes.FileReport.index()">Duty to report for large businesses</a></li>
+    </ol>
+</div>
 
-    <h2 class="heading-medium">Before you start</h2>
-    <p>Make sure to have everything you need to complete the process:</p>
-    <ul class="list list-bullet">
-        <li>Ensure you have your invoicing data ready. <a href="#">Learn more&hellip;</a></li>
-        <li>You will need your Companies House login credentials</li>
-        <li>Make sure you are authorised by Companies House to file reports for your company</li>
-    </ul>
-    <p>
-       <a href="@routes.Home.index()" class="link-back">Back</a>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">Duty to report for large businesses</h1>
+    <p class="lede">
+        If you work for a large business, you can learn about about
+        your duty to report on your payment practices, and file your reports here.
     </p>
+</div>
+<div class="grid-row">
+    <div class="column-one-half">
+        <h3 class="heading-medium">
+            <a href="@routes.FileReport.guidance()">
+                Guidance on the duty to report
+            </a>
+        </h3>
+        <p>
+            Find out if your business needs to report and how to do it.
+        </p>
+    </div>
+    <div class="column-one-half">
+        <h3 class="heading-medium">
+            <a href="@routes.FileReport.start()">
+                File a report
+            </a>
+        </h3>
+        <p>
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida.
+        </p>
+    </div>
 </div>

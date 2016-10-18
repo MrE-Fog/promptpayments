@@ -39,6 +39,8 @@ public class FileReport extends PageController {
 
 
     public Result index() {return ok(page(views.html.FileReport.index.render())); }
+    public Result start() {return ok(page(views.html.FileReport.start.render())); }
+    public Result guidance() {return ok(page(views.html.FileReport.guidance.render())); }
 
     public Result findCompanies() {return ok(page(views.html.FileReport.findCompanies.render())); }
 

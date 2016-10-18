@@ -6,6 +6,10 @@ Code stolen shamelessly from [lite-play-common](https://github.com/BISDigital/li
 
 ## How?!?!
 
+You'll need to set the following environment variables:
+- JDBC_DATABASE_URL, JDBC_DATABASE_USERNAME, JDBC_DATABASE_PASSWORD -- connection details for your to your postgres database
+- COMPANIESHOUSE_API -- the API key for companies house
+
 Your PC needs the following components
 
 - Java Runtime Environment
