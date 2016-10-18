@@ -27,18 +27,18 @@
 <form action="@routes.FileReport.reviewFiling()" method="POST">
     <input type="hidden" id="TargetCompanyCompaniesHouseIdentifier" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
 
-    <fieldset>
+    <fieldset class="form-group">
         <label class="form-label" for="TargetCompanyNamePublic">Company</label>
         <input class="form-control" type="text" disabled="disabled" id="TargetCompanyNamePublic" value="@company.Name">
     </fieldset>
 
 
-    <fieldset>
+    <fieldset class="form-group">
         <label class="form-label" for="FilingDate2">Filing date</label>
         <input class="form-control" type="text" disabled="disabled" id="FilingDate2" value="@date.ToFriendlyString()">
     </fieldset>
 
-    <fieldset class="@validation.validateStartDate().cssClass()">
+    <fieldset class="form-group @validation.validateStartDate().cssClass()">
         <label class="form-label">
             <span>Start date</span>
             <span class="error-message">@validation.validateStartDate().errorMessage()</span>
@@ -47,7 +47,7 @@
         @_formSelect("StartDate_month", model.get().getStartDate_month().toString(), datePicker.months)
         @_formSelect("StartDate_year", model.get().getStartDate_year().toString(), datePicker.years)
     </fieldset>
-    <fieldset class="@validation.validateEndDate().cssClass()">
+    <fieldset class="form-group @validation.validateEndDate().cssClass()">
         <label class="form-label">
             <span>End date</span>
             <span class="error-message">@validation.validateEndDate().errorMessage()</span>
@@ -56,14 +56,14 @@
         @_formSelect("EndDate_month", model.get().getEndDate_month().toString(), datePicker.months)
         @_formSelect("EndDate_year", model.get().getEndDate_year().toString(), datePicker.years)
     </fieldset>
-    <fieldset class="@validation.validateAverageTimeToPay().cssClass()">
+    <fieldset class="form-group @validation.validateAverageTimeToPay().cssClass()">
         <label class="form-label" for="RecordOne">
             <span>Average time to pay</span>
             <span class="error-message">@validation.validateAverageTimeToPay().errorMessage()</span>
         </label>
         <input class="form-control" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
     </fieldset>
-    <fieldset class="@validation.validatePercentInvoicesPaidBeyondAgreedTerms().cssClass()">
+    <fieldset class="form-group @validation.validatePercentInvoicesPaidBeyondAgreedTerms().cssClass()">
         <label class="form-label" for="RecordTwo">
             <span>Percentage of invoices paid later than agreed terms</span>
             <span class="error-message">@validation.validatePercentInvoicesPaidBeyondAgreedTerms().errorMessage()</span>
@@ -71,23 +71,23 @@
         <input class="form-control" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
     </fieldset>
 
-    <div class="@validation.validateTimePercentages().cssClass()">
+    <div class="form-group @validation.validateTimePercentages().cssClass()" style="margin-bottom:15px;">
         <span class="error-message">@validation.validateTimePercentages().errorMessage()</span>
-        <fieldset class="@validation.validatePercentInvoicesWithin30Days().cssClass()">
+        <fieldset class="form-group @validation.validatePercentInvoicesWithin30Days().cssClass()">
             <label class="form-label" for="RecordThree">
                 <span>Percentage of invoices paid within 30 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin30Days().errorMessage()</span>
             </label>
             <input class="form-control" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30DaysAsDecimal()">
         </fieldset>
-        <fieldset class="@validation.validatePercentInvoicesWithin60Days().cssClass()">
+        <fieldset class="form-group @validation.validatePercentInvoicesWithin60Days().cssClass()">
             <label class="form-label" for="RecordFour">
                 <span>Percentage of invoices paid within 31 to 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin60Days().errorMessage()</span>
             </label>
             <input class="form-control" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60DaysAsDecimal()">
         </fieldset>
-        <fieldset class="@validation.validatePercentInvoicesBeyond60Days().cssClass()">
+        <fieldset class="form-group @validation.validatePercentInvoicesBeyond60Days().cssClass()" style="margin-bottom:15px;">
             <label class="form-label" for="RecordFive">
                 <span>Percentage of invoices paid later than 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesBeyond60Days().errorMessage()</span>
@@ -96,14 +96,14 @@
         </fieldset>
     </div>
 
-    <fieldset class="@validation.validatePaymentTerms().cssClass()">
+    <fieldset class="form-group @validation.validatePaymentTerms().cssClass()">
         <label class="form-label" for="RecordSix">
             <span>Payment terms</span>
             <span class="error-message">@validation.validatePaymentTerms().errorMessage()</span>
         </label>
         <textarea class="form-control" id="RecordSix" name="PaymentTerms">@model.get().getPaymentTerms()</textarea>
     </fieldset>
-    <fieldset class="@validation.validateDisputeResolution().cssClass()">
+    <fieldset class="form-group @validation.validateDisputeResolution().cssClass()">
         <label class="form-label" for="RecordSeven">
             <span>Dispute resolution</span>
             <span class="error-message">@validation.validateDisputeResolution().errorMessage()</span>
@@ -172,7 +172,7 @@
         </label>
     </fieldset>
 
-    <fieldset class="@validation.validatePaymentCodes().cssClass()">
+    <fieldset class="form-group @validation.validatePaymentCodes().cssClass()">
         <label class="form-label" for="RecordEight">
             <span>Payment codes (optional)</span>
             <span class="error-message">@validation.validatePaymentCodes().errorMessage()</span>

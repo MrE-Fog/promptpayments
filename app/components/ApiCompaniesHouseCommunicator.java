@@ -3,7 +3,6 @@ package components;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.CompanySummary;
 import play.libs.Json;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.net.URL;

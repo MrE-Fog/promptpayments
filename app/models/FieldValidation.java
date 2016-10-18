@@ -15,7 +15,7 @@ public class FieldValidation {
 
     public String cssClass() {
         //slightly naughty convenience method
-        return isValid ? "form-group" : "form-group error";
+        return isValid ? "" : "error";
     }
 
     public boolean isOk() {
