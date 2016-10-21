@@ -5,6 +5,7 @@ import components.CompaniesHouseCommunicator;
 import components.PagedList;
 import components.ReportsRepository;
 import models.*;
+import play.mvc.Http;
 import utils.TimeProvider;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        if (!companiesHouseCommunicator.mayFileForCompany(token,companiesHouseIdentifier)) {
+        if (!reportsRepository.mayFileForCompany(token,companiesHouseIdentifier)) {
             return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         }
 
@@ -45,7 +46,7 @@ public class FileReportOrchestrator {
         ));
     }
 
-    public OrchestratorResult<ValidatedFilingData> tryValidateReportFilingModel(String token, ReportFilingModel model) {
+    public OrchestratorResult<ValidatedFilingData> tryValidateReportFilingModel(ReportFilingModel model) {
         CompanySummary company = companiesHouseCommunicator.tryGetCompany(model.getTargetCompanyCompaniesHouseIdentifier());
         if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
@@ -67,7 +68,7 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        if (!companiesHouseCommunicator.mayFileForCompany(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
+        if (!reportsRepository.mayFileForCompany(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
             return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         }
 
@@ -81,6 +82,28 @@ public class FileReportOrchestrator {
         } catch (IOException e) {
             e.printStackTrace();
             return OrchestratorResult.fromFailure("Internal error: Couldn't search companies");
+        }
+    }
+    String authorizedCallbackUri = "https://paymentdutyregister.herokuapp.com/FileReport/cb";
+
+
+    public String getAuthorizationUri(String companiesHouseIdentifier) {
+        return companiesHouseCommunicator.getAuthorizationUri(authorizedCallbackUri, companiesHouseIdentifier);
+    }
+
+    public OrchestratorResult<Http.Cookie> tryAuthorize(String code, String companiesHouseIdentifier) {
+        try {
+            String authTokenCookieName = "auth";
+            String authToken = companiesHouseCommunicator.verifyAuthCode(code, authorizedCallbackUri, companiesHouseIdentifier);
+            if (authToken != null) {
+                reportsRepository.linkAuthTokenToCompany(authToken, companiesHouseIdentifier);
+                return OrchestratorResult.fromSucccess(Http.Cookie.builder(authTokenCookieName, authToken).build());
+            }
+            return OrchestratorResult.fromFailure("Could not authenticate user");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return OrchestratorResult.fromFailure("Could not authenticate user");
         }
     }
 }

@@ -7,6 +7,7 @@ import orchestrators.FileReportOrchestrator;
 import orchestrators.OrchestratorResult;
 import play.data.Form;
 import play.data.FormFactory;
+import play.mvc.Http;
 import play.mvc.Result;
 import utils.DatePickerHelper;
 import utils.TimeProvider;
@@ -43,7 +44,30 @@ public class FileReport extends PageController {
     public Result findCompanies() {return ok(page(views.html.FileReport.findCompanies.render())); }
 
     public Result login(String companiesHouseIdentifier) {
-        return ok(page(views.html.FileReport.login.render(companiesHouseIdentifier)));
+        String authorizationUri = fileReportOrchestrator.getAuthorizationUri(companiesHouseIdentifier);
+        return redirect(authorizationUri);
+        //return ok(page(views.html.FileReport.login.render(companiesHouseIdentifier)));
+    }
+
+    public Result loginCallback(String state, String code) {
+        OrchestratorResult<Http.Cookie> result = fileReportOrchestrator.tryAuthorize(code, state);
+        if (result.success()) {
+            response().setCookie(result.get());
+            OrchestratorResult<FilingData> model = fileReportOrchestrator.tryMakeReportFilingModel(result.get().value(), state);
+            if (model.success()) {
+                return ok(page(views.html.FileReport.file.render(
+                        reportForm.fill(model.get().model),
+                        new AllOkReportFilingModelValidation(),
+                        model.get().company,
+                        model.get().date,
+                        new DatePickerHelper(timeProvider)
+                )));
+            } else {
+                return status(500, model.message());
+            }
+        } else {
+            return status(500, result.message());
+        }
     }
 
     public Result companies(int page) {
@@ -56,18 +80,8 @@ public class FileReport extends PageController {
         }
     }
 
-    public Result file() {
-        String company = request().body().asFormUrlEncoded().get("companieshouseidentifier")[0];
-        OrchestratorResult<FilingData> data = fileReportOrchestrator.tryMakeReportFilingModel("bullshitToken", company);
-        if (data.success()) {
-            return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), new AllOkReportFilingModelValidation(), data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
-        } else {
-            return status(401, data.message());
-        }
-    }
-
     public Result reviewFiling() {
-        OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
+        OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
         if (data.success()) {
             if (data.get().validation.isValid()) {
                 return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
@@ -80,7 +94,7 @@ public class FileReport extends PageController {
     }
 
     public Result editFiling() {
-        OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel("bullshitToken", reportForm.bindFromRequest(request()).get());
+        OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
         if (data.success()) {
             return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().validation, data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
         } else {
@@ -90,7 +104,7 @@ public class FileReport extends PageController {
 
     public Result submitFiling() {
         ReportFilingModel model = reportForm.bindFromRequest(request()).get();
-        OrchestratorResult<Integer> resultingId = fileReportOrchestrator.tryFileReport("bullshitToken", model);
+        OrchestratorResult<Integer> resultingId = fileReportOrchestrator.tryFileReport(request().cookie("auth").value(), model);
         if (resultingId.success()) {
             return redirect(routes.ViewReport.view(model.getTargetCompanyCompaniesHouseIdentifier(), resultingId.get()));
         } else {

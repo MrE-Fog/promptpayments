@@ -64,7 +64,7 @@ public class FileReportOrchestratorTest {
     public void tryMakeReportFilingModel() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
 
-        when(communicator.mayFileForCompany("somestuff", "122")).thenReturn(true);
+        when(reportsRepository.mayFileForCompany("somestuff", "122")).thenReturn(true);
         when(communicator.tryGetCompany("122")).thenReturn(companyModel.Info);
         
         OrchestratorResult<FilingData> filingData = orchestrator.tryMakeReportFilingModel("somestuff", "122");
@@ -92,7 +92,7 @@ public class FileReportOrchestratorTest {
     @Test
     public void tryMakeReportFilingModel_newcompany() throws Exception {
         when(communicator.tryGetCompany("1234")).thenReturn(new CompanySummary("New corp", "1234"));
-        when(communicator.mayFileForCompany("data", "1234")).thenReturn(true);
+        when(reportsRepository.mayFileForCompany("data", "1234")).thenReturn(true);
 
         OrchestratorResult<FilingData> data = orchestrator.tryMakeReportFilingModel("data", "1234");
         assertTrue(data.success());
@@ -104,7 +104,7 @@ public class FileReportOrchestratorTest {
     @Test
     public void tryMakeReportFilingModel_noauthority() throws Exception {
         when(communicator.tryGetCompany("120")).thenReturn(noAuthorityCompanyModel.Info);
-        when(communicator.mayFileForCompany("somestuff","120")).thenReturn(false);
+        when(reportsRepository.mayFileForCompany("somestuff","120")).thenReturn(false);
         OrchestratorResult<FilingData> filingData = orchestrator.tryMakeReportFilingModel("somestuff", "120");
         verify(communicator, times(1)).tryGetCompany("120");
         assertFailureResponse(filingData);
@@ -115,7 +115,7 @@ public class FileReportOrchestratorTest {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
         when(communicator.tryGetCompany("122")).thenReturn(companyModel.Info);
 
-        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
+        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel(rfm);
 
         verify(communicator,times(1)).tryGetCompany("122");
 
@@ -129,7 +129,7 @@ public class FileReportOrchestratorTest {
     public void tryValidateReportFilingModel_newcompany() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("1234");
         when(communicator.tryGetCompany("1234")).thenReturn(new CompanySummary("Newcorp", "1234"));
-        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
+        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel(rfm);
 
         verify(communicator, times(1)).tryGetCompany("1234");
 
@@ -141,7 +141,7 @@ public class FileReportOrchestratorTest {
     public void tryValidateReportFilingModel_nocompany() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
         when(communicator.tryGetCompany("122")).thenReturn(null);
-        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel("somestuff", rfm);
+        OrchestratorResult<ValidatedFilingData> filingData = orchestrator.tryValidateReportFilingModel(rfm);
 
         verify(communicator, times(1)).tryGetCompany("122");
 
@@ -152,7 +152,7 @@ public class FileReportOrchestratorTest {
     public void tryFileReport() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
 
-        when(communicator.mayFileForCompany("somestuff", "122")).thenReturn(true);
+        when(reportsRepository.mayFileForCompany("somestuff", "122")).thenReturn(true);
         when(communicator.tryGetCompany("122")).thenReturn(companyModel.Info);
 
         when(reportsRepository.TryFileReport(eq(rfm), eq(companyModel.Info), any())).thenReturn(42);
@@ -171,7 +171,7 @@ public class FileReportOrchestratorTest {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("1234");
         CompanySummary newCorp = new CompanySummary("New Corp", "1234");
 
-        when(communicator.mayFileForCompany("somestuff", "1234")).thenReturn(true);
+        when(reportsRepository.mayFileForCompany("somestuff", "1234")).thenReturn(true);
         when(communicator.tryGetCompany("1234")).thenReturn(newCorp);
 
         when(reportsRepository.TryFileReport(eq(rfm), eq(newCorp), any())).thenReturn(42);
@@ -205,7 +205,7 @@ public class FileReportOrchestratorTest {
     public void tryFileReport_noauthority() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("120");
 
-        when(communicator.mayFileForCompany("somestuff", "120")).thenReturn(false);
+        when(reportsRepository.mayFileForCompany("somestuff", "120")).thenReturn(false);
 
         OrchestratorResult<Integer> filingData = orchestrator.tryFileReport("somestuff", rfm);
 

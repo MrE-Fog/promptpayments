@@ -30,12 +30,4 @@ public class ApiCompaniesHouseCommunicatorTest {
         assertEquals("EIGENCODE LTD", new ApiCompaniesHouseCommunicator().tryGetCompany("10203299").Name);
         assertNull(new ApiCompaniesHouseCommunicator().tryGetCompany("123"));
     }
-
-    @Test
-    public void mayFileForCompany() throws Exception {
-        assertTrue(new ApiCompaniesHouseCommunicator().mayFileForCompany("something","10203299"));
-        assertFalse(new ApiCompaniesHouseCommunicator().mayFileForCompany("something","123"));
-        assertFalse(new ApiCompaniesHouseCommunicator().mayFileForCompany(null,"123"));
-        assertFalse(new ApiCompaniesHouseCommunicator().mayFileForCompany("something",null));
-    }
 }

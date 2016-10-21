@@ -83,10 +83,9 @@ public class VisualTest extends PageController {
                 views.html.Reports.company.render(healthyCompanyModel),
 
                 views.html.FileReport.index.render(),
-                views.html.FileReport.login.render("123"),
-                views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 3, 3), "healthy company"),
-                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), null, healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), null, healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
+                    views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 3, 3), "healthy company"),
+                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time))
 
         )).toList());

@@ -26,4 +26,8 @@ public interface ReportsRepository {
     int TryFileReport(ReportFilingModel rfm, CompanySummary company, Calendar filingDate);
 
     List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months);
+
+    boolean linkAuthTokenToCompany(String authToken, String companiesHouseIdentifier);
+
+    boolean mayFileForCompany(String oAuthToken, String targetCompanyCompaniesHouseIdentifier);
 }

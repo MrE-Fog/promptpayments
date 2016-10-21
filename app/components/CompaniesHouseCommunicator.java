@@ -4,6 +4,7 @@ import com.google.inject.ImplementedBy;
 import models.CompanySummary;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -13,8 +14,9 @@ import java.util.List;
  */
 @ImplementedBy(ApiCompaniesHouseCommunicator.class)
 public interface CompaniesHouseCommunicator {
-    boolean mayFileForCompany(String oAuthToken, String companiesHouseIdentifier);
+    String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier);
     PagedList<CompanySummary> searchCompanies(String search, int page, int itemsPerPage) throws IOException;
+    String verifyAuthCode(String authCode, String redirectUri, String companiesHouseIdentifier) throws IOException;
     CompanySummary tryGetCompany(String s);
 }
 

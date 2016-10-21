@@ -169,6 +169,29 @@ final class JdbcReportsRepository implements ReportsRepository {
 
     }
 
+    @Override
+    public boolean linkAuthTokenToCompany(String authToken, String companiesHouseIdentifier) {
+        List<Boolean> result = jdbcCommunicator.ExecuteUpdate(
+                "INSERT INTO AuthTokens (Token, CompaniesHouseIdentifier, LoggingDate) SELECT ?, ?, ? " +
+                        "WHERE NOT EXISTS (SELECT * FROM AuthTokens WHERE Token = ?)",
+                new Object[]{authToken, companiesHouseIdentifier, timeProvider.Now().getTime(), authToken},
+                x -> true
+        );
+        return !result.isEmpty();
+    }
+
+    @Override
+    public boolean mayFileForCompany(String oAuthToken, String targetCompanyCompaniesHouseIdentifier) {
+        Calendar yesterday = timeProvider.Now();
+        yesterday.add(Calendar.DATE, -1);
+
+        List<Boolean> result = jdbcCommunicator.ExecuteQuery("SELECT 1 FROM AuthTokens WHERE Token = ? AND CompaniesHouseIdentifier = ? AND LoggingDate > ?",
+                new Object[]{oAuthToken, targetCompanyCompaniesHouseIdentifier, yesterday.getTime()},
+                x -> true);
+        //todo: timeout
+        return !result.isEmpty();
+    }
+
     private Option<CompanySummary> GetCompanySummaryByIdentifier(String identifier) {
         List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
                 "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier = ? LIMIT 1",
