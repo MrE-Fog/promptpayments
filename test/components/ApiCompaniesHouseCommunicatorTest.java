@@ -30,4 +30,16 @@ public class ApiCompaniesHouseCommunicatorTest {
         assertEquals("EIGENCODE LTD", new ApiCompaniesHouseCommunicator().tryGetCompany("10203299").Name);
         assertNull(new ApiCompaniesHouseCommunicator().tryGetCompany("123"));
     }
+
+    //@Test
+    public void oauth() throws Exception {
+        String url = new ApiCompaniesHouseCommunicator().getAuthorizationUri("https://paymentdutyregister.herokuapp.com/FileReport/cb", "10203299");
+
+        new ApiCompaniesHouseCommunicator().verifyAuthCode(
+                "iLwmKNd5-TX2CzFvQc2ANDxv-0c3nLS7fdVALdK7TI8",
+                "https://paymentdutyregister.herokuapp.com/FileReport/cb",
+                "10203299"
+        );
+
+    }
 }
