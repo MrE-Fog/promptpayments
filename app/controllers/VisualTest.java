@@ -36,7 +36,7 @@ public class VisualTest extends PageController {
 
     public Result index() {
 
-        Calendar time = new MockUtcTimeProvider(2016,9,1).Now();
+        Calendar time = new MockUtcTimeProvider(2016, 9, 1).Now();
         ReportSummary healthyReportSummary = new ReportSummary(1, time);
 
         ReportModel healthyReportModel = new ReportModel(
@@ -47,8 +47,8 @@ public class VisualTest extends PageController {
                 new BigDecimal("15.00"),
                 new BigDecimal("5.00"),
 
-                new MockUtcTimeProvider(2016,0,0).Now(),
-                new MockUtcTimeProvider(2016,5,0).Now(),
+                new MockUtcTimeProvider(2016, 0, 0).Now(),
+                new MockUtcTimeProvider(2016, 5, 0).Now(),
 
                 "User-supplied description of payment terms",
                 "User-supplied description of dispute resolution",
@@ -60,7 +60,7 @@ public class VisualTest extends PageController {
                 "Prompt Payment Code"
         );
 
-        ReportModel emptyReportModel = new ReportModel(healthyReportSummary, null, null, null, null, null, new MockUtcTimeProvider(2016,0,1).Now(), new MockUtcTimeProvider(2016,5,30).Now(), null, null, false, false, false, false, null);
+        ReportModel emptyReportModel = new ReportModel(healthyReportSummary, null, null, null, null, null, new MockUtcTimeProvider(2016, 0, 1).Now(), new MockUtcTimeProvider(2016, 5, 30).Now(), null, null, false, false, false, false, null);
         CompanySummary healthyCompanySummary = new CompanySummary("Eigencode Ltd.", "123");
 
         CompanyModel healthyCompanyModel = new CompanyModel(healthyCompanySummary, new PagedList<>(Arrays.asList(healthyReportSummary, healthyReportSummary, healthyReportSummary), 6, 0, 3));
@@ -68,6 +68,10 @@ public class VisualTest extends PageController {
         ReportFilingModel newReportFilingModel = ReportFilingModel.MakeEmptyModelForTarget("123");
 
         ReportFilingModel completeReportFilingModel = getCompleteFilingModel();
+        ReportFilingModel faultyReportFilingModel = getFaultyFilingModel();
+        ReportFilingModel dateswappedFilingModel = getDateswappedFilingModel();
+
+
         Html html = HtmlFormat.fill(JavaConversions.asScalaBuffer(Arrays.asList(
 
                 views.html.Home.index.render(),
@@ -83,9 +87,11 @@ public class VisualTest extends PageController {
                 views.html.Reports.company.render(healthyCompanyModel),
 
                 views.html.FileReport.index.render(),
-                    views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 3, 3), "healthy company"),
+                views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 3, 3), "healthy company"),
                 views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(dateswappedFilingModel), new ReportFilingModelValidationImpl(dateswappedFilingModel, time), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time))
 
         )).toList());
@@ -118,6 +124,50 @@ public class VisualTest extends PageController {
                 true,
                 false,
                 false);
+    }
+
+    public ReportFilingModel getFaultyFilingModel() {
+        return ReportFilingModel.makeReportFilingModel(
+                "122",
+                -100,
+                200,
+                50,
+                50,
+                50,
+
+                2020,
+                0,
+                1,
+
+                2019,
+                1,
+                31,
+
+                "",
+                "",
+                "",
+
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public ReportFilingModel getDateswappedFilingModel() {
+        ReportFilingModel completeFilingModel = getCompleteFilingModel();
+        int year = completeFilingModel.getStartDate_year();
+        int month = completeFilingModel.getStartDate_month();
+        int day = completeFilingModel.getStartDate_day();
+
+        completeFilingModel.setStartDate_year(completeFilingModel.getEndDate_year());
+        completeFilingModel.setStartDate_month(completeFilingModel.getEndDate_month());
+        completeFilingModel.setStartDate_day(completeFilingModel.getEndDate_day());
+
+        completeFilingModel.setEndDate_year(year);
+        completeFilingModel.setEndDate_month(month);
+        completeFilingModel.setEndDate_day(day);
+        return completeFilingModel;
     }
 }
 

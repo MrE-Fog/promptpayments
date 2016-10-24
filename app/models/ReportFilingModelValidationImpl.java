@@ -59,8 +59,8 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesPaidBeyondAgreedTerms() {
         if (model.getPercentInvoicesPaidBeyondAgreedTerms() == null || model.getPercentInvoicesPaidBeyondAgreedTerms().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_nonnegative);
-        if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_nonnegative);
+        if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
+        if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
     }
 
@@ -68,7 +68,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesWithin30Days() {
         if (model.getPercentInvoicesWithin30Days() == null || model.getPercentInvoicesWithin30Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesWithin30DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        if (model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_nonnegative);
+        if (model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
     }
@@ -77,7 +77,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesWithin60Days() {
         if (model.getPercentInvoicesWithin60Days() == null || model.getPercentInvoicesWithin60Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesWithin60DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        if (model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_nonnegative);
+        if (model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
     }
@@ -86,7 +86,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesBeyond60Days() {
         if (model.getPercentInvoicesBeyond60Days() == null || model.getPercentInvoicesBeyond60Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesBeyond60DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        if (model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_nonnegative);
+        if (model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
     }
