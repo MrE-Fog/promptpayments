@@ -126,7 +126,7 @@ public class VisualTest extends PageController {
                 false);
     }
 
-    public ReportFilingModel getFaultyFilingModel() {
+    private ReportFilingModel getFaultyFilingModel() {
         return ReportFilingModel.makeReportFilingModel(
                 "122",
                 -100,
@@ -154,7 +154,7 @@ public class VisualTest extends PageController {
         );
     }
 
-    public ReportFilingModel getDateswappedFilingModel() {
+    private ReportFilingModel getDateswappedFilingModel() {
         ReportFilingModel completeFilingModel = getCompleteFilingModel();
         int year = completeFilingModel.getStartDate_year();
         int month = completeFilingModel.getStartDate_month();
