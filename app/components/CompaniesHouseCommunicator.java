@@ -12,7 +12,7 @@ import java.util.List;
  *
  * Performs queries to Companies House
  */
-@ImplementedBy(ApiCompaniesHouseCommunicator.class)
+@ImplementedBy(MockCompaniesHouseCommunicator.class)
 public interface CompaniesHouseCommunicator {
     String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier);
     PagedList<CompanySummary> searchCompanies(String search, int page, int itemsPerPage) throws IOException;
