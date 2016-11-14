@@ -51,6 +51,14 @@ public class JdbcReportsRepositoryTest {
     }
 
     @Test
+    public void searchCOmpanies_ByNumber() throws Exception {
+        PagedList<CompanySummary> result = jdbcReportsRepository.searchCompanies(" 120\t", 0, 25);
+
+        assertTrue(result.size() == 1);
+        assertTrue(result.totalSize() == 1);
+    }
+
+    @Test
     public void searchCompanies_TruncatesSurroundingWhitespace() throws Exception {
         List<CompanySummary> result1 = jdbcReportsRepository.searchCompanies("    Cookies",0, 25);
         List<CompanySummary> result2 = jdbcReportsRepository.searchCompanies("\tCookies\t",0, 25);

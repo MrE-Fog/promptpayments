@@ -30,14 +30,15 @@ final class JdbcReportsRepository implements ReportsRepository {
 
     @Override
     public PagedList<CompanySummary> searchCompanies(String company, int page, int itemsPerPage) {
+        String companySanitised = "%" + company.trim() + "%";
         List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
-                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE LOWER(Name) LIKE LOWER(?) ORDER BY Name LIMIT ? OFFSET ?",
-                new Object[]{"%" + company.trim() + "%", itemsPerPage, page*itemsPerPage},
+                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE LOWER(Name) LIKE LOWER(?) OR CompaniesHouseIdentifier LIKE ? ORDER BY Name LIMIT ? OFFSET ?",
+                new Object[]{companySanitised, companySanitised, itemsPerPage, page*itemsPerPage},
                 _CompanySummaryMapper);
 
         Integer total = jdbcCommunicator.ExecuteQuery(
-                "SELECT COUNT(*) FROM Company WHERE LOWER(Name) LIKE LOWER(?)",
-                new Object[]{"%" + company.trim() + "%"},
+                "SELECT COUNT(*) FROM Company WHERE LOWER(Name) LIKE LOWER(?) OR CompaniesHouseIdentifier LIKE ?",
+                new Object[]{companySanitised, companySanitised},
                 x -> x.getInt(1)).get(0);
 
         return new PagedList<>(companySummaries, total, page, itemsPerPage);
