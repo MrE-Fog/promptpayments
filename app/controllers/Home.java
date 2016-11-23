@@ -26,8 +26,8 @@ public class Home extends PageController {
 
     public Result accessData() {return ok(page(views.html.Home.accessData.render()));}
 
-    public Result ifGuide(int page) {
-        return status(404);
+    public Result ifGuide() {
+        return ok(page(views.html.Home.ifGuide.render()));
     }
 
     public Result howGuide(int page) {
