@@ -176,8 +176,8 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompany_paged() throws Exception {
-        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel("120", 0, 3).get().ReportSummaries;
-        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel("120", 1, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 3).ReportSummaries;
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 1, 3).ReportSummaries;
 
         assertEquals("The number of results should not exceed page size", 3, result.size());
         assertEquals("Page number should be accurately reported", 0, result.pageNumber());
@@ -196,8 +196,8 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompany_paged_chronological() throws Exception {
-        PagedList<ReportSummary> result1 = jdbcReportsRepository.getCompanyModel("120", 0, 3).get().ReportSummaries;
-        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel("120", 1, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result1 = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 3).ReportSummaries;
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 1, 3).ReportSummaries;
 
         assertTrue(result1.get(0).getFilingDate().compareTo(result1.get(1).getFilingDate()) > 0);
         assertTrue(result1.get(1).getFilingDate().compareTo(result1.get(2).getFilingDate()) > 0);
@@ -206,7 +206,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompany_emptyforzeropagesize() throws Exception {
-        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel("120", 0, 0).get().ReportSummaries;
+        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 0).ReportSummaries;
         assertEquals(0, result.size());
         assertEquals(4, result.totalSize());
         assertEquals(false, result.canGoBack());
@@ -216,7 +216,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyModel("122", 0 , 25).get();
+        CompanyModel company = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0 , 25);
 
         assertEquals("Eigencode Ltd.", company.Info.Name);
         assertEquals(1, company.ReportSummaries.size());
@@ -225,7 +225,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_ReportsChronological() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyModel("120", 0, 25).get();
+        CompanyModel company = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 25);
 
         assertEquals(4, company.ReportSummaries.size());
 
@@ -236,7 +236,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_DoesntExist() throws Exception {
-        assertTrue(jdbcReportsRepository.getCompanyModel("124", 0,25).isEmpty());
+        assertTrue(jdbcReportsRepository.getCompanyModel(new CompanySummary("Fakecorp", "124"), 0,25).ReportSummaries.isEmpty());
     }
 
 

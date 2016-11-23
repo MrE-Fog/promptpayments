@@ -2,7 +2,7 @@
 <li class="searchresult">
     <h2 class="heading-medium">
         <a href="@link">@result.Name</a>
-        (@result.ReportCount reports)
+        (@result.ReportCount @(result.ReportCount match {case 1 => "report" case n => "reports"}))
     </h2>
     <p>
         Company number: @result.CompaniesHouseIdentifier

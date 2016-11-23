@@ -1,6 +1,6 @@
 @(report: ReportSummary, companiesHouseIdentifier: String)
 <li class="searchresult">
-    <h2 class="header-medium">
+    <h2 class="heading-medium">
         <a href="@routes.ViewReport.view(companiesHouseIdentifier, report.Identifier)">
             @report.StartDateString() &ndash; @report.EndDateString()
         </a>

@@ -1,97 +1,83 @@
 @(model: ReportModel, company: CompanySummary)
 <div class="breadcrumbs">
     <ol>
-        <li><a href="@routes.Home.index()">Home</a></li>
-        <li><a href="@routes.SearchReport.searchstart()">Find reports</a></li>
-        <li><a href="@routes.SearchReport.company(company.CompaniesHouseIdentifier,0)">@company.Name</a></li>
-        <li><a href="@routes.ViewReport.view(company.CompaniesHouseIdentifier, model.Info.Identifier)">@model.Info.UiDateString()</a></li>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
+        <li><a href="@routes.SearchReport.searchstart()">Search for reports</a></li>
+        <li><a href="@routes.SearchReport.company(company.CompaniesHouseIdentifier,0)">@company.Name reports</a></li>
     </ol>
 </div>
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">
-        Payment report by @company.Name
+        @company.Name:
+        <span class="nowrap">@model.getStartDateString()</span> &ndash; <span class="nowrap">@model.getEndDateString()</span>
+        <hr>
     </h1>
-    <p class="lede">
-        <span class="fieldcaption">Filed on:</span> @model.Info.UiDateString()
-    </p>
+
+    <p class="small-aside">Company number: @company.CompaniesHouseIdentifier</p>
+    <h3 class="heading-medium">Key statistics</h3>
+    <p>Average time taken to pay invoices: <span class="datum">@model.AverageTimeToPay days</span></p>
+    <p>Invoices not paid within agreed terms: <span class="datum">@model.PercentInvoicesPaidBeyondAgreedTerms%</span></p>
     <p>
-        <span class="fieldcaption">Company number:</span> @company.CompaniesHouseIdentifier
-    </p>
-    <p>
-        <span class="fieldcaption">Reporting period:</span> @model.getStartDateString() &ndash; @model.getEndDateString()
+        Invoices paid
+        <ul class="list list-bullet">
+            <li>within 30 days: <span class="datum">@model.PercentInvoicesWithin30Days%</span></li>
+            <li>within 31 to 60 days: <span class="datum">@model.PercentInvoicesWithin60Days%</span></li>
+            <li>later than 60 days: <span class="datum">@model.PercentInvoicesBeyond60Days%</span></li>
+        </ul>
     </p>
 
-    <div class="datablock">
-        <h2 class="heading-small">Payment terms</h2>
-        <p>
-            @model.PaymentTerms
-        </p>
-    </div>
-</div>
-<div class="grid-row">
-    <div class="column-one-third">
-        <div class="datablock">
-            <p class="stat">
-                <span class="bignumber">@model.AverageTimeToPay</span> days
-            </p>
-            <p class="statcaption">
-                Average time taken to pay invoices
-            </p>
-        </div>
-    </div>
-    <div class="column-one-third">
-        <div class="datablock">
-            <p class="stat">
-                <span class="bignumber">@model.PercentInvoicesPaidBeyondAgreedTerms%</span>
-            </p>
-            <p class="statcaption">
-                Invoices paid beyond agreed terms
-            </p>
-        </div>
-    </div>
-    <div class="column-one-third">
-        <div class="datablock">
-            <ul class="list list-bullet">
-                <li>paid @model.PercentInvoicesWithin30Days% of invoices within 30 days</li>
-                <li>paid @model.PercentInvoicesWithin60Days% of invoices within 31 to 60 days</li>
-                <li>paid @model.PercentInvoicesBeyond60Days% of invoices later than 60 days</li>
-            </ul>
-        </div>
-    </div>
-</div>
-<div class="scannable-wrapper">
-    <div class="datablock">
-        <h2 class="heading-small">Dispute resolution</h2>
-        <p>
-            @model.DisputeResolution
-        </p>
-    </div>
-    <div class="datablock">
-        <h2 class="heading-small">Use the following payment codes</h2>
-        <p>
-            @model.PaymentCodes
-        </p>
-    </div>
+    <h3 class="heading-medium">Payment terms</h3>
+    <h4 class="heading-small">Standard payment period</h4>
+    <p></p>
+    <h4 class="heading-small">Maximum contractual period</h4>
+    <p></p>
+    <h4 class="heading-small">Were there any changes to the payment terms in the reporting period?</h4>
+    <p></p>
+    <h4 class="heading-small">Were suppliers notified or consulted about these changes?</h4>
+    <p></p>
+    <h4 class="heading-small">Any other information about standard payment terms</h4>
+    <p></p>
+    <h4 class="heading-small">Standard payment period</h4>
+    <p></p>
 
-    <table>
-        <tr>
-            <td>Offers E-Invoicing</td>
-            <td>@{if(model.OfferEInvoicing) "Yes" else "No"}</td>
-        </tr>
-        <tr>
-            <td>Offers supply chain financing</td>
-            <td>@{if(model.OfferSupplyChainFinance) "Yes" else "No"}</td>
-        </tr>
-        <tr>
-            <td>Policies cover payments for remaining on supplier list</td>
-            <td>@{if(model.RetentionChargesInPolicy) "Yes" else "No"}</td>
-        </tr>
-        <tr>
-            <td>Payments have been demanded for remaining on supplier list during the reporting period</td>
-            <td>@{if(model.RetentionChargesInPast) "Yes" else "No"}</td>
-        </tr>
-    </table>
+    <h3 class="heading-medium">Dispute resolution policy</h3>
+    <p>
+        @model.DisputeResolution
+    </p>
+
+    <h3 class="heading-medium">Other payment information</h3>
+    <h4 class="heading-small">
+        Is this business a member of a code of practice for payment?
+        <span class="heading-secondary">For example, signatories to The Prompt Payment Code must commit to paying 95% of their invoices within 60 days.</span>
+    </h4>
+    <p>
+        @(model.PaymentCodes match {case "" => "No" case null => "No" case s => "Yes: " + s})
+    </p>
+    <h4 class="heading-small">
+        Does this business offer e-invoicing?
+        <span class="heading-secondary">Do you allow suppliers to electronically submit and track invoices?</span>
+    </h4>
+    <p>
+        @(model.OfferEInvoicing match {case false => "No" case _ => "Yes"})
+    </p>
+
+    <h4 class="heading-small">
+        Does this business offer supply chain finance?
+        <span class="heading-secondary">This is where a supplier’s invoice can be paid quickly by a third-party financing company, who the business pays at a later date.</span>
+    </h4>
+    <p>
+        @(model.OfferSupplyChainFinance match {case false => "No" case _ => "Yes"})
+    </p>
+    <h4 class="heading-small">
+        Does this business have a policy of deducting sums from payments as a charge for remaining on a supplier list?
+    </h4>
+    <p>
+        @(model.RetentionChargesInPolicy match {case false => "No" case _ => "Yes"})
+    </p>
+    <h4 class="heading-small">
+        In this reporting period, did this business deduct sums from payments as a charge for remaining on a supplier list?
+    </h4>
+    <p>
+        @(model.RetentionChargesInPast match {case false => "No" case _ => "Yes"})
+    </p>
 </div>
-<p>
-    <a class="link-back" href="@routes.SearchReport.company(company.CompaniesHouseIdentifier, 0)">Back to @company.Name</a>
-</p>
