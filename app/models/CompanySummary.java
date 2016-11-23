@@ -9,3 +9,4 @@ public class CompanySummary {
         CompaniesHouseIdentifier = companiesHouseIdentifier;
     }
 }
+

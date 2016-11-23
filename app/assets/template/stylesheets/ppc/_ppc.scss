@@ -2,6 +2,19 @@
     max-width: 640px;
 }
 
+.separator {
+    height: 10px;
+    background-color: #005ea5;
+}
+.heading-sidebar {
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+    text-transform: none;
+    font-size-adjust: 0.525;
+    margin-top: 0.5em;
+    margin-bottom: .83333em;
+}
 .hidden {
    display:none;
 }
@@ -27,6 +40,39 @@ fieldset {
 
 .error fieldset {
     padding-left:0;
+}
+
+
+/* Search results */
+.paging .page {
+    display:inline;
+    margin-right:1em;
+}
+
+.paging .page .thispage {
+    font-weight:bold;
+}
+
+.link {
+    margin:0;
+    padding:0;
+    color: #005ea5;
+    text-decoration:underline;
+    display:inline;
+    border:none;
+    background:none;
+    cursor:pointer;
+}
+.searchresults {
+    margin: 2em 0;
+}
+
+.searchresult p {
+    margin: 0;
+    color: #616a6e;
+}
+.searchresult .heading-medium {
+    margin-bottom:15px;
 }
 
 #StartDate_day, #StartDate_month, #StartDate_year,

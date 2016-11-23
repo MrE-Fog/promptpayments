@@ -1,10 +1,7 @@
 package components;
 
 import com.google.inject.ImplementedBy;
-import models.CompanyModel;
-import models.CompanySummary;
-import models.ReportFilingModel;
-import models.ReportModel;
+import models.*;
 import play.libs.F;
 import scala.Option;
 
@@ -19,7 +16,7 @@ import java.util.List;
 @ImplementedBy(JdbcReportsRepository.class)
 public interface ReportsRepository {
     PagedList<CompanySummary> searchCompanies(String company, int page, int itemsPerPage);
-    Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier, int page, int itemsPerPage);
+    CompanyModel getCompanyModel(CompanySummary companySummary, int page, int itemsPerPage);
     Option<ReportModel> getReport(String company, int reportId);
     PagedList<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers, int page, int itemsPerPage);
 
@@ -30,4 +27,6 @@ public interface ReportsRepository {
     boolean linkAuthTokenToCompany(String authToken, String companiesHouseIdentifier);
 
     boolean mayFileForCompany(String oAuthToken, String targetCompanyCompaniesHouseIdentifier);
+
+    PagedList<CompanySearchResult> getCompanySearchInfo(PagedList<CompanySummaryWithAddress> companySummaries);
 }

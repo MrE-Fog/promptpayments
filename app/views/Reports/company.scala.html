@@ -1,41 +1,58 @@
 @(model: CompanyModel)
 <div class="breadcrumbs">
     <ol>
-        <li><a href="@routes.Home.index()">Home</a></li>
-        <li><a href="@routes.SearchReport.searchstart()">Find reports</a></li>
-        <li><a href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier,0)">@model.Info.Name</a></li>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
     </ol>
 </div>
-<div class="scannable-wrapper">
-    <h1 class="heading-xlarge">
-        Payment reports filed by @model.Info.Name
-    </h1>
-    @if(model.ReportSummaries.isEmpty()) {
-        <p class="noresults">No reports found.</p>
-    } else {
-        <ul class="searchresults">
-            @for(report <- model.ReportSummaries) {
-                <li class="searchresult">
-                    <h2 class="header-medium">
-                        <a href="@routes.ViewReport.view(model.Info.CompaniesHouseIdentifier, report.Identifier)">Report filed on @report.UiDateString()</a>
-                    </h2>
-                    <p>
-                        Some text, some text some text
-                    </p>
-                </li>
+
+<h1 class="heading-xlarge">
+    @model.Info.Name reports
+    <hr>
+</h1>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if(model.ReportSummaries.isEmpty()) {
+            <p class="noresults">No reports found.</p>
+        } else {
+            <ul class="searchresults">
+                @for(report <- model.ReportSummaries) {
+                    @shared._reportSummary(report, model.Info.CompaniesHouseIdentifier)
+                }
+            </ul>
+
+            @if(model.ReportSummaries.canPage()) {
+            <div class="paging">
+                @if(model.ReportSummaries.canGoBack()) {
+                    <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() - 1)">Previous</a>
+                }
+
+                @for(i <- Math.max(0, model.ReportSummaries.pageNumber - 5) to Math.max(10, model.ReportSummaries.pageNumber + 5)) {
+                    @if(i == model.ReportSummaries.pageNumber) {
+                        <span class="page thispage" >@(i+1)</span>
+                    }
+                    @if(i != model.ReportSummaries.pageNumber && model.ReportSummaries.canGo(i)) {
+                        <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, i)">@(i+1)</a>
+                    }
+                }
+                @if(model.ReportSummaries.canGoNext()) {
+                <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() + 1)">Next</a>
+                }
+            </div>
             }
+            <p>
+                @model.ReportSummaries.totalSize() @(model.ReportSummaries.totalSize() match {case 1 => "match" case n => "matches"}) found
+            </p>
+        }
+    </div>
+    <div class="column-one-third">
+        <div class="separator"></div>
+        <h3 class="heading-sidebar">Do you work for this business?</h3>
+        <ul class="list">
+            <li><a href="@routes.Home.ifGuide(0)">Find out if your business needs to report</a></li>
+            <li><a href="@routes.Home.howGuide(0)">How to report</a></li>
+            <li><a href="@routes.FileReport.startForCompany(model.Info.CompaniesHouseIdentifier)">Publish a report</a></li>
         </ul>
-    <p class="paging">
-        Showing @(model.ReportSummaries.rangeLower() + 1)&ndash;@(model.ReportSummaries.rangeUpper()+1) of @model.ReportSummaries.totalSize() reports.
-        @if(model.ReportSummaries.canGoBack()) {
-        <a href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() - 1)">Previous page</a>
-        }
-        @if(model.ReportSummaries.canGoNext()) {
-        <a href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() + 1)">Next page</a>
-        }
-    </p>
-    }
+    </div>
+
 </div>
-<p>
-    <a href="@routes.SearchReport.search()" class="link-back">Back</a>
-</p>

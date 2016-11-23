@@ -27,17 +27,39 @@ public class PagedList<T> extends ArrayList<T> {
         return pageNumber;
     }
 
-    public int rangeLower() {
-        return Math.min(pageNumber*pageSize, totalSize);
-    }
-
-    public int rangeUpper() { return Math.max(Math.min(totalSize - 1, (pageNumber + 1) * pageSize - 1), rangeLower()); }
-
     public boolean canGoBack() {
-        return rangeLower() > 0 && rangeLower() < totalSize;
+        return canGo(pageNumber-1);
     }
 
     public boolean canGoNext() {
-        return rangeUpper() < totalSize - 1;
+        return canGo(pageNumber+1);
+    }
+
+    public boolean canGo(int pageNumber) {
+        if (pageNumber == pageNumber()) {
+            return true;
+        }
+        if (!canPage()) {
+            return false;
+        }
+
+        return isValidRange(pageNumber);
+    }
+
+    private boolean isValidRange(int pageNumber) {
+        return (pageNumber) * pageSize < totalSize && pageNumber >= 0;
+    }
+
+    public boolean canPage() {
+        //check we are in a valid navigational state
+        if ((this.pageNumber)*pageSize >= totalSize || this.pageNumber < 0) {
+            return false;
+        }
+
+        return isValidRange(pageNumber-1) || isValidRange(pageNumber+1);
+    }
+
+    public int pageSize() {
+        return pageSize;
     }
 }

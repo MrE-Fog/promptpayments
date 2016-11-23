@@ -17,8 +17,9 @@ GET     /Data/Export                       controllers.Home.export()
 
 GET     /Reports      controllers.SearchReport.searchstart()
 GET     /Reports/Search controllers.SearchReport.search()
-POST    /Reports/Search controllers.SearchReport.handleSearch(page: Int)
-GET     /Reports/Company/:company   controllers.SearchReport.company(company: String, page: Int)
+POST    /Reports/Search controllers.SearchReport.handleSearch(page: Int ?= 0)
+GET     /Reports/Company/:company   controllers.SearchReport.company(company: String, page: Int ?= 0)
+GET     /Reports/Company/:company/File controllers.FileReport.startForCompany(company: String)
 GET     /Reports/Company/:company/Report/:report controllers.ViewReport.view(company: String, report: Int)
 
 GET     /FileReport          controllers.FileReport.index()

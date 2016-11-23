@@ -2,6 +2,7 @@ package components;
 
 import controllers.routes;
 import models.CompanySummary;
+import models.CompanySummaryWithAddress;
 
 import java.io.IOException;
 
@@ -14,7 +15,7 @@ public class MockCompaniesHouseCommunicator implements CompaniesHouseCommunicato
     }
 
     @Override
-    public PagedList<CompanySummary> searchCompanies(String search, int page, int itemsPerPage) throws IOException {
+    public PagedList<CompanySummaryWithAddress> searchCompanies(String search, int page, int itemsPerPage) throws IOException {
         return inner.searchCompanies(search,page,itemsPerPage);
     }
 
@@ -24,7 +25,7 @@ public class MockCompaniesHouseCommunicator implements CompaniesHouseCommunicato
     }
 
     @Override
-    public CompanySummary tryGetCompany(String s) {
-        return inner.tryGetCompany(s);
+    public CompanySummary getCompany(String s) throws IOException {
+        return inner.getCompany(s);
     }
 }

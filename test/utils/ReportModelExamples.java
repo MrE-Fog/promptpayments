@@ -5,6 +5,7 @@ import models.ReportModel;
 import models.ReportSummary;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
 /**
  * Created by daniel.rothig on 10/10/2016.
@@ -67,15 +68,18 @@ public class ReportModelExamples {
     }
 
     public static ReportModel makeReportModel(int id, int year, int month) {
+
+        Calendar start = new MockUtcTimeProvider(2016, 0, 0).Now();
+        Calendar end = new MockUtcTimeProvider(2016, 4, 30).Now();
         return new ReportModel(
-                new ReportSummary(id, new MockUtcTimeProvider(year,month,1).Now()),
+                new ReportSummary(id, new MockUtcTimeProvider(year,month,1).Now(), start, end),
                 new BigDecimal("31.00"),
                 new BigDecimal("10.00"),
                 new BigDecimal("80.00"),
                 new BigDecimal("15.00"),
                 new BigDecimal( "5.00"),
-                new MockUtcTimeProvider(2016,0,0).Now(),
-                new MockUtcTimeProvider(2016,4,30).Now(),
+                start,
+                end,
                 "Payment terms",
                 "Dispute terms",
                 true,
@@ -86,15 +90,17 @@ public class ReportModelExamples {
     }
 
     public static ReportModel makeEmptyReportModel() {
+        Calendar start = new MockUtcTimeProvider(2016, 0, 1).Now();
+        Calendar end = new MockUtcTimeProvider(2016, 5, 30).Now();
         return new ReportModel(
-                new ReportSummary(1, new MockUtcTimeProvider(2016, 6, 1).Now()),
+                new ReportSummary(1, new MockUtcTimeProvider(2016, 6, 1).Now(), start, end),
                 null,
                 null,
                 null,
                 null,
                 null,
-                new MockUtcTimeProvider(2016, 0, 1).Now(),
-                new MockUtcTimeProvider(2016, 5, 30).Now(),
+                start,
+                end,
                 null,
                 null,
                 false,

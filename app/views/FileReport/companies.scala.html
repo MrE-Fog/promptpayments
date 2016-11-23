@@ -1,5 +1,5 @@
 @import components.PagedList
-@(results: PagedList[CompanySummary], query: String)
+@(results: PagedList[CompanySearchResult], query: String)
 <div class="breadcrumbs">
     <ol>
         <li><a href="@routes.Home.index()">Home</a></li>
@@ -20,21 +20,7 @@
         }
         </ul>
 
-        <p class="paging">
-            Showing @(results.rangeLower() + 1)&ndash;@(results.rangeUpper()+1) of @results.totalSize() companies.
-            @if(results.canGoBack()) {
-            <form action="@routes.FileReport.companies(results.pageNumber() - 1)" method="POST">
-                <input type="hidden" name="companyname" value="@query">
-                <input class="button" type="submit" value="Previous page">
-            </form>
-            }
-            @if(results.canGoNext()) {
-            <form action="@routes.FileReport.companies(results.pageNumber() + 1)" method="POST">
-                <input type="hidden" name="companyname" value="@query">
-                <input class="button" type="submit" value="Next page">
-            </form>
-            }
-        </p>
+
     }
 </div>
 <p>

@@ -76,7 +76,7 @@ public class ReportModelTest {
 
     private static ReportModel getReportModel(Calendar filingDate, Calendar start, Calendar end) {
         return new ReportModel(
-                new ReportSummary(1, filingDate),
+                new ReportSummary(1, filingDate, start, end),
                 null, null, null, null, null,
                 start,
                 end,

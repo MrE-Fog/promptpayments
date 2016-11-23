@@ -37,7 +37,7 @@ public class VisualTest extends PageController {
     public Result index() {
 
         Calendar time = new MockUtcTimeProvider(2016, 9, 1).Now();
-        ReportSummary healthyReportSummary = new ReportSummary(1, time);
+        ReportSummary healthyReportSummary = new ReportSummary(1, time, time, time);
 
         ReportModel healthyReportModel = new ReportModel(
                 healthyReportSummary,
@@ -61,9 +61,11 @@ public class VisualTest extends PageController {
         );
 
         ReportModel emptyReportModel = new ReportModel(healthyReportSummary, null, null, null, null, null, new MockUtcTimeProvider(2016, 0, 1).Now(), new MockUtcTimeProvider(2016, 5, 30).Now(), null, null, false, false, false, false, null);
-        CompanySummary healthyCompanySummary = new CompanySummary("Eigencode Ltd.", "123");
+        CompanySearchResult healthyCompanySearchResult = new CompanySearchResult(
+                new CompanySummaryWithAddress("Eigencode Ltd.", "123", "1 Stott Gardens"),
+                3);
 
-        CompanyModel healthyCompanyModel = new CompanyModel(healthyCompanySummary, new PagedList<>(Arrays.asList(healthyReportSummary, healthyReportSummary, healthyReportSummary), 6, 0, 3));
+        CompanyModel healthyCompanyModel = new CompanyModel(healthyCompanySearchResult, new PagedList<>(Arrays.asList(healthyReportSummary, healthyReportSummary, healthyReportSummary), 6, 0, 3));
 
         ReportFilingModel newReportFilingModel = ReportFilingModel.MakeEmptyModelForTarget("123");
 
@@ -78,21 +80,21 @@ public class VisualTest extends PageController {
                 views.html.Home.about.render(),
                 views.html.Home.accessData.render(),
 
-                views.html.Reports.report.render(healthyReportModel, healthyCompanySummary),
-                views.html.Reports.report.render(emptyReportModel, healthyCompanySummary),
+                views.html.Reports.report.render(healthyReportModel, healthyCompanySearchResult),
+                views.html.Reports.report.render(emptyReportModel, healthyCompanySearchResult),
 
                 views.html.Reports.searchstart.render(),
                 views.html.Reports.search.render(),
-                views.html.Reports.results.render("cod", new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 0, 3)),
+                views.html.Reports.results.render("cod", new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 0, 3)),
                 views.html.Reports.company.render(healthyCompanyModel),
 
                 views.html.FileReport.index.render(),
-                views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySummary, healthyCompanySummary, healthyCompanySummary), 100, 3, 3), "healthy company"),
-                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.file.render(reportForm.fill(dateswappedFilingModel), new ReportFilingModelValidationImpl(dateswappedFilingModel, time), healthyCompanySummary, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySummary, new UiDate(time))
+                views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 3, 3), "healthy company"),
+                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(dateswappedFilingModel), new ReportFilingModelValidationImpl(dateswappedFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySearchResult, new UiDate(time))
 
         )).toList());
 

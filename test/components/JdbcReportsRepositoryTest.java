@@ -12,7 +12,6 @@ import utils.UtcTimeProvider;
 
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -96,14 +95,14 @@ public class JdbcReportsRepositoryTest {
         assertEquals("The number of results should not exceed page size", 2, result.size());
         assertEquals("Page number should be accurately reported", 0, result.pageNumber());
         assertEquals("Total size should be accurately reported", 3, result.totalSize());
-        assertEquals("Lower bound should be accurately reported", 0, result.rangeLower());
-        assertEquals("Upper bound should be accurately reported", 1, result.rangeUpper());
+        assertEquals("Lower bound should be accurately reported", false, result.canGoBack());
+        assertEquals("Upper bound should be accurately reported", true, result.canGoNext());
 
         assertEquals("The number of results should not exceed page size", 1, result2.size());
         assertEquals("Page number should be accurately reported", 1, result2.pageNumber());
         assertEquals("Total size should be accurately reported", 3, result2.totalSize());
-        assertEquals("Lower bound should be accurately reported", 2, result2.rangeLower());
-        assertEquals("Upper bound should be accurately reported", 2, result2.rangeUpper());
+        assertEquals("Lower bound should be accurately reported", true, result2.canGoBack());
+        assertEquals("Upper bound should be accurately reported", false, result2.canGoNext());
     }
 
     @Test
@@ -120,8 +119,9 @@ public class JdbcReportsRepositoryTest {
         PagedList<CompanySummary> result = jdbcReportsRepository.searchCompanies("   co",0,0);
         assertEquals(0, result.size());
         assertEquals(3, result.totalSize());
-        assertEquals(0, result.rangeLower());
-        assertEquals(0, result.rangeUpper());
+        assertEquals(false, result.canGoBack());
+        assertEquals(false, result.canGoNext());
+        assertEquals(false, result.canPage());
     }
 
     @Test
@@ -139,14 +139,16 @@ public class JdbcReportsRepositoryTest {
         assertEquals("The number of results should not exceed page size", 2, result1.size());
         assertEquals("Page number should be accurately reported", 0, result1.pageNumber());
         assertEquals("Total size should be accurately reported", 3, result1.totalSize());
-        assertEquals("Lower bound should be accurately reported", 0, result1.rangeLower());
-        assertEquals("Upper bound should be accurately reported", 1, result1.rangeUpper());
+        assertEquals("CanGoBack should be accurately reported", false, result1.canGoBack());
+        assertEquals("CanGoNext should be accurately reported", true, result1.canGoNext());
+        assertEquals("CanPage should be accurately reported", true, result1.canPage());
 
         assertEquals("The number of results should not exceed page size", 1, result2.size());
         assertEquals("Page number should be accurately reported", 1, result2.pageNumber());
         assertEquals("Total size should be accurately reported", 3, result2.totalSize());
-        assertEquals("Lower bound should be accurately reported", 2, result2.rangeLower());
-        assertEquals("Upper bound should be accurately reported", 2, result2.rangeUpper());
+        assertEquals("CanGoBack bound should be accurately reported", true, result2.canGoBack());
+        assertEquals("CanGoNext bound should be accurately reported", false, result2.canGoNext());
+        assertEquals("CanPage bound should be accurately reported", true, result2.canPage());
     }
 
     @Test
@@ -167,32 +169,35 @@ public class JdbcReportsRepositoryTest {
         PagedList<CompanySummary> result = jdbcReportsRepository.getCompanySummaries(companies,0,0);
         assertEquals(0, result.size());
         assertEquals(3, result.totalSize());
-        assertEquals(0, result.rangeLower());
-        assertEquals(0, result.rangeUpper());
+        assertEquals(false, result.canGoBack());
+        assertEquals(false, result.canGoNext());
+        assertEquals(false, result.canPage());
     }
 
     @Test
     public void getCompany_paged() throws Exception {
-        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 3).get().ReportSummaries;
-        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 1, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel("120", 0, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel("120", 1, 3).get().ReportSummaries;
 
         assertEquals("The number of results should not exceed page size", 3, result.size());
         assertEquals("Page number should be accurately reported", 0, result.pageNumber());
         assertEquals("Total size should be accurately reported", 4, result.totalSize());
-        assertEquals("Lower bound should be accurately reported", 0, result.rangeLower());
-        assertEquals("Upper bound should be accurately reported", 2, result.rangeUpper());
+        assertEquals("CanGoBack should be accurately reported", false, result.canGoBack());
+        assertEquals("CanGoNext should be accurately reported", true, result.canGoNext());
+        assertEquals("CanPage should be accurately reported", true, result.canPage());
 
         assertEquals("The number of results should not exceed page size", 1, result2.size());
         assertEquals("Page number should be accurately reported", 1, result2.pageNumber());
         assertEquals("Total size should be accurately reported", 4, result2.totalSize());
-        assertEquals("Lower bound should be accurately reported", 3, result2.rangeLower());
-        assertEquals("Upper bound should be accurately reported", 3, result2.rangeUpper());
+        assertEquals("CanGoBack should be accurately reported", true, result2.canGoBack());
+        assertEquals("CanGoNext should be accurately reported", false, result2.canGoNext());
+        assertEquals("CanPage should be accurately reported", true, result2.canPage());
     }
 
     @Test
     public void getCompany_paged_chronological() throws Exception {
-        PagedList<ReportSummary> result1 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 3).get().ReportSummaries;
-        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 1, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result1 = jdbcReportsRepository.getCompanyModel("120", 0, 3).get().ReportSummaries;
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel("120", 1, 3).get().ReportSummaries;
 
         assertTrue(result1.get(0).getFilingDate().compareTo(result1.get(1).getFilingDate()) > 0);
         assertTrue(result1.get(1).getFilingDate().compareTo(result1.get(2).getFilingDate()) > 0);
@@ -201,16 +206,17 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompany_emptyforzeropagesize() throws Exception {
-        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 0).get().ReportSummaries;
+        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel("120", 0, 0).get().ReportSummaries;
         assertEquals(0, result.size());
         assertEquals(4, result.totalSize());
-        assertEquals(0, result.rangeLower());
-        assertEquals(0, result.rangeUpper());
+        assertEquals(false, result.canGoBack());
+        assertEquals(false, result.canGoNext());
+        assertEquals(false, result.canPage());
     }
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("122", 0 , 25).get();
+        CompanyModel company = jdbcReportsRepository.getCompanyModel("122", 0 , 25).get();
 
         assertEquals("Eigencode Ltd.", company.Info.Name);
         assertEquals(1, company.ReportSummaries.size());
@@ -219,7 +225,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_ReportsChronological() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("120", 0, 25).get();
+        CompanyModel company = jdbcReportsRepository.getCompanyModel("120", 0, 25).get();
 
         assertEquals(4, company.ReportSummaries.size());
 
@@ -230,7 +236,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_DoesntExist() throws Exception {
-        assertTrue(jdbcReportsRepository.getCompanyByCompaniesHouseIdentifier("124", 0,25).isEmpty());
+        assertTrue(jdbcReportsRepository.getCompanyModel("124", 0,25).isEmpty());
     }
 
 

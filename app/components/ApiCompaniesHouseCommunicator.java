@@ -2,6 +2,7 @@ package components;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import models.CompanySummary;
+import models.CompanySummaryWithAddress;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -94,7 +95,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
     }
 
     @Override
-    public PagedList<CompanySummary> searchCompanies(String search, int page, int itemsPerPage) throws IOException {
+    public PagedList<CompanySummaryWithAddress> searchCompanies(String search, int page, int itemsPerPage) throws IOException {
 
         String query = String.format("https://api.companieshouse.gov.uk/search/companies?q=%s&items_per_page=%s&start_index=%s",
                 urlEncode(search),
@@ -106,12 +107,12 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode(apiKey.getBytes()));
         connection.setRequestProperty("Authorization", basicAuth);
         JsonNode parsed = Json.parse(connection.getInputStream());
-        List<CompanySummary> rtn = new ArrayList<>();
+        List<CompanySummaryWithAddress> rtn = new ArrayList<>();
 
         Iterator<JsonNode> items = parsed.get("items").elements();
         while (items.hasNext()) {
             JsonNode company = items.next();
-            rtn.add(new CompanySummary(company.get("title").asText(), company.get("company_number").asText()));
+            rtn.add(new CompanySummaryWithAddress(company.get("title").asText(), company.get("company_number").asText(), company.get("address_snippet").asText()));
         }
 
         return new PagedList<>(
@@ -122,9 +123,8 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
     }
 
     @Override
-    public CompanySummary tryGetCompany(String companiesHouseIdentifier) {
+    public CompanySummary getCompany(String companiesHouseIdentifier) throws IOException {
 
-        try {
             String query = String.format("https://api.companieshouse.gov.uk/company/%s",
                     urlEncode(companiesHouseIdentifier));
 
@@ -137,8 +137,6 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
                 return null;
             }
             return new CompanySummary(parsed.get("company_name").asText(), parsed.get("company_number").asText());
-        } catch(IOException ignored) {
-            return null;
-        }
+
     }
 }

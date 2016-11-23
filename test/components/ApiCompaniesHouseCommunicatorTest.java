@@ -1,6 +1,6 @@
 package components;
 
-import models.CompanySummary;
+import models.CompanySummaryWithAddress;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class ApiCompaniesHouseCommunicatorTest {
 
     @Test
     public void getCompanies() throws Exception {
-        List<CompanySummary> companies = new ApiCompaniesHouseCommunicator().searchCompanies("eigencode", 0, 25);
+        List<CompanySummaryWithAddress> companies = new ApiCompaniesHouseCommunicator().searchCompanies("eigencode", 0, 25);
         assertEquals(1, companies.size());
     }
 
@@ -27,8 +27,8 @@ public class ApiCompaniesHouseCommunicatorTest {
 
     @Test
     public void tryGetCompany() throws Exception {
-        assertEquals("EIGENCODE LTD", new ApiCompaniesHouseCommunicator().tryGetCompany("10203299").Name);
-        assertNull(new ApiCompaniesHouseCommunicator().tryGetCompany("123"));
+        assertEquals("EIGENCODE LTD", new ApiCompaniesHouseCommunicator().getCompany("10203299").Name);
+        assertNull(new ApiCompaniesHouseCommunicator().getCompany("123"));
     }
 
     //@Test

@@ -28,7 +28,13 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<FilingData> tryMakeReportFilingModel(String token, String companiesHouseIdentifier) {
-        CompanySummary company = companiesHouseCommunicator.tryGetCompany(companiesHouseIdentifier);
+        CompanySummary company = null;
+        try {
+            company = companiesHouseCommunicator.getCompany(companiesHouseIdentifier);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return OrchestratorResult.fromFailure("Cannot retrieve companies");
+        }
         if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
@@ -47,7 +53,13 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<ValidatedFilingData> tryValidateReportFilingModel(ReportFilingModel model) {
-        CompanySummary company = companiesHouseCommunicator.tryGetCompany(model.getTargetCompanyCompaniesHouseIdentifier());
+        CompanySummary company = null;
+        try {
+            company = companiesHouseCommunicator.getCompany(model.getTargetCompanyCompaniesHouseIdentifier());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return OrchestratorResult.fromFailure("Cannot retrieve companies");
+        }
         if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
@@ -63,7 +75,13 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<Integer> tryFileReport(String oAuthToken, ReportFilingModel model) {
-        CompanySummary company = companiesHouseCommunicator.tryGetCompany(model.getTargetCompanyCompaniesHouseIdentifier());
+        CompanySummary company = null;
+        try {
+            company = companiesHouseCommunicator.getCompany(model.getTargetCompanyCompaniesHouseIdentifier());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return OrchestratorResult.fromFailure("Cannot retrieve companies");
+        }
         if (company == null) {
             return OrchestratorResult.fromFailure("Unknown company");
         }
@@ -76,7 +94,7 @@ public class FileReportOrchestrator {
         return OrchestratorResult.fromSucccess(i);
     }
 
-    public OrchestratorResult<PagedList<CompanySummary>> findRegisteredCompanies(String company, int page, int itemsPerPage) {
+    public OrchestratorResult<PagedList<CompanySummaryWithAddress>> findRegisteredCompanies(String company, int page, int itemsPerPage) {
         try {
             return OrchestratorResult.fromSucccess(companiesHouseCommunicator.searchCompanies(company, page, itemsPerPage));
         } catch (IOException e) {
@@ -104,6 +122,29 @@ public class FileReportOrchestrator {
         } catch (IOException e) {
             e.printStackTrace();
             return OrchestratorResult.fromFailure("Could not authenticate user");
+        }
+    }
+
+    public OrchestratorResult<PagedList<CompanySearchResult>> trySearchCompanies(String company, int page, int resultsPerPage) {
+        try {
+            PagedList<CompanySummaryWithAddress> companySummaries = companiesHouseCommunicator.searchCompanies(company, page, resultsPerPage);
+            PagedList<CompanySearchResult> results = reportsRepository.getCompanySearchInfo(companySummaries);
+
+            return OrchestratorResult.fromSucccess(results);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return OrchestratorResult.fromFailure("Could not query companies");
+        }
+    }
+
+    public OrchestratorResult<CompanyModel> getCompanyModel(String company, int page, int itemsPerPage) {
+        try {
+            CompanySummary companySummary = companiesHouseCommunicator.getCompany(company);
+            CompanyModel companyModel = reportsRepository.getCompanyModel(companySummary, page, itemsPerPage);
+            return OrchestratorResult.fromSucccess(companyModel);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return OrchestratorResult.fromFailure("Could not retrieve companies");
         }
     }
 }

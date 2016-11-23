@@ -6,6 +6,7 @@ import models.ReportModel;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 
 /**
  * Created by daniel.rothig on 27/09/2016.
@@ -18,7 +19,8 @@ public class ViewReport extends PageController {
     private ReportsRepository reportsRepository;
 
     public Result view(String companiesHouseIdentifier, int reportId) {
-        CompanySummary company = reportsRepository.getCompanyByCompaniesHouseIdentifier(companiesHouseIdentifier, 0, 25).get().Info;
+
+        CompanySummary company = reportsRepository.getCompanySummaries(Arrays.asList(new String[]{companiesHouseIdentifier}), 0, 25).get(0);
         ReportModel report = reportsRepository.getReport(companiesHouseIdentifier, reportId).get();
         return ok(page(views.html.Reports.report.render(report, company)));
     }

@@ -1,9 +1,13 @@
-@(result: CompanySummary, link: play.api.mvc.Call)
+@(result: CompanySearchResult, link: play.api.mvc.Call)
 <li class="searchresult">
-    <h2 class="header-medium">
+    <h2 class="heading-medium">
         <a href="@link">@result.Name</a>
+        (@result.ReportCount reports)
     </h2>
     <p>
-        Some text, some text some text
+        Company number: @result.CompaniesHouseIdentifier
+    </p>
+    <p>
+        @result.AddressLine
     </p>
 </li>

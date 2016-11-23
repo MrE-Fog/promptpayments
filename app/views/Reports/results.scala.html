@@ -1,41 +1,52 @@
 @import components.PagedList
-@(searchTerm: String, results: PagedList[CompanySummary])
+@(searchTerm: String, results: PagedList[CompanySearchResult])
 <div class="breadcrumbs">
     <ol>
-        <li><a href="@routes.Home.index()">Home</a></li>
-        <li><a href="@routes.SearchReport.searchstart()">Find reports</a></li>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
     </ol>
 </div>
-<div class="scannable-wrapper">
-    <h1 class="heading-xlarge">
-        Companies matching @searchTerm
-    </h1>
-    @if(results.isEmpty()) {
-        <p class="noresults">No results found.</p>
-    } else {
-        <ul class="searchresults">
-            @for(result <- results) {
-                @views.html.shared._companySummary(result, routes.SearchReport.company(result.CompaniesHouseIdentifier, 0))
-            }
-        </ul>
 
-        <p class="paging">
-            Showing @(results.rangeLower() + 1)&ndash;@(results.rangeUpper()+1) of @results.totalSize() matching companies.
+<h1 class="heading-xlarge">Search for a business</h1>
+<p class="lede">Enter business name or company number</p>
+@shared._search(searchTerm)
+
+@if(results.isEmpty()) {
+    <p class="noresults">No results found.</p>
+} else {
+    <ul class="searchresults">
+        @for(result <- results) {
+            @views.html.shared._companySummary(result, routes.SearchReport.company(result.CompaniesHouseIdentifier, 0))
+        }
+    </ul>
+    @if(results.canPage()) {
+        <div class="paging">
             @if(results.canGoBack()) {
-                <form method="POST" action="@routes.SearchReport.handleSearch(results.pageNumber()-1)">
-                    <input type="hidden" class="form-control" name="companyname" value="@searchTerm" />
-                    <input type="submit" class="button block" value="Previous page">
+                <form method="POST" class="page" action="@routes.SearchReport.handleSearch(results.pageNumber()-1)">
+                    <input type="hidden" name="companyname" value="@searchTerm" />
+                    <input type="submit" class="link" value="Previous">
                 </form>
+            }
+
+            @for(i <- Math.max(0, results.pageNumber - 5) to Math.max(10, results.pageNumber + 5)) {
+                @if(i == results.pageNumber) {
+                    <span class="page thispage" >@(i+1)</span>
+                }
+                @if(i != results.pageNumber && results.canGo(i)) {
+                    <form method="POST" class="page" action="@routes.SearchReport.handleSearch(i)">
+                        <input type="hidden" name="companyname" value="@searchTerm" />
+                        <input type="submit" class="link"  value="@(i+1)">
+                    </form>
+                }
             }
             @if(results.canGoNext()) {
-                <form method="POST" action="@routes.SearchReport.handleSearch(results.pageNumber()+1)">
-                    <input type="hidden" class="form-control" name="companyname" value="@searchTerm"/>
-                    <input type="submit" class="button block" value="Next page">
+                <form method="POST" class="page" action="@routes.SearchReport.handleSearch(results.pageNumber()+1)">
+                    <input type="hidden" name="companyname" value="@searchTerm"/>
+                    <input type="submit" class="link" value="Next">
                 </form>
             }
-        </p>
+        </div>
     }
-</div>
-<p>
-    <a href="@routes.SearchReport.search()" class="link-back">Back to search</a>
-</p>
+    <p>
+        @results.totalSize() @(results.totalSize() match {case 1 => "match" case n => "matches"}) found
+    </p>
+}

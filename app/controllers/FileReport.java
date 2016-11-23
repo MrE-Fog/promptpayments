@@ -39,6 +39,7 @@ public class FileReport extends PageController {
 
     public Result index() {return ok(page(views.html.FileReport.index.render())); }
     public Result start() {return ok(page(views.html.FileReport.start.render())); }
+    public Result startForCompany(String company) {return ok(page(views.html.FileReport.start.render())); }
     public Result guidance() {return ok(page(views.html.FileReport.guidance.render())); }
 
     public Result findCompanies() {return ok(page(views.html.FileReport.findCompanies.render())); }
@@ -71,13 +72,7 @@ public class FileReport extends PageController {
     }
 
     public Result companies(int page) {
-        String company = request().body().asFormUrlEncoded().get("companyname")[0];
-        OrchestratorResult<PagedList<CompanySummary>> companies = fileReportOrchestrator.findRegisteredCompanies(company, page, 25);
-        if (companies.success()) {
-            return ok(page(views.html.FileReport.companies.render(companies.get(), company)));
-        } else {
-            return status(501, companies.message());
-        }
+        return status(404);
     }
 
     public Result reviewFiling() {

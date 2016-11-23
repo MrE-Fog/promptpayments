@@ -45,31 +45,26 @@ final class JdbcReportsRepository implements ReportsRepository {
     }
 
     @Override
-    public Option<CompanyModel> getCompanyByCompaniesHouseIdentifier(String identifier, int page, int itemsPerPage) {
-        Option<CompanySummary> summary = GetCompanySummaryByIdentifier(identifier);
-        if (summary.isEmpty()) {
-            return Option.empty();
-        }
-
+    public CompanyModel getCompanyModel(CompanySummary companySummary, int page, int itemsPerPage) {
         List<ReportSummary> reports = jdbcCommunicator.ExecuteQuery(
-                "SELECT Identifier, FilingDate FROM Report WHERE CompaniesHouseIdentifier = ? ORDER BY FilingDate DESC LIMIT ? OFFSET ?",
-                new Object[]{identifier, itemsPerPage, page * itemsPerPage},
+                "SELECT Identifier, FilingDate, StartDate, EndDate FROM Report WHERE CompaniesHouseIdentifier = ? ORDER BY FilingDate DESC LIMIT ? OFFSET ?",
+                new Object[]{companySummary.CompaniesHouseIdentifier, itemsPerPage, page * itemsPerPage},
                 _ReportSummaryMapper);
 
         Integer total = jdbcCommunicator.ExecuteQuery(
                 "SELECT COUNT(*) FROM Report WHERE CompaniesHouseIdentifier = ?",
-                new Object[]{identifier},
+                new Object[]{companySummary.CompaniesHouseIdentifier},
                 x -> x.getInt(1)).get(0);
 
         PagedList<ReportSummary> pagedReports = new PagedList<>(reports, total, page, itemsPerPage);
 
-        return Option.apply(new CompanyModel(summary.get(), pagedReports));
+        return new CompanyModel(companySummary, pagedReports);
     }
 
     @Override
     public Option<ReportModel> getReport(String company, int reportId) {
         List<ReportModel> reportModels = jdbcCommunicator.ExecuteQuery(
-                "SELECT Identifier, FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ? LIMIT 1",
+                "SELECT Identifier, FilingDate, StartDate, EndDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ? LIMIT 1",
                 new Object[]{company, reportId},
                 _ReportMapper(0));
 
@@ -159,7 +154,7 @@ final class JdbcReportsRepository implements ReportsRepository {
         minDate.add(Calendar.MONTH, -1 * months);
 
         return jdbcCommunicator.ExecuteQuery(
-                "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes " +
+                "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.StartDate, Report.EndDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes " +
                 "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
                 "WHERE Report.FilingDate >= ?" +
                 "LIMIT 100000",
@@ -193,6 +188,32 @@ final class JdbcReportsRepository implements ReportsRepository {
         return !result.isEmpty();
     }
 
+    @Override
+    public PagedList<CompanySearchResult> getCompanySearchInfo(PagedList<CompanySummaryWithAddress> companySummaries) {
+        if (companySummaries.isEmpty()) {
+            return new PagedList<CompanySearchResult>(new ArrayList<CompanySearchResult>(), companySummaries.totalSize(), companySummaries.pageNumber(), companySummaries.pageNumber());
+        }
+        HashMap<String, CompanySummaryWithAddress> companies = new HashMap<>();
+        for (CompanySummaryWithAddress c : companySummaries) companies.put(c.CompaniesHouseIdentifier, c);
+
+        String parameters = "('" + String.join("'), ('", companies.keySet()) + "')";
+
+        List<CompanySearchResult> ts = jdbcCommunicator.ExecuteQuery(
+                String.format(
+                        "SELECT chis.chi, COALESCE(ReportCounts.ReportCount,0) " +
+                        "FROM (SELECT CompaniesHouseIdentifier, COUNT(*) as ReportCount FROM Report GROUP BY CompaniesHouseIdentifier) " +
+                        "AS ReportCounts " +
+                        "RIGHT JOIN (values %s) as chis(chi) ON chis.chi = CompaniesHouseIdentifier",
+                        parameters),
+                new Object[]{},
+                x -> {
+                    System.out.println("companies house identifier: " + x.getString(1));
+                    return new CompanySearchResult(companies.get(x.getString(1)), x.getInt(2));
+                });
+
+        return new PagedList<>(ts, companySummaries.totalSize(), companySummaries.pageNumber(), companySummaries.pageSize());
+    }
+
     private Option<CompanySummary> GetCompanySummaryByIdentifier(String identifier) {
         List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
                 "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier = ? LIMIT 1",
@@ -205,29 +226,29 @@ final class JdbcReportsRepository implements ReportsRepository {
         }
     }
 
-        private JdbcCommunicator.Mapper<CompanySummary> _CompanySummaryMapper =
-            results -> new CompanySummary(results.getString(1), results.getString(2));
+    private JdbcCommunicator.Mapper<CompanySummary> _CompanySummaryMapper =
+           results -> new CompanySummary(results.getString(1), results.getString(2));
 
     private JdbcCommunicator.Mapper<ReportSummary> _ReportSummaryMapper =
-            results -> new ReportSummary(results.getInt(1), results.getCalendar(2));
+            results -> new ReportSummary(results.getInt(1), results.getCalendar(2), results.getCalendar(3), results.getCalendar(4));
 
     private JdbcCommunicator.Mapper<ReportModel> _ReportMapper(int offset) {
         return results -> new ReportModel(
-                new ReportSummary(results.getInt(1 + offset), results.getCalendar(2 + offset)),
-                results.getBigDecimal(3 + offset),
-                results.getBigDecimal(4 + offset),
+                new ReportSummary(results.getInt(1 + offset), results.getCalendar(2 + offset), results.getCalendar(3 + offset), results.getCalendar(4 + offset)),
                 results.getBigDecimal(5 + offset),
                 results.getBigDecimal(6 + offset),
                 results.getBigDecimal(7 + offset),
-                results.getCalendar(8 + offset),
-                results.getCalendar(9 + offset),
-                results.getString(10 + offset),
-                results.getString(11 + offset),
-                results.getBoolean(12 + offset),
-                results.getBoolean(13 + offset),
+                results.getBigDecimal(8 + offset),
+                results.getBigDecimal(9 + offset),
+                results.getCalendar(10+ offset),
+                results.getCalendar(11+ offset),
+                results.getString(12 + offset),
+                results.getString(13 + offset),
                 results.getBoolean(14 + offset),
                 results.getBoolean(15 + offset),
-                results.getString(16 + offset));
+                results.getBoolean(16 + offset),
+                results.getBoolean(17 + offset),
+                results.getString(18 + offset));
     }
 
 }

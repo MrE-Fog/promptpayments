@@ -19,8 +19,8 @@ public class PagedListTest {
     public void OutOfBoundsHasCappedBoundsAndPages() throws Exception {
         PagedList<Integer> list = new PagedList<>(new ArrayList<>(), 50, 10, 10);
 
-        assertEquals(50, list.rangeLower());
-        assertEquals(50, list.rangeUpper());
+
+        assertEquals(false, list.canPage());
         assertEquals(10, list.pageNumber());
         assertEquals(50, list.totalSize());
 
@@ -32,8 +32,10 @@ public class PagedListTest {
     public void FullProvidesCorrectMetadata() throws Exception {
         PagedList<Integer> list = new PagedList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), 500, 10, 10);
 
-        assertEquals(100, list.rangeLower());
-        assertEquals(109, list.rangeUpper());
+        assertEquals(true, list.canPage());
+        assertEquals(true, list.canGoBack());
+        assertEquals(true, list.canGoNext());
+
         assertEquals(10, list.pageNumber());
         assertEquals(500, list.totalSize());
         assertEquals(10, list.size());
@@ -48,14 +50,5 @@ public class PagedListTest {
 
         assertFalse(list.canGoBack());
         assertTrue(list.canGoNext());
-    }
-
-    @Test
-    public void UpperBoundLimitedByTotal() throws Exception {
-        PagedList<Integer> list = new PagedList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8), 109, 10, 10);
-        assertEquals(108, list.rangeUpper());
-
-        assertTrue(list.canGoBack());
-        assertFalse(list.canGoNext());
     }
 }
