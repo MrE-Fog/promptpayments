@@ -7,6 +7,10 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /                           controllers.Home.index()
 GET     /About                      controllers.Home.about()
+GET     /DutyToReport               controllers.Home.ifGuide(page:Int = 0)
+GET     /DutyToReport/:page         controllers.Home.ifGuide(page:Int)
+GET     /HowToReport                controllers.Home.howGuide(page:Int = 0)
+GET     /HowToReport/:page          controllers.Home.howGuide(page:Int)
 
 GET     /Data                       controllers.Home.accessData()
 GET     /Data/Export                       controllers.Home.export()

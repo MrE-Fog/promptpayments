@@ -1,58 +1,16 @@
-<div class="breadcrumbs">
-    <ol>
-        <li><a href="@routes.Home.index()">Home</a></li>
-    </ol>
-</div>
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">
-        Payment practices duty
+        @shared._name()
     </h1>
     <p class="lede">
-        All large businesses are now required to publish information about how promptly they pay their suppliers. You can find this information here.
+        Large businesses are required to publish information about their payment practices and performance.
     </p>
 </div>
-<div class="grid-row">
-    <div class="column-one-half">
-        <h3 class="heading-medium">
-            <a href="@routes.FileReport.index()">
-                Duty to report for large businesses
-            </a>
-        </h3>
-        <p>
-            If you work for a large business, you can learn about about your duty to report and file your reports here.
-        </p>
-    </div>
-    <div class="column-one-half">
-        <h3 class="heading-medium">
-            <a href="@routes.SearchReport.searchstart()">
-                Search the payment practices reports
-            </a>
-        </h3>
-        <p>
-            Search for a business to find out how promptly they pay their suppliers.
-        </p>
-    </div>
-</div>
-<div class="grid-row">
-    <div class="column-one-half">
-        <h3 class="heading-medium">
-            <a href="@routes.Home.accessData()">
-                Download the report data as a spreadsheet
-            </a>
-        </h3>
-        <p>
-            The entire database of large business prompt payment information.
-        </p>
-    </div>
-    <div class="column-one-half"></div>
-</div>
-<div class="scannable-wrapper">
-    <h2 class="heading-medium">
-        About the payment practices duty
-    </h2>
-    <p>
-        Lorem ipsum dolor sit amet, sit eu adolescens suscipiantur. Augue accommodare sit ut, nusquam placerat ex sit. Soluta nostrum intellegat duo cu. Erat legere saperet ei sed. Id eam ponderum fabellas, albucius similique omittantur cum an. Liber luptatum cu vis, id vis vide eirmod facilis. <a href="@routes.Home.about()">Learn more</a>.
-    </p>
-</div>
+@shared._search()
+<h3 class="heading-medium">Information for large businesses</h3>
+<ul class="list list-bullet">
+    <li><a href="@routes.Home.ifGuide(0)">Find out if your business needs to report</a> on payment practices</li>
+    <li><a href="@routes.Home.howGuide(0)">How to report</a> your payment practices</li>
+</ul>
 
 
