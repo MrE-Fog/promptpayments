@@ -67,7 +67,7 @@ fieldset {
     cursor:pointer;
 }
 .searchresults {
-    margin: 2em 0;
+    margin: 0 0 2em;
 }
 
 .searchresult p {
@@ -97,6 +97,7 @@ fieldset {
 .search-bar-active {
   background: #E5E5E5;
   padding: 0.5em;
+  margin-bottom: 2em;
 }
 .searchfield {
   position:relative;

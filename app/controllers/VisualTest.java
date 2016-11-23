@@ -83,8 +83,6 @@ public class VisualTest extends PageController {
                 views.html.Reports.report.render(healthyReportModel, healthyCompanySearchResult),
                 views.html.Reports.report.render(emptyReportModel, healthyCompanySearchResult),
 
-                views.html.Reports.searchstart.render(),
-                views.html.Reports.search.render(),
                 views.html.Reports.results.render("cod", new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 0, 3)),
                 views.html.Reports.company.render(healthyCompanyModel),
 

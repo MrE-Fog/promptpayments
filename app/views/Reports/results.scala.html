@@ -11,8 +11,12 @@
 @shared._search(searchTerm)
 
 @if(results.isEmpty() && searchTerm != "") {
-    <p class="noresults">No results found.</p>
-} else {
+    <div class="scannable-wrapper">
+        <p class="bold-medium">We didn’t find any businesses with that name or company number.</p>
+        <p>Please try searching again using different search terms.</p>
+    </div>
+}
+@if(!results.isEmpty()) {
     <ul class="searchresults">
         @for(result <- results) {
             @views.html.shared._companySummary(result, routes.SearchReport.company(result.CompaniesHouseIdentifier, 0))

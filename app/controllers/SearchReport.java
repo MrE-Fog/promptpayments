@@ -11,6 +11,7 @@ import orchestrators.OrchestratorResult;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * Created by daniel.rothig on 27/09/2016.
@@ -25,9 +26,9 @@ public class SearchReport extends PageController {
     @Inject
     private FileReportOrchestrator orchestrator;
 
-    public Result searchstart() {return ok(page(views.html.Reports.searchstart.render())); }
-
-    public Result search() {return ok(page(views.html.Reports.search.render())); }
+    public Result search() {
+        return ok(page(views.html.Reports.results.render("", new PagedList<>(new ArrayList<>(),0,0,0))));
+    }
 
     public Result handleSearch(int page) {
         String company = request().body().asFormUrlEncoded().get("companyname")[0];

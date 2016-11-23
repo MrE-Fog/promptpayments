@@ -15,7 +15,6 @@ GET     /HowToReport/:page          controllers.Home.howGuide(page:Int)
 GET     /Data                       controllers.Home.accessData()
 GET     /Data/Export                       controllers.Home.export()
 
-GET     /Reports      controllers.SearchReport.searchstart()
 GET     /Reports/Search controllers.SearchReport.search()
 POST    /Reports/Search controllers.SearchReport.handleSearch(page: Int ?= 0)
 GET     /Reports/Company/:company   controllers.SearchReport.company(company: String, page: Int ?= 0)
