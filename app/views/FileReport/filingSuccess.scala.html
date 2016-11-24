@@ -1,0 +1,23 @@
+@(company: String, id: Int)
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
+    </ol>
+</div>
+<div class="scannable-wrapper">
+
+    <div class="govuk-box-highlight">
+        <h1 class="bold-large">Your report has been published</h1>
+        <p>
+            Your reference number is<br>
+            <strong class="heading-medium">@id</strong>
+        </p>
+    </div>
+    <p>We have sent you a confirmation email.</p>
+
+    <h3 class="heading-medium">What happens next</h3>
+    <p>Your report is now available to the public. You can see your public report <a href="@routes.ViewReport.view(company,id)">here</a>.</p>
+    <p>
+        <a href="#">What did you think of this service?</a> (takes 30 seconds)
+    </p>
+</div>

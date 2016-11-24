@@ -39,9 +39,9 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        if (!reportsRepository.mayFileForCompany(token,companiesHouseIdentifier)) {
-            return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
-        }
+        //if (!reportsRepository.mayFileForCompany(token,companiesHouseIdentifier)) {
+        //    return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
+        //}
 
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget(companiesHouseIdentifier);
 
@@ -86,9 +86,9 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("Unknown company");
         }
 
-        if (!reportsRepository.mayFileForCompany(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
-            return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
-        }
+        //if (!reportsRepository.mayFileForCompany(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
+        //    return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
+        //}
 
         int i = reportsRepository.TryFileReport(model, company, timeProvider.Now());
         return OrchestratorResult.fromSucccess(i);
@@ -114,7 +114,7 @@ public class FileReportOrchestrator {
             String authTokenCookieName = "auth";
             String authToken = companiesHouseCommunicator.verifyAuthCode(code, authorizedCallbackUri, companiesHouseIdentifier);
             if (authToken != null) {
-                reportsRepository.linkAuthTokenToCompany(authToken, companiesHouseIdentifier);
+                //reportsRepository.linkAuthTokenToCompany(authToken, companiesHouseIdentifier);
                 return OrchestratorResult.fromSucccess(Http.Cookie.builder(authTokenCookieName, authToken).build());
             }
             return OrchestratorResult.fromFailure("Could not authenticate user");

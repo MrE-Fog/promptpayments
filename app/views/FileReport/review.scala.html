@@ -1,13 +1,29 @@
-@(model: Form[ReportFilingModel], company: CompanySummary, date: UiDate)
+@(model: Form[ReportFilingModel], company: CompanySummary, date: UiDate, confirmedError: scala.Boolean)
 @import play.data.FormFactory
 @import models.UiDate
 <div class="breadcrumbs">
     <ol>
-        <li><a href="@routes.Home.index()">Home</a></li>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
     </ol>
 </div>
-<h1 class="heading-xlarge">File a report</h1>
+<h1 class="heading-xlarge">Check your report before publishing</h1>
+<div class="notice">
+    <i class="icon icon-important">
+        <span class="visually-hidden">Warning</span>
+    </i>
+    <strong>If your report is incorrect or misleading, you could face a fine.</strong>
+</div>
+@if(confirmedError == true) {
+<div class="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h1 class="heading-medium error-summary-heading" id="error-summary-heading">
+        You need to confirm this report before publishing it
+    </h1>
 
+    <p>
+        Please confirm this report by ticking the checkbox below.
+    </p>
+</div>
+}
 <table>
     <tr>
         <td>
@@ -164,7 +180,20 @@
     <input type="hidden" name="RetentionChargesInPast" value="@model.get().isRetentionChargesInPast()">
     <input type="hidden" name="PaymentCodes" value="@model.get().getPaymentCodes()">
 
-    <input type="submit" class="button" value="Submit">
+    <div class="scannable-wrapper">
+    <fieldset class='confirmation form-group @(confirmedError match { case true => "error" case _ => ""})'>
+        <h3 class="bold-medium">Confirm this statement then publish your report</h3>
+        @if(confirmedError == true) {
+            <span class="error-message">You must tick the checkbox to proceed.</span>
+        }
+        <input type="hidden" name="confirmed" value="0">
+        <label class="block-label" for="confirmed">
+            <input type="checkbox" name="confirmed" id="confirmed" value="1">
+            I confirm that the information provided in this report is accurate and has been approved by a director of my company or a designated member of my limited liability partnership.
+        </label>
+    </fieldset>
+    <input type="submit" class="button" value="Publish your report">
+    </div>
 </form>
 
 <form action="@routes.FileReport.editFiling()" method="POST">

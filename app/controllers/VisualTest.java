@@ -90,7 +90,7 @@ public class VisualTest extends PageController {
                 views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(dateswappedFilingModel), new ReportFilingModelValidationImpl(dateswappedFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySearchResult, new UiDate(time))
+                views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySearchResult, new UiDate(time), true)
 
         )).toList());
 

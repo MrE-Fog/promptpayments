@@ -87,7 +87,7 @@ public class FileReport extends PageController {
         OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
         if (data.success()) {
             if (data.get().validation.isValid()) {
-                return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date)));
+                return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date, false)));
             } else {
                 return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().validation, data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
             }
@@ -107,9 +107,15 @@ public class FileReport extends PageController {
 
     public Result submitFiling() {
         ReportFilingModel model = reportForm.bindFromRequest(request()).get();
+        Boolean confirmed = Arrays.stream(request().body().asFormUrlEncoded().get("confirmed")).anyMatch(x -> x.equals("1"));
+        if (!confirmed) {
+            OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(model);
+            return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date, true)));
+        }
+
         OrchestratorResult<Integer> resultingId = fileReportOrchestrator.tryFileReport(request().cookie("auth").value(), model);
         if (resultingId.success()) {
-            return redirect(routes.ViewReport.view(model.getTargetCompanyCompaniesHouseIdentifier(), resultingId.get()));
+            return ok(page(views.html.FileReport.filingSuccess.render(model.getTargetCompanyCompaniesHouseIdentifier(), resultingId.get())));
         } else {
             return status(401, resultingId.message());
         }
