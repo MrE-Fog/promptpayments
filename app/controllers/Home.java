@@ -31,7 +31,7 @@ public class Home extends PageController {
     }
 
     public Result howGuide(int page) {
-        return status(404);
+        return ok(page(views.html.Home.howGuide.render(page)));
     }
 }
 

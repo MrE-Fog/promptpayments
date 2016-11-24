@@ -1,0 +1,6 @@
+@(title: String, page:Int, currentPage:Int)
+@if(page == currentPage) {
+    <span>@title</span>
+} else {
+    <a href="@routes.Home.howGuide(page)">@title</a>
+}

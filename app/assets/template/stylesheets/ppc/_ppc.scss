@@ -45,7 +45,30 @@ fieldset {
     padding-left:0;
 }
 
+/* Guidance pages */
 
+.inline-wizard {
+    background-color: #dee0e2;
+    padding: 1.5em;
+}
+
+.inline-wizard .output {
+    border-left: solid 10px black;
+    padding-left: 10px;
+}
+
+.inline-wizard .float-left {
+    float: left;
+    width: 2.5em;
+    margin-right:1em;
+}
+
+.inline-wizard .float-left.wide {
+    width: 3.5em;
+}
+.inline-wizard .float-left input {
+    width:100%;
+}
 /* Search results */
 .paging .page {
     display:inline;

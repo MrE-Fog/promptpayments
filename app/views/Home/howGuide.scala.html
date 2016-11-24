@@ -1,0 +1,154 @@
+@(page:Int)
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
+    </ol>
+</div>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">
+        How to report your payment practices: a guide for large businesses
+    </h1>
+    <div class="grid-row">
+        <div class="column-half">
+            <ol class="list list-number">
+                <li>@_guidePageLink("Overview", 0, page)</li>
+                <li>@_guidePageLink("Deadlines", 1, page)</li>
+            </ol>
+        </div>
+        <div class="column-half">
+            <ol start="3" class="list list-number">
+                <li>@_guidePageLink("What to report", 2, page)</li>
+            </ol>
+        </div>
+    </div>
+    <hr>
+
+    @if(page == 0) {
+        <h2 class="heading-large">1. Overview</h2>
+        <p>
+            <a href="@routes.Home.ifGuide()">Most large businesses</a> must publish information about how they pay their suppliers. If you are in scope, you need to report on:
+        </p>
+        <ul class="list list-bullet">
+            <li>your payment terms</li>
+            <li>how well you perform against those terms</li>
+            <li>how well you perform against those terms</li>
+            <li>your payment practices</li>
+        </ul>
+        <p>
+            This applies to private and public companies and limited liability partnerships (LLPs).
+        </p>
+        <p>
+            You have to report every six months. The start date depends on your business’s financial year[LINK 3],
+        </p>
+        <p>
+            The information you need to publish should cover payments under your contracts with other businesses for goods, services and intangible assets, but not:
+        </p>
+        <ul class="list list-bullet">
+            <li><a href="">contracts for financial services</a></li>
+            <li>contracts which <a href="">don’t have a significant connection the UK.</a></li>
+        </ul>
+        <p>
+            All reports will be available online for anyone to read and download.
+        </p>
+
+        <div class="notice">
+            <i class="icon icon-important">
+                <span class="visually-hidden">Warning</span>
+            </i>
+            <strong>The report must be signed off by a director or a designated member of a Limited Liability Partnership. You must submit your report before the deadline and the report must be accurate and truthful. If not, the business and every director or designated member may be liable to a fine.</strong>
+        </div>
+    }
+    @if(page == 1) {
+        <h2 class="heading-large">2. Deadlines</h2>
+        <p>
+            You need to submit a report twice per financial year, starting with your first financial year on or after 6 April 2017. The first reporting period is six months beginning on the first day of your financial year - and the deadline for the report is 30 days later.
+        </p>
+        <p class="bold-medium">
+            Calculate your reporting period and your deadline to report
+        </p>
+        <form class="inline-wizard" method="GET" action="">
+            <p class="heading-small">Enter the start date of your financial year</p>
+            <div class="float-left">
+                <label class="form-label" for="start-day">Day</label>
+                <input class="form-control" type="number" id="start-day" name="start-day" />
+            </div>
+            <div class="float-left">
+                <label class="form-label" for="start-month">Month</label>
+                <input class="form-control" type="number" id="start-month" name="start-month" />
+            </div>
+            <div class="float-left wide">
+                <label class="form-label" for="start-year">Year</label>
+                <input class="form-control" type="number" id="start-year" name="start-year" />
+            </div>
+            <div style="clear:both"></div>
+
+            <p class="heading-small">Enter the end date of your financial year</p>
+            <div class="float-left">
+                <label class="form-label" for="end-day">Day</label>
+                <input class="form-control" type="number" id="end-day" name="end-day" />
+            </div>
+            <div class="float-left">
+                <label class="form-label" for="end-month">Month</label>
+                <input class="form-control" type="number" id="end-month" name="end-month" />
+            </div>
+            <div class="float-left wide">
+                <label class="form-label" for="end-year">Year</label>
+                <input class="form-control" type="number" id="end-year" name="end-year" />
+            </div>
+            <div style="clear:both"></div>
+            <input class="button" type="submit" value="Calculate your next reporting period">
+            <div class="output">
+            </div>
+        </form>
+        <h4 class="heading-small">If your financial year isn’t 12 months long</h4>
+        <p>
+            If you have altered your financial year length, you may have a financial year that is less or more than 12 months.
+        </p>
+        <ul class="list list-bullet">
+            <li>If your financial year is less than 9 months, you only need to report once per financial year: this report will cover your whole financial year.</li>
+            <li>If it’s between 9 and 15 months, your first report covers 6 months, and your second report will cover the rest of the financial year.</li>
+            <li>If it’s more than 15 months, you must report 3 times.</li>
+        </ul>
+
+        <div class="notice">
+            <i class="icon icon-important">
+                <span class="visually-hidden">Warning</span>
+            </i>
+            <strong>You must <a href="@routes.SearchReport.search()">publish your report online</a> by your submission date.</strong>
+        </div>
+    }
+
+    @if(page==2) {
+        <h2 class="heading-large">4. What you must report</h2>
+        <p>
+            You need to prepare the information for your report and get sign-off by a director (or, in an limited liability partnership, by a <a href="">designated member</a> before entering the information into the online form. You need to provide the following information:
+        </p>
+        <h3 class="bold-medium">Your payment terms, which must include the following</h3>
+        <ul class="list list-bullet">
+            <li>Your standard or ‘default’ payment terms. This must include your standard payment period.</li>
+            <li>Your maximum contractual payment period,</li>
+            <li>Any changes you have made to standard terms during the reporting period.</li>
+            <li>If so, whether suppliers have been notified or consulted on these  changes.</li>
+        </ul>
+        <h3 class="bold-medium">Your payment performance</h3>
+        <ul class="list list-bullet">
+            <li>The average time to pay invoices.</li>
+            <li>The proportion of invoices paid within 30 days, between 31 and 60 days and 61+ days.</li>
+            <li>The proportion of invoices not paid within agreed terms.</li>
+        </ul>
+        <div class="notice">
+            <i class="icon icon-important">
+                <span class="visually-hidden">Warning</span>
+            </i>
+            <strong>You should calculate your time to pay from the date you receive an invoice or other payment notice (eg a timesheet). This is ‘day zero’.</strong>
+        </div>
+        <h3 class="bold-medium">How you deal with suppliers</h3>
+        <ul class="list list-bullet">
+            <li>Any processes you have for dispute resolution related to payment.</li>
+            <li>Whether suppliers are offered e-invoicing.</li>
+            <li>Whether suppliers are offered supply chain finance.</li>
+            <li>Whether your business charges has a policy of deducting sums from payments as a charge for remaining on a supplier list.</li>
+            <li>Whether your business is a member of a payment code such as the <a href="http://www.promptpaymentcode.org.uk/">Prompt Payment Code</a>.</li>
+        </ul>
+    }
+</div>
