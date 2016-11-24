@@ -1,0 +1,22 @@
+@(currentPage: Int, previous: String, next: String)
+<footer>
+    <nav class="govuk-previous-and-next-navigation" role="navigation" aria-label="Pagination">
+        <ul class="group">
+        @if(previous != null) {
+            <li class="previous-page">
+                <a title="Navigate to previous part" rel="previous" href="@routes.Home.howGuide(currentPage-1)">
+                    <span class="pagination-label">Previous</span> <span class="pagination-part-title">@previous</span>
+                </a>
+            </li>
+        }
+        @if(next != null) {
+            <li class="next-page">
+                <a title="Navigate to next part" rel="next" href="@routes.Home.howGuide(currentPage+1)">
+                    <span class="pagination-label">Next</span> <span class="pagination-part-title">@next</span>
+                </a>
+            </li>
+
+        }
+        </ul>
+    </nav>
+</footer>

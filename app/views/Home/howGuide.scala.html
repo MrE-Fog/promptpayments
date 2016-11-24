@@ -57,6 +57,7 @@
             </i>
             <strong>The report must be signed off by a director or a designated member of a Limited Liability Partnership. You must submit your report before the deadline and the report must be accurate and truthful. If not, the business and every director or designated member may be liable to a fine.</strong>
         </div>
+        @_pagination(0, null, "Deadlines")
     }
     @if(page == 1) {
         <h2 class="heading-large">2. Deadlines</h2>
@@ -116,21 +117,22 @@
             </i>
             <strong>You must <a href="@routes.SearchReport.search()">publish your report online</a> by your submission date.</strong>
         </div>
+        @_pagination(1, "Overview", "What you must report")
     }
 
     @if(page==2) {
-        <h2 class="heading-large">4. What you must report</h2>
+        <h2 class="heading-large">3. What you must report</h2>
         <p>
             You need to prepare the information for your report and get sign-off by a director (or, in an limited liability partnership, by a <a href="">designated member</a> before entering the information into the online form. You need to provide the following information:
         </p>
-        <h3 class="bold-medium">Your payment terms, which must include the following</h3>
+        <h3 class="heading-medium">Your payment terms, which must include the following</h3>
         <ul class="list list-bullet">
             <li>Your standard or ‘default’ payment terms. This must include your standard payment period.</li>
             <li>Your maximum contractual payment period,</li>
             <li>Any changes you have made to standard terms during the reporting period.</li>
             <li>If so, whether suppliers have been notified or consulted on these  changes.</li>
         </ul>
-        <h3 class="bold-medium">Your payment performance</h3>
+        <h3 class="heading-medium">Your payment performance</h3>
         <ul class="list list-bullet">
             <li>The average time to pay invoices.</li>
             <li>The proportion of invoices paid within 30 days, between 31 and 60 days and 61+ days.</li>
@@ -142,7 +144,7 @@
             </i>
             <strong>You should calculate your time to pay from the date you receive an invoice or other payment notice (eg a timesheet). This is ‘day zero’.</strong>
         </div>
-        <h3 class="bold-medium">How you deal with suppliers</h3>
+        <h3 class="heading-medium">How you deal with suppliers</h3>
         <ul class="list list-bullet">
             <li>Any processes you have for dispute resolution related to payment.</li>
             <li>Whether suppliers are offered e-invoicing.</li>
@@ -150,5 +152,6 @@
             <li>Whether your business charges has a policy of deducting sums from payments as a charge for remaining on a supplier list.</li>
             <li>Whether your business is a member of a payment code such as the <a href="http://www.promptpaymentcode.org.uk/">Prompt Payment Code</a>.</li>
         </ul>
+        @_pagination(2, "Deadlines", null)
     }
 </div>
