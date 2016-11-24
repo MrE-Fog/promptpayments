@@ -10,40 +10,56 @@
     <hr>
 </h1>
 
+@if(model.ReportSummaries.isEmpty()) {
+<div class="scannable-wrapper">
+    <h3 class="heading-medium">This business has not published any reports</h3>
+    <ul class="list list-bullet">
+        <li>Only large businesses are required to publish payment practice reports. It is possible that the business you are searching for is not large enough to be subject to this requirement.</li>
+        <li>Every business has a different reporting date. It is possible that the business you are searching for is not yet required to publish its first report.</li>
+    </ul>
+    <h3 class="heading-medium">Do you work for this business?</h3>
+    <p>
+        Your business may be required to publish information about payment practices and performance.
+    </p>
+    <ul class="list">
+        <li><a href="@routes.Home.ifGuide()">Find out if your business needs to report</a></li>
+        <li><a href="@routes.Home.howGuide(0)">How to report</a></li>
+    </ul>
+    <a class="button" href="@routes.FileReport.startForCompany(model.Info.CompaniesHouseIdentifier)">Publish a report</a>
+</div>
+} else {
 <div class="grid-row">
     <div class="column-two-thirds">
-        @if(model.ReportSummaries.isEmpty()) {
-            <p class="noresults">No reports found.</p>
-        } else {
-            <ul class="searchresults">
-                @for(report <- model.ReportSummaries) {
-                    @shared._reportSummary(report, model.Info.CompaniesHouseIdentifier)
-                }
-            </ul>
 
-            @if(model.ReportSummaries.canPage()) {
-            <div class="paging">
-                @if(model.ReportSummaries.canGoBack()) {
-                    <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() - 1)">Previous</a>
-                }
-
-                @for(i <- Math.max(0, model.ReportSummaries.pageNumber - 5) to Math.max(10, model.ReportSummaries.pageNumber + 5)) {
-                    @if(i == model.ReportSummaries.pageNumber) {
-                        <span class="page thispage" >@(i+1)</span>
-                    }
-                    @if(i != model.ReportSummaries.pageNumber && model.ReportSummaries.canGo(i)) {
-                        <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, i)">@(i+1)</a>
-                    }
-                }
-                @if(model.ReportSummaries.canGoNext()) {
-                <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() + 1)">Next</a>
-                }
-            </div>
-            }
-            <p>
-                @model.ReportSummaries.totalSize() @(model.ReportSummaries.totalSize() match {case 1 => "report" case n => "reports"}) found
-            </p>
+    <ul class="searchresults">
+        @for(report <- model.ReportSummaries) {
+            @shared._reportSummary(report, model.Info.CompaniesHouseIdentifier)
         }
+    </ul>
+
+        @if(model.ReportSummaries.canPage()) {
+        <div class="paging">
+            @if(model.ReportSummaries.canGoBack()) {
+                <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() - 1)">Previous</a>
+            }
+
+            @for(i <- Math.max(0, model.ReportSummaries.pageNumber - 5) to Math.max(10, model.ReportSummaries.pageNumber + 5)) {
+                @if(i == model.ReportSummaries.pageNumber) {
+                    <span class="page thispage" >@(i+1)</span>
+                }
+                @if(i != model.ReportSummaries.pageNumber && model.ReportSummaries.canGo(i)) {
+                    <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, i)">@(i+1)</a>
+                }
+            }
+            @if(model.ReportSummaries.canGoNext()) {
+            <a class="page" href="@routes.SearchReport.company(model.Info.CompaniesHouseIdentifier, model.ReportSummaries.pageNumber() + 1)">Next</a>
+            }
+        </div>
+        }
+        <p>
+            @model.ReportSummaries.totalSize() @(model.ReportSummaries.totalSize() match {case 1 => "report" case n => "reports"}) found
+        </p>
+
     </div>
     <div class="column-one-third">
         <div class="separator"></div>
@@ -54,5 +70,6 @@
             <li><a href="@routes.FileReport.startForCompany(model.Info.CompaniesHouseIdentifier)">Publish a report</a></li>
         </ul>
     </div>
+}
 
 </div>
