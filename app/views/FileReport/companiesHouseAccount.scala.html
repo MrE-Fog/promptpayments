@@ -1,0 +1,16 @@
+@(company: String)
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
+    </ol>
+</div>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">You need to register a Companies House account</h1>
+    <h3 class="heading-medium">How this works</h3>
+    <ul class="list list-bullet">
+        <li>Fill in the online registration form.</li>
+        <li>Companies House will post a letter to your business address to verify your identity - this will take a few days.</li>
+        <li>You can then sign in to file your report.</li>
+    </ul>
+    <a class="button button-start" href="https://beta.companieshouse.gov.uk/signin">Apply for a Companies House account</a>
+</div>

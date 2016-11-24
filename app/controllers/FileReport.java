@@ -37,16 +37,27 @@ public class FileReport extends PageController {
     }
 
 
-    public Result index() {return ok(page(views.html.FileReport.index.render())); }
-    public Result start() {return ok(page(views.html.FileReport.start.render())); }
-    public Result startForCompany(String company) {return ok(page(views.html.FileReport.start.render())); }
-    public Result guidance() {return ok(page(views.html.FileReport.guidance.render())); }
+    public Result startForCompany(String company) {
+        OrchestratorResult<CompanyModel> companyModel = fileReportOrchestrator.getCompanyModel(company, 0, 0);
+        if (companyModel.success()) {
+            return ok(page(views.html.FileReport.start.render(companyModel.get().Info)));
+        } else {
+            return status(500, companyModel.message());
+        }
+    }
 
-    public Result findCompanies() {return ok(page(views.html.FileReport.findCompanies.render())); }
+    public Result signInInterstitial(String company) {
+        return ok(page(views.html.FileReport.signInInterstitial.render(company)));
+    }
 
     public Result login(String companiesHouseIdentifier) {
-        String authorizationUri = fileReportOrchestrator.getAuthorizationUri(companiesHouseIdentifier);
-        return redirect(authorizationUri);
+        String hasAccount = request().body().asFormUrlEncoded().get("account")[0];
+        if (hasAccount.equals("1")) {
+            String authorizationUri = fileReportOrchestrator.getAuthorizationUri(companiesHouseIdentifier);
+            return redirect(authorizationUri);
+        } else {
+            return ok(page(views.html.FileReport.companiesHouseAccount.render()));
+        }
         //return ok(page(views.html.FileReport.login.render(companiesHouseIdentifier)));
     }
 
@@ -71,9 +82,6 @@ public class FileReport extends PageController {
         }
     }
 
-    public Result companies(int page) {
-        return status(404);
-    }
 
     public Result reviewFiling() {
         OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());

@@ -1,24 +1,19 @@
+@(company: CompanySummary)
 <div class="breadcrumbs">
     <ol>
-        <li><a href="@routes.Home.index()">Home</a></li>
-        <li><a href="@routes.FileReport.index()">Duty to report for large businesses</a></li>
-        <li><a href="@routes.FileReport.start()">File a payment report</a></li>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
     </ol>
 </div>
 <div class="scannable-wrapper">
-    <h1 class="heading-xlarge">File a payment report</h1>
-    <p class="lede">Provide information on the payment practices of your company</p>
-    <p>Press the button below to get started.</p>
-    <a href="@routes.FileReport.findCompanies()" class="button button-start">File a payment report</a>
+    <h1 class="heading-xlarge">Publish a report for @company.Name</h1>
+    <p class="bold-medium">Company number: @company.CompaniesHouseIdentifier</p>
+    <p class="lede">Large businesses must publish payment reports twice a year.</p>
+    <a href="@routes.FileReport.signInInterstitial(company.CompaniesHouseIdentifier)" class="button button-start">File a payment report</a>
 
     <h2 class="heading-medium">Before you start</h2>
-    <p>Make sure to have everything you need to complete the process:</p>
     <ul class="list list-bullet">
-        <li>Ensure you have your invoicing data ready. <a href="#">Learn more&hellip;</a></li>
-        <li>You will need your Companies House login credentials</li>
-        <li>Make sure you are authorised by Companies House to file reports for your company</li>
+        <li>Check your business counts as a <a href="@routes.Home.ifGuide()">large business</a>, and find out <a href="@routes.Home.howGuide(2)">what you need to report</a>.</li>
+        <li>Register an <a href="https://beta.companieshouse.gov.uk/signin">account with Companies House</a> &ndash; you’ll need to make sure you’re authorised to file reports for your business.</li>
+        <li>Prepare your report data in advance.</li>
     </ul>
-    <p>
-       <a href="@routes.Home.index()" class="link-back">Back</a>
-    </p>
 </div>

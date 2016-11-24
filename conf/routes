@@ -17,15 +17,14 @@ GET     /Data/Export                       controllers.Home.export()
 GET     /Reports/Search controllers.SearchReport.search()
 POST    /Reports/Search controllers.SearchReport.handleSearch(page: Int ?= 0)
 GET     /Reports/Company/:company   controllers.SearchReport.company(company: String, page: Int ?= 0)
-GET     /Reports/Company/:company/File controllers.FileReport.startForCompany(company: String)
 GET     /Reports/Company/:company/Report/:report controllers.ViewReport.view(company: String, report: Int)
 
-GET     /FileReport          controllers.FileReport.index()
-GET     /FileReport/Start          controllers.FileReport.start()
-GET     /FileReport/Guidance          controllers.FileReport.guidance()
-GET     /FileReport/Search controllers.FileReport.findCompanies()
-POST     /FileReport/Companies    controllers.FileReport.companies(page: Int)
-GET     /FileReport/Login/:id    controllers.FileReport.login(id: String)
+
+GET     /Reports/Company/:company/File controllers.FileReport.startForCompany(company: String)
+GET     /Reports/Company/:company/PreLogIn controllers.FileReport.signInInterstitial(company: String)
+POST     /Reports/Company/:company/LogIn    controllers.FileReport.login(company: String)
+
+
 GET     /FileReport/cb    controllers.FileReport.loginCallback(state: String, code: String)
 POST     /FileReport/Edit      controllers.FileReport.editFiling()
 POST    /FileReport/ReviewFiling    controllers.FileReport.reviewFiling()

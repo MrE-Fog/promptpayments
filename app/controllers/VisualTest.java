@@ -86,8 +86,6 @@ public class VisualTest extends PageController {
                 views.html.Reports.results.render("cod", new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 0, 3)),
                 views.html.Reports.company.render(healthyCompanyModel),
 
-                views.html.FileReport.index.render(),
-                views.html.FileReport.companies.render(new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 3, 3), "healthy company"),
                 views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
