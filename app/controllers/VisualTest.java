@@ -106,13 +106,13 @@ public class VisualTest extends PageController {
                 15,
                 5,
 
-                2016,
-                0,
-                1,
+                "2016",
+                "0",
+                "1",
 
-                2016,
-                5,
-                29,
+                "2016",
+                "5",
+                "29",
 
                 "Payment terms",
                 "Dispute resolution",
@@ -133,13 +133,13 @@ public class VisualTest extends PageController {
                 50,
                 50,
 
-                2020,
-                0,
-                1,
+                "2020",
+                "0",
+                "1",
 
-                2019,
-                1,
-                31,
+                "2019",
+                "1",
+                "31",
 
                 "",
                 "",
@@ -154,9 +154,9 @@ public class VisualTest extends PageController {
 
     private ReportFilingModel getDateswappedFilingModel() {
         ReportFilingModel completeFilingModel = getCompleteFilingModel();
-        int year = completeFilingModel.getStartDate_year();
-        int month = completeFilingModel.getStartDate_month();
-        int day = completeFilingModel.getStartDate_day();
+        String year = completeFilingModel.getStartDate_year();
+        String month = completeFilingModel.getStartDate_month();
+        String day = completeFilingModel.getStartDate_day();
 
         completeFilingModel.setStartDate_year(completeFilingModel.getEndDate_year());
         completeFilingModel.setStartDate_month(completeFilingModel.getEndDate_month());

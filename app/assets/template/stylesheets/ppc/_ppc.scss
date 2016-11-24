@@ -12,6 +12,11 @@
     height: 10px;
     background-color: #005ea5;
 }
+
+.small-aside {
+    font-size:18px;
+    color: #616a6e;
+}
 .heading-sidebar {
     font-size: 24px;
     line-height: 1.25;
@@ -65,16 +70,16 @@ fieldset {
     padding-left: 10px;
 }
 
-.inline-wizard .float-left {
+.input-float-left {
     float: left;
     width: 2.5em;
     margin-right:1em;
 }
 
-.inline-wizard .float-left.wide {
+.input-float-left.wide {
     width: 3.5em;
 }
-.inline-wizard .float-left input {
+.input-float-left input {
     width:100%;
 }
 /* Search results */
@@ -109,12 +114,6 @@ fieldset {
     margin-bottom:15px;
 }
 
-#StartDate_day, #StartDate_month, #StartDate_year,
-#EndDate_day, #EndDate_month, #EndDate_year {
-    display: inline;
-    width: 5em;
-    margin-right: 10px;
-}
 
 .stat {
     font-size: 1.2em;

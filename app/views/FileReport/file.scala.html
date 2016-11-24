@@ -9,7 +9,18 @@
         <li><a href="@routes.Home.index()">Home</a></li>
     </ol>
 </div>
-<h1 class="heading-xlarge">File a report</h1>
+<h1 class="heading-xlarge">Publish a report for @company.Name</h1>
+<div class="notice">
+    <i class="icon icon-important">
+        <span class="visually-hidden">Warning</span>
+    </i>
+    <strong><a href="@routes.Home.howGuide(0)">You should prepare</a> before filling in this form.</strong>
+</div>
+<p class="small-aside">
+    Companies House number: @company.CompaniesHouseIdentifier
+    <br>
+    Date of submission: @date.ToDateString()
+</p>
 
 @if(!validation.isValid()) {
     <div class="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -22,97 +33,100 @@
         </p>
     </div>
 }
+<div class="scannable-wrapper">
 <form action="@routes.FileReport.reviewFiling()" method="POST" class="@{if (!validation.isValid()) "error-wrapper"}">
     <input type="hidden" id="TargetCompanyCompaniesHouseIdentifier" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
 
-    <fieldset class="form-group">
-        <label class="form-label" for="TargetCompanyNamePublic">Company</label>
-        <input class="form-control" type="text" disabled="disabled" id="TargetCompanyNamePublic" value="@company.Name">
-    </fieldset>
-
-
-    <fieldset class="form-group">
-        <label class="form-label" for="FilingDate2">Filing date</label>
-        <input class="form-control" type="text" disabled="disabled" id="FilingDate2" value="@date.ToFriendlyString()">
-    </fieldset>
-
+    <h2 class="heading-large">Reporting period</h2>
     <fieldset class="form-group @validation.validateStartDate().cssClass()">
         <label class="form-label">
-            <span>Start date</span>
+            <span class="bold-medium">Start date of reporting period</span>
+            <span class="form-hint">This is the first day of the financial year in which you are required to report. Your next reporting period starts straight after the end of this reporting period.</span>
             <span class="error-message">@validation.validateStartDate().errorMessage()</span>
         </label>
-        @_formSelect("StartDate_day", model.get().getStartDate_day().toString(), datePicker.days)
-        @_formSelect("StartDate_month", model.get().getStartDate_month().toString(), datePicker.months)
-        @_formSelect("StartDate_year", model.get().getStartDate_year().toString(), datePicker.years)
+        @_dateinput("StartDate_")
     </fieldset>
     <fieldset class="form-group @validation.validateEndDate().cssClass()">
         <label class="form-label">
-            <span>End date</span>
+            <span class="bold-medium">End date of reporting period </span>
+            <span class="form-hint">For your first report of the year, this will be six months from the start date, unless your financial year runs for less than 9 months. For your second report, this will be the final day of your financial year.</span>
             <span class="error-message">@validation.validateEndDate().errorMessage()</span>
         </label>
-        @_formSelect("EndDate_day", model.get().getEndDate_day().toString(), datePicker.days)
-        @_formSelect("EndDate_month", model.get().getEndDate_month().toString(), datePicker.months)
-        @_formSelect("EndDate_year", model.get().getEndDate_year().toString(), datePicker.years)
+        @_dateinput("EndDate_")
     </fieldset>
+
+    <h2 class="heading-large">Key statistics</h2>
+    <p>Numbers in this section must be whole numbers</p>
     <fieldset class="form-group @validation.validateAverageTimeToPay().cssClass()">
         <label class="form-label" for="RecordOne">
-            <span>Average time to pay</span>
+            <span class="bold-medium">Average time to pay in days</span>
+            <span class="form-hint">Out all of the payments you have made in the reporting period, the average time it took to pay.</span>
             <span class="error-message">@validation.validateAverageTimeToPay().errorMessage()</span>
         </label>
         <input class="form-control" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
     </fieldset>
     <fieldset class="form-group @validation.validatePercentInvoicesPaidBeyondAgreedTerms().cssClass()">
         <label class="form-label" for="RecordTwo">
-            <span>Percentage of invoices paid later than agreed terms</span>
+            <span class="bold-medium">Percentage of invoices not paid within agreed terms</span>
+            <span class="form-hint">The percentage of invoices you failed to pay under the terms of your supplier contracts. This relates to the number of invoices, not their value.</span>
             <span class="error-message">@validation.validatePercentInvoicesPaidBeyondAgreedTerms().errorMessage()</span>
         </label>
         <input class="form-control" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
     </fieldset>
 
     <div class="form-group @validation.validateTimePercentages().cssClass()" style="margin-bottom:15px;">
+        <span class="bold-medium">Split of invoices paid in the reporting period</span>
+        <span class="form-hint">Figures A, B and C should add up to 100%</span>
         <span class="error-message">@validation.validateTimePercentages().errorMessage()</span>
         <fieldset class="form-group @validation.validatePercentInvoicesWithin30Days().cssClass()">
             <label class="form-label" for="RecordThree">
-                <span>Percentage of invoices paid within 30 days</span>
+                <span>A) Percentage of invoices paid within 30 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin30Days().errorMessage()</span>
             </label>
             <input class="form-control" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30DaysAsDecimal()">
         </fieldset>
         <fieldset class="form-group @validation.validatePercentInvoicesWithin60Days().cssClass()">
             <label class="form-label" for="RecordFour">
-                <span>Percentage of invoices paid within 31 to 60 days</span>
+                <span>B) Percentage of invoices paid within 31 to 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin60Days().errorMessage()</span>
             </label>
             <input class="form-control" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60DaysAsDecimal()">
         </fieldset>
         <fieldset class="form-group @validation.validatePercentInvoicesBeyond60Days().cssClass()" style="margin-bottom:15px;">
             <label class="form-label" for="RecordFive">
-                <span>Percentage of invoices paid later than 60 days</span>
+                <span>C) Percentage of invoices paid later than 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesBeyond60Days().errorMessage()</span>
             </label>
             <input class="form-control" type="text" id="RecordFive" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60DaysAsDecimal()">
         </fieldset>
     </div>
 
+    <h2 class="heading-large">Payment terms</h2>
     <fieldset class="form-group @validation.validatePaymentTerms().cssClass()">
         <label class="form-label" for="RecordSix">
-            <span>Payment terms</span>
+            <span class="bold-medium">Describe your standard payment terms, including your standard payment period</span>
+            <span class="form-hint">You can include a link the relevant page on your website.</span>
             <span class="error-message">@validation.validatePaymentTerms().errorMessage()</span>
         </label>
         <textarea class="form-control" id="RecordSix" name="PaymentTerms">@model.get().getPaymentTerms()</textarea>
     </fieldset>
+
+    <h2 class="heading-large">Dispute resolution policy</h2>
     <fieldset class="form-group @validation.validateDisputeResolution().cssClass()">
         <label class="form-label" for="RecordSeven">
-            <span>Dispute resolution</span>
+            <span class="bold-medium">Describe your dispute resolution process</span>
+            <span class="form-hint">How do you handle complaints and queries from your suppliers about payments under qualifying contracts?</span>
             <span class="error-message">@validation.validateDisputeResolution().errorMessage()</span>
         </label>
         <textarea class="form-control" id="RecordSeven" name="DisputeResolution">@model.get().getDisputeResolution()</textarea>
     </fieldset>
 
+    <h2 class="heading-large">Other payment information</h2>
 
     <fieldset class="inline @validation.validateOfferEInvoicing().cssClass()">
         <label class="form-label">
-            <span>Do you offer E-Invoicing?</span>
+            <span class="bold-medium">Does your business offer E-invoicing?</span>
+            <span class="form-hint">Do you allow suppliers to electronically submit and track invoices?</span>
             <span class="error-message">@validation.validateOfferEInvoicing().errorMessage()</span>
         </label>
         <label class="block-label" for="OfferEInvoicing-yes">
@@ -128,7 +142,8 @@
     <fieldset class="inline @validation.validateOfferSupplyChainFinance().cssClass()">
 
         <label class="form-label">
-            <span>Do you offer supply chain finance options?</span>
+            <span class="bold-medium">Does your business offer supply chain finance options?</span>
+            <span class="form-hint">This is where a supplier’s invoice can be paid quickly by a third-party company, who you then pay at a later date.</span>
             <span class="error-message">@validation.validateOfferSupplyChainFinance().errorMessage()</span>
 
         </label>
@@ -143,7 +158,7 @@
     </fieldset>
     <fieldset class="inline @validation.validateRetentionChargesInPolicy().cssClass()">
         <label class="form-label">
-            <span>Policy cover retention charges</span>
+            <span class="bold-medium">Does your business have a policy of deducting sums from payments as a charge for remaining on a supplier list?</span>
             <span class="error-message">@validation.validateRetentionChargesInPolicy().errorMessage()</span>
         </label>
         <label class="block-label" for="RetentionChargesInPolicy-yes">
@@ -157,7 +172,7 @@
     </fieldset>
     <fieldset class="inline @validation.validateRetentionChargesInPast().cssClass()">
         <label class="form-label">
-            <span>Ever raised retention charges?</span>
+            <span class="bold-medium">In this reporting period, has your business deducted sums from payments as a charge for remaining on a supplier list?</span>
             <span class="error-message">@validation.validateRetentionChargesInPast().errorMessage()</span>
         </label>
         <label class="block-label" for="RetentionChargesInPast-yes">
@@ -172,11 +187,13 @@
 
     <fieldset class="form-group @validation.validatePaymentCodes().cssClass()">
         <label class="form-label" for="RecordEight">
-            <span>Payment codes (optional)</span>
+            <span class="bold-medium">Is your business a signatory to a code of practice for payment?</span>
+            <span class="form-hint">If yes, enter the name of the code</span>
             <span class="error-message">@validation.validatePaymentCodes().errorMessage()</span>
         </label>
         <textarea class="form-control" id="RecordEight" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
     </fieldset>
 
-    <input type="submit" class="button" value="Review">
+    <input type="submit" class="button" value="Continue">
 </form>
+</div>

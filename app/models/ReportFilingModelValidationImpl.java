@@ -2,6 +2,7 @@ package models;
 
 import java.security.InvalidParameterException;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 
@@ -11,14 +12,15 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     private final ReportFilingModel model;
     private final Calendar utcNow;
 
-    private final String message_required = "This field is required";
+    private final String message_required = "Please answer this question";
     private final String message_nonnegative = "This should be a non-negative number";
     private final String message_percentagebounds = "This should be a number between 0 and 100";
     private final String message_upperpercentagebounds = "This cannot exceed 100%";
     private final String message_sumto100 = "These fields should sum to 100%";
     private final String message_invaliddate = "This date is invalid";
     private final String message_future = "Reporting period cannot cover the future";
-    private final String message_startbeforeend = "End date should be after start date";
+    private final String message_startbeforeend = "The end date cannot be before the start date";
+    private final String message_startsixmonthsbeforeend = "The end date must be at least six months after the start date";
 
     public ReportFilingModelValidationImpl(ReportFilingModel model, Calendar utcNow) {
         this.model = model;
@@ -120,6 +122,15 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
             return FieldValidation.fail(message_future);
         if (validateStartDate().isOk() && model.getEndDate().getTime().getTime() <= model.getStartDate().getTime().getTime())
             return FieldValidation.fail(message_startbeforeend);
+
+        if (validateStartDate().isOk()) {
+            Calendar startDateClone = (Calendar) model.getStartDate().clone();
+            startDateClone.add(Calendar.MONTH, 6);
+            if (model.getEndDate().getTime().getTime() <= startDateClone.getTime().getTime()) {
+                return FieldValidation.fail(message_startsixmonthsbeforeend);
+            }
+        }
+
         return FieldValidation.ok();
     }
 

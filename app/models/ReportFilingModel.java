@@ -19,13 +19,13 @@ public class ReportFilingModel {
     private String PercentInvoicesWithin60Days;
     private String PercentInvoicesBeyond60Days;
 
-    private int StartDate_year;
-    private int StartDate_month;
-    private int StartDate_day;
+    private String StartDate_year;
+    private String StartDate_month;
+    private String StartDate_day;
 
-    private int EndDate_year;
-    private int EndDate_month;
-    private int EndDate_day;
+    private String EndDate_year;
+    private String EndDate_month;
+    private String EndDate_day;
 
     private String PaymentTerms;
     private String DisputeResolution;
@@ -89,7 +89,7 @@ public class ReportFilingModel {
         return rtn;
     }
 
-    public static ReportFilingModel makeReportFilingModel(String targetCompanyCompaniesHouseIdentifier, double averageTimeToPay, double percentInvoicesPaidBeyondAgreedTerms, double percentInvoicesWithin30Days, double percentInvoicesWithin60Days, double percentInvoicesBeyond60Days, int startDate_year, int startDate_month, int startDate_day, int endDate_year, int endDate_month, int endDate_day, String paymentTerms, String disputeResolution, String paymentCodes, Boolean offerEInvoicing, Boolean offerSupplyChainFinance, Boolean retentionChargesInPolicy, Boolean retentionChargesInPast) {
+    public static ReportFilingModel makeReportFilingModel(String targetCompanyCompaniesHouseIdentifier, double averageTimeToPay, double percentInvoicesPaidBeyondAgreedTerms, double percentInvoicesWithin30Days, double percentInvoicesWithin60Days, double percentInvoicesBeyond60Days, String startDate_year, String startDate_month, String startDate_day, String endDate_year, String endDate_month, String endDate_day, String paymentTerms, String disputeResolution, String paymentCodes, Boolean offerEInvoicing, Boolean offerSupplyChainFinance, Boolean retentionChargesInPolicy, Boolean retentionChargesInPast) {
         ReportFilingModel rfm = new ReportFilingModel();
 
         rfm.TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
@@ -125,51 +125,51 @@ public class ReportFilingModel {
         TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
     }
 
-    public int getStartDate_year() {
+    public String getStartDate_year() {
         return StartDate_year;
     }
 
-    public void setStartDate_year(int startDate_year) {
+    public void setStartDate_year(String startDate_year) {
         StartDate_year = startDate_year;
     }
 
-    public int getStartDate_month() {
+    public String getStartDate_month() {
         return StartDate_month;
     }
 
-    public void setStartDate_month(int startDate_month) {
+    public void setStartDate_month(String startDate_month) {
         StartDate_month = startDate_month;
     }
 
-    public int getStartDate_day() {
+    public String getStartDate_day() {
         return StartDate_day;
     }
 
-    public void setStartDate_day(int startDate_day) {
+    public void setStartDate_day(String startDate_day) {
         StartDate_day = startDate_day;
     }
 
-    public int getEndDate_year() {
+    public String getEndDate_year() {
         return EndDate_year;
     }
 
-    public void setEndDate_year(int endDate_year) {
+    public void setEndDate_year(String endDate_year) {
         EndDate_year = endDate_year;
     }
 
-    public int getEndDate_month() {
+    public String getEndDate_month() {
         return EndDate_month;
     }
 
-    public void setEndDate_month(int endDate_month) {
+    public void setEndDate_month(String endDate_month) {
         EndDate_month = endDate_month;
     }
 
-    public int getEndDate_day() {
+    public String getEndDate_day() {
         return EndDate_day;
     }
 
-    public void setEndDate_day(int endDate_day) {
+    public void setEndDate_day(String endDate_day) {
         EndDate_day = endDate_day;
     }
 
@@ -269,11 +269,14 @@ public class ReportFilingModel {
         RetentionChargesInPast = retentionChargesInPast;
     }
 
-    private Calendar tryMakeUtcDate(int year, int month, int day) {
+    private Calendar tryMakeUtcDate(String year, String month, String day) {
+        if (year == null || year.isEmpty()) return null;
+        if (month == null || month.isEmpty()) return null;
+        if (day == null || day.isEmpty()) return null;
         try {
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             calendar.setLenient(false);
-            calendar.set(year, month, day);
+            calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day));
             calendar.getTime(); // this throws if the year-month-day combination is invalid.
             return calendar;
         } catch (Exception ignored) {

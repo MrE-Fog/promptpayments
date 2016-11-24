@@ -69,34 +69,11 @@
         </p>
         <form class="inline-wizard" method="GET" action="">
             <p class="heading-small">Enter the start date of your financial year</p>
-            <div class="float-left">
-                <label class="form-label" for="start-day">Day</label>
-                <input class="form-control" type="number" id="start-day" name="start-day" />
-            </div>
-            <div class="float-left">
-                <label class="form-label" for="start-month">Month</label>
-                <input class="form-control" type="number" id="start-month" name="start-month" />
-            </div>
-            <div class="float-left wide">
-                <label class="form-label" for="start-year">Year</label>
-                <input class="form-control" type="number" id="start-year" name="start-year" />
-            </div>
-            <div style="clear:both"></div>
+            @shared._dateinput("start-")
 
             <p class="heading-small">Enter the end date of your financial year</p>
-            <div class="float-left">
-                <label class="form-label" for="end-day">Day</label>
-                <input class="form-control" type="number" id="end-day" name="end-day" />
-            </div>
-            <div class="float-left">
-                <label class="form-label" for="end-month">Month</label>
-                <input class="form-control" type="number" id="end-month" name="end-month" />
-            </div>
-            <div class="float-left wide">
-                <label class="form-label" for="end-year">Year</label>
-                <input class="form-control" type="number" id="end-year" name="end-year" />
-            </div>
-            <div style="clear:both"></div>
+            @shared._dateinput("end-")
+
             <input class="button" type="submit" value="Calculate your next reporting period">
             <div class="output">
             </div>
