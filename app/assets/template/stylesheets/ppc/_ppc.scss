@@ -82,6 +82,10 @@ fieldset {
 .input-float-left input {
     width:100%;
 }
+
+.key-column {
+ width: 30%;
+}
 /* Search results */
 .paging .page {
     display:inline;
@@ -114,14 +118,6 @@ fieldset {
     margin-bottom:15px;
 }
 
-
-.stat {
-    font-size: 1.2em;
-    font-weight:bold;
-}
-.stat .bignumber {
-    font-size: 1.5em;
-}
 
 /* Search box */
 .search-bar-active {

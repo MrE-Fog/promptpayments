@@ -126,7 +126,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
         if (validateStartDate().isOk()) {
             Calendar startDateClone = (Calendar) model.getStartDate().clone();
             startDateClone.add(Calendar.MONTH, 6);
-            if (model.getEndDate().getTime().getTime() <= startDateClone.getTime().getTime()) {
+            if (model.getEndDate().getTime().getTime() < startDateClone.getTime().getTime()) {
                 return FieldValidation.fail(message_startsixmonthsbeforeend);
             }
         }

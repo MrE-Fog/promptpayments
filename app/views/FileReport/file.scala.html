@@ -44,7 +44,7 @@
             <span class="form-hint">This is the first day of the financial year in which you are required to report. Your next reporting period starts straight after the end of this reporting period.</span>
             <span class="error-message">@validation.validateStartDate().errorMessage()</span>
         </label>
-        @_dateinput("StartDate_")
+        @_dateinput("StartDate_", model.get().getStartDate_day(), model.get().getStartDate_month(), model.get().getStartDate_year())
     </fieldset>
     <fieldset class="form-group @validation.validateEndDate().cssClass()">
         <label class="form-label">
@@ -52,7 +52,7 @@
             <span class="form-hint">For your first report of the year, this will be six months from the start date, unless your financial year runs for less than 9 months. For your second report, this will be the final day of your financial year.</span>
             <span class="error-message">@validation.validateEndDate().errorMessage()</span>
         </label>
-        @_dateinput("EndDate_")
+        @_dateinput("EndDate_", model.get().getEndDate_day(), model.get().getEndDate_month(), model.get().getEndDate_year())
     </fieldset>
 
     <h2 class="heading-large">Key statistics</h2>
