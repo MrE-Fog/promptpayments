@@ -131,8 +131,10 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
 
         if (validateStartDate().isOk()) {
             Calendar startDateClone = (Calendar) model.getStartDate().clone();
+            startDateClone.add(Calendar.DATE, -1);
             startDateClone.add(Calendar.MONTH, 6);
-            if (model.getEndDate().getTime().getTime() < startDateClone.getTime().getTime()) {
+
+            if (startDateClone.getTime().getTime() - model.getEndDate().getTime().getTime() > 100) {
                 return FieldValidation.fail(message_startsixmonthsbeforeend);
             }
         }
@@ -163,7 +165,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
 
     @Override
     public FieldValidation validatePaymentTermsChangedComment() {
-        if (!model.isPaymentTermsChanged().equals(true)) {
+        if (model.isPaymentTermsChanged() == null || model.isPaymentTermsChanged().equals(false)) {
             return FieldValidation.ok();
         }
 
@@ -175,7 +177,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
 
     @Override
     public FieldValidation validatePaymentTermsChangedNotified() {
-        if (!model.isPaymentTermsChanged().equals(true)) {
+        if (model.isPaymentTermsChanged() == null || model.isPaymentTermsChanged().equals(false)) {
             return FieldValidation.ok();
         }
 
@@ -186,7 +188,11 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
 
     @Override
     public FieldValidation validatePaymentTermsChangedNotifiedComment() {
-        if (!model.isPaymentTermsChanged().equals(true) || !model.isPaymentTermsChangedNotified().equals(true)) {
+        if (model.isPaymentTermsChanged() == null || model.isPaymentTermsChanged().equals(false)) {
+            return FieldValidation.ok();
+        }
+
+        if (model.isPaymentTermsChangedNotified() == null || model.isPaymentTermsChangedNotified().equals(false)) {
             return FieldValidation.ok();
         }
 
@@ -217,7 +223,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
 
     @Override
     public FieldValidation validatePaymentCodes() {
-        if (!model.isHasPaymentCodes().equals(true)) {
+        if (model.isHasPaymentCodes() == null || model.isHasPaymentCodes().equals(false)) {
             return FieldValidation.ok();
         }
 

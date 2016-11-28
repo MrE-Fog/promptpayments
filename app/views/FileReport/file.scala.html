@@ -120,7 +120,7 @@
         <textarea class="form-control" id="MaximumContractPeriod" name="MaximumContractPeriod">@model.get().getMaximumContractPeriod()</textarea>
     </fieldset>
 
-    <div class="form-group @validation.validatePaymentTermsChanged().cssClass()">
+    <fieldset class="form-group inline @validation.validatePaymentTermsChanged().cssClass()">
         <label class="form-label">
             <span class="bold-medium">Were there any changes to your standard payment terms in the reporting period?</span>
             <span class="error-message">@validation.validatePaymentTermsChanged().errorMessage()</span>
@@ -133,16 +133,18 @@
             <input id="PaymentTermsChanged-no" name="PaymentTermsChanged" type="radio" value="0" @{if(model.get().isPaymentTermsChanged != null && !model.get().isPaymentTermsChanged()) "checked='checked'"}>
             No
         </label>
+    </fieldset>
+    <div class="panel" id="show-if-payment-changes">
         <fieldset class="form-group @validation.validatePaymentTermsChangedComment().cssClass()">
             <label class="form-label" for="PaymentTermsChangedComment">
-                <span class="bold-medium">Explain what the changes were</span>
+                <span class="bold-medium">If so, explain what the changes were</span>
                 <span class="error-message">@validation.validatePaymentTermsChangedComment().errorMessage()</span>
             </label>
             <textarea class="form-control" id="PaymentTermsChangedComment" name="PaymentTermsChangedComment">@model.get().getPaymentTermsChangedComment()</textarea>
         </fieldset>
-        <div class="form-group @validation.validatePaymentTermsChangedNotified().cssClass()">
+        <fieldset class="form-group inline @validation.validatePaymentTermsChangedNotified().cssClass()">
             <label class="form-label">
-                <span class="bold-medium">Did you consult or notify suppliers before you made these changes?</span>
+                <span class="bold-medium">If there were changes, did you consult or notify suppliers before you made these changes?</span>
                 <span class="error-message">@validation.validatePaymentTermsChangedNotified().errorMessage()</span>
             </label>
             <label class="block-label" for="PaymentTermsChangedNotified-yes">
@@ -153,18 +155,22 @@
                 <input id="PaymentTermsChangedNotified-no" name="PaymentTermsChangedNotified" type="radio" value="0" @{if(model.get().isPaymentTermsChangedNotified != null && !model.get().isPaymentTermsChangedNotified()) "checked='checked'"}>
                 No
             </label>
+        </fieldset>
+        <div class="panel" id="show-if-payment-changes-notified">
             <fieldset class="form-group @validation.validatePaymentTermsChangedNotifiedComment().cssClass()">
                 <label class="form-label" for="PaymentTermsChangedNotifiedComment">
-                    <span class="bold-medium">Explain how you did this</span>
+                    <span class="bold-medium">If so, explain how you did this</span>
                     <span class="error-message">@validation.validatePaymentTermsChangedNotifiedComment().errorMessage()</span>
                 </label>
                 <textarea class="form-control" id="PaymentTermsChangedNotifiedComment" name="PaymentTermsChangedNotifiedComment">@model.get().getPaymentTermsChangedNotifiedComment()</textarea>
             </fieldset>
         </div>
     </div>
+
+
     <fieldset class="form-group @validation.validatePaymentTermsComment().cssClass()">
         <label class="form-label" for="PaymentTermsComment">
-            <span class="bold-medium">Explain how you did this</span>
+            <span class="bold-medium">Optional: enter further information about payment terms</span>
             <span class="error-message">@validation.validatePaymentTermsComment().errorMessage()</span>
         </label>
         <textarea class="form-control" id="PaymentTermsComment" name="PaymentTermsComment">@model.get().getPaymentTermsComment()</textarea>
@@ -200,7 +206,6 @@
     </fieldset>
 
     <fieldset class="inline @validation.validateOfferSupplyChainFinance().cssClass()">
-
         <label class="form-label">
             <span class="bold-medium">Does your business offer supply chain finance options?</span>
             <span class="form-hint">This is where a supplier’s invoice can be paid quickly by a third-party company, who you then pay at a later date.</span>
@@ -245,7 +250,7 @@
         </label>
     </fieldset>
 
-    <div class="form-group @validation.validateHasPaymentCodes().cssClass()">
+    <fieldset class="form-group inline @validation.validateHasPaymentCodes().cssClass()">
         <label class="form-label">
             <span class="bold-medium">Is your business a signatory to a code of practice for payment?</span>
             <span class="error-message">@validation.validateHasPaymentCodes().errorMessage()</span>
@@ -258,15 +263,56 @@
             <input id="HasPaymentCodes-no" name="HasPaymentCodes" type="radio" value="0" @{if(model.get().isHasPaymentCodes() !=null && !model.get().isHasPaymentCodes()) "checked='checked'"}>
             No
         </label>
-        <div class="form-group @validation.validatePaymentCodes().cssClass()">
+    </fieldset>
+    <div class="panel" id="show-if-payment-codes">
+        <fieldset class="form-group @validation.validatePaymentCodes().cssClass()">
             <label class="form-label" for="PaymentCodes">
-                <span class="bold-medium">Enter the name of the code</span>
+                <span class="bold-medium">If so, enter the name of the code</span>
                 <span class="error-message">@validation.validatePaymentCodes().errorMessage()</span>
             </label>
             <textarea class="form-control" id="PaymentCodes" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
-        </div>
+        </fieldset>
     </div>
 
     <input type="submit" class="button" value="Continue">
 </form>
 </div>
+
+<script>
+
+    var panel1 = document.getElementById("show-if-payment-codes");
+    var panel2 = document.getElementById("show-if-payment-changes");
+    var panel3 = document.getElementById("show-if-payment-changes-notified");
+
+    function showDependingOnValue(elem,name) {
+        var radios = document.getElementsByName(name);
+        var val = null;
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                val = radios[i].value;
+            }
+        }
+
+        if (val == "1") {
+            elem.style.display = '';
+        } else {
+            elem.style.display = 'none';
+        }
+    }
+
+    function subscribeToChange(elem, name) {
+        var radios = document.getElementsByName(name);
+        for (var i =0; i < radios.length; i++) {
+            radios[i].onclick = function() { showDependingOnValue(elem,name); };
+        }
+    }
+
+    showDependingOnValue(panel1, "HasPaymentCodes");
+    showDependingOnValue(panel2, "PaymentTermsChanged");
+    showDependingOnValue(panel3, "PaymentTermsChangedNotified");
+
+    subscribeToChange(panel1, "HasPaymentCodes");
+    subscribeToChange(panel2, "PaymentTermsChanged");
+    subscribeToChange(panel3, "PaymentTermsChangedNotified");
+
+</script>

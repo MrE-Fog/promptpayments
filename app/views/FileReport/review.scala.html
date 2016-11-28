@@ -107,10 +107,18 @@
     </tr>
     <tr>
         <td  class="key-column">
+            Maximum contract period
+        </td>
+        <td>
+            @model.get().getMaximumContractPeriod()
+        </td>
+    </tr>
+    <tr>
+        <td  class="key-column">
             Payment terms have changed
         </td>
         <td>
-            @if(model.get().isPaymentTermsChanged()) {
+            @if(model.get().isPaymentTermsChanged() != null && model.get().isPaymentTermsChanged()) {
                 <strong>Yes </strong>&ndash; @model.get().getPaymentTermsChangedComment()
             } else {
                 <strong>No</strong>
@@ -122,10 +130,10 @@
             Suppliers notified of changes
         </td>
         <td>
-            @if(!model.get().isPaymentTermsChanged()) {
+            @if(model.get().isPaymentTermsChanged() == null || !model.get().isPaymentTermsChanged()) {
             <em>N/A</em>
             } else {
-                @if(model.get().isPaymentTermsChangedNotified()) {
+                @if(model.get().isPaymentTermsChangedNotified() != null && model.get().isPaymentTermsChangedNotified()) {
                     <strong>Yes </strong>&ndash; @model.get().getPaymentTermsChangedNotifiedComment()
                 } else {
                     <strong>No</strong>
@@ -186,7 +194,7 @@
             Payment code participation
         </td>
         <td>
-            @if(model.get().isHasPaymentCodes()) {
+            @if(model.get().isHasPaymentCodes() != null && model.get().isHasPaymentCodes()) {
                 <strong>Yes </strong>&ndash; @model.get().getPaymentCodes()
             } else {
                 <strong>None</strong>
@@ -213,11 +221,19 @@
     <input type="hidden" name="EndDate_day" value="@model.get().getEndDate_day()">
 
     <input type="hidden" name="PaymentTerms" value="@model.get().getPaymentTerms()">
+    <input type="hidden" name="MaximumContractPeriod" value="@model.get().getMaximumContractPeriod()">
+    <input type="hidden" name="PaymentTermsChanged" value="@model.get().isPaymentTermsChanged()">
+    <input type="hidden" name="PaymentTermsChangedComment" value="@model.get().getPaymentTermsChangedComment()">
+    <input type="hidden" name="PaymentTermsChangedNotified" value="@model.get().isPaymentTermsChangedNotified()">
+    <input type="hidden" name="PaymentTermsChangedNotifiedComment" value="@model.get().getPaymentTermsChangedNotifiedComment()">
+    <input type="hidden" name="PaymentTermsComment" value="@model.get().getPaymentTermsComment()">
+
     <input type="hidden" name="DisputeResolution" value="@model.get().getDisputeResolution()">
     <input type="hidden" name="OfferEInvoicing" value="@model.get().isOfferEInvoicing()">
     <input type="hidden" name="OfferSupplyChainFinance" value="@model.get().isOfferSupplyChainFinance()">
     <input type="hidden" name="RetentionChargesInPolicy" value="@model.get().isRetentionChargesInPolicy()">
     <input type="hidden" name="RetentionChargesInPast" value="@model.get().isRetentionChargesInPast()">
+    <input type="hidden" name="HasPaymentCodes" value="@model.get().isHasPaymentCodes()">
     <input type="hidden" name="PaymentCodes" value="@model.get().getPaymentCodes()">
 
     <div class="scannable-wrapper">
@@ -253,11 +269,19 @@
     <input type="hidden" name="EndDate_day" value="@model.get().getEndDate_day()">
 
     <input type="hidden" name="PaymentTerms" value="@model.get().getPaymentTerms()">
+    <input type="hidden" name="MaximumContractPeriod" value="@model.get().getMaximumContractPeriod()">
+    <input type="hidden" name="PaymentTermsChanged" value="@model.get().isPaymentTermsChanged()">
+    <input type="hidden" name="PaymentTermsChangedComment" value="@model.get().getPaymentTermsChangedComment()">
+    <input type="hidden" name="PaymentTermsChangedNotified" value="@model.get().isPaymentTermsChangedNotified()">
+    <input type="hidden" name="PaymentTermsChangedNotifiedComment" value="@model.get().getPaymentTermsChangedNotifiedComment()">
+    <input type="hidden" name="PaymentTermsComment" value="@model.get().getPaymentTermsComment()">
+
     <input type="hidden" name="DisputeResolution" value="@model.get().getDisputeResolution()">
     <input type="hidden" name="OfferEInvoicing" value="@model.get().isOfferEInvoicing()">
     <input type="hidden" name="OfferSupplyChainFinance" value="@model.get().isOfferSupplyChainFinance()">
     <input type="hidden" name="RetentionChargesInPolicy" value="@model.get().isRetentionChargesInPolicy()">
     <input type="hidden" name="RetentionChargesInPast" value="@model.get().isRetentionChargesInPast()">
+    <input type="hidden" name="HasPaymentCodes" value="@model.get().isHasPaymentCodes()">
     <input type="hidden" name="PaymentCodes" value="@model.get().getPaymentCodes()">
 
     <input type="submit" class="button" value="Correct">

@@ -70,7 +70,7 @@
     <h3 class="heading-medium">Other payment information</h3>
     <h4 class="heading-small">
         Is this business a member of a code of practice for payment?
-        <span class="heading-secondary">For example, signatories to The Prompt Payment Code must commit to paying 95% of their invoices within 60 days.</span>
+        <span class="form-hint">For example, signatories to The Prompt Payment Code must commit to paying 95% of their invoices within 60 days.</span>
     </h4>
     <p>
         @if(model.HasPaymentCodes) {
@@ -81,7 +81,7 @@
     </p>
     <h4 class="heading-small">
         Does this business offer e-invoicing?
-        <span class="heading-secondary">Do you allow suppliers to electronically submit and track invoices?</span>
+        <span class="form-hint">Do you allow suppliers to electronically submit and track invoices?</span>
     </h4>
     <p>
         @(model.OfferEInvoicing match {case false => "No" case _ => "Yes"})
@@ -89,7 +89,7 @@
 
     <h4 class="heading-small">
         Does this business offer supply chain finance?
-        <span class="heading-secondary">This is where a supplier’s invoice can be paid quickly by a third-party financing company, who the business pays at a later date.</span>
+        <span class="form-hint">This is where a supplier’s invoice can be paid quickly by a third-party financing company, who the business pays at a later date.</span>
     </h4>
     <p>
         @(model.OfferSupplyChainFinance match {case false => "No" case _ => "Yes"})
