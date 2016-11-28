@@ -51,16 +51,23 @@ public class VisualTest extends PageController {
                 new MockUtcTimeProvider(2016, 5, 0).Now(),
 
                 "User-supplied description of payment terms",
+                "Max contract period",
+                true,
+                "description of change",
+                true,
+                "description of notification",
+                "Payment terms comments",
                 "User-supplied description of dispute resolution",
 
                 true,
                 true,
                 false,
                 false,
+                true,
                 "Prompt Payment Code"
         );
 
-        ReportModel emptyReportModel = new ReportModel(healthyReportSummary, null, null, null, null, null, new MockUtcTimeProvider(2016, 0, 1).Now(), new MockUtcTimeProvider(2016, 5, 30).Now(), null, null, false, false, false, false, null);
+        ReportModel emptyReportModel = new ReportModel(healthyReportSummary, null, null, null, null, null, new MockUtcTimeProvider(2016, 0, 1).Now(), new MockUtcTimeProvider(2016, 5, 30).Now(), null, null, false, null, false, null, null, null, false, false, false, false, false, null);
         CompanySearchResult healthyCompanySearchResult = new CompanySearchResult(
                 new CompanySummaryWithAddress("Eigencode Ltd.", "123", "1 Stott Gardens"),
                 3);
@@ -115,7 +122,14 @@ public class VisualTest extends PageController {
                 "29",
 
                 "Payment terms",
+                "max contract period",
+                true,
+                "description of changes",
+                true,
+                "description of notification",
+                "comments on payment terms",
                 "Dispute resolution",
+                true,
                 "Payment codes",
 
                 true,
@@ -143,6 +157,13 @@ public class VisualTest extends PageController {
 
                 "",
                 "",
+                null,
+                "",
+                null,
+                "",
+                "",
+                "",
+                null,
                 "",
 
                 null,

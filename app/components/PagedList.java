@@ -52,7 +52,7 @@ public class PagedList<T> extends ArrayList<T> {
 
     public boolean canPage() {
         //check we are in a valid navigational state
-        if ((this.pageNumber)*pageSize >= totalSize || this.pageNumber < 0) {
+        if ((this.pageNumber)*pageSize >= totalSize || this.pageNumber < 0 || this.pageSize <= 0) {
             return false;
         }
 

@@ -5,7 +5,10 @@ import components.CompaniesHouseCommunicator;
 import components.PagedList;
 import components.ReportsRepository;
 import models.*;
+import org.assertj.core.groups.Tuple;
+import play.libs.F;
 import play.mvc.Http;
+import scala.Option;
 import utils.TimeProvider;
 
 import java.io.IOException;
@@ -145,6 +148,19 @@ public class FileReportOrchestrator {
         } catch (IOException e) {
             e.printStackTrace();
             return OrchestratorResult.fromFailure("Could not retrieve companies");
+        }
+    }
+
+    public OrchestratorResult<F.Tuple<CompanySummary, ReportModel>> getReport(String companiesHouseIdentifier, int reportId) {
+        try {
+            CompanySummary companySummary = companiesHouseCommunicator.getCompany(companiesHouseIdentifier);
+            Option<ReportModel> model = reportsRepository.getReport(companiesHouseIdentifier, reportId);
+            if(model.isEmpty()) {
+                return OrchestratorResult.fromFailure("Could not find report");
+            }
+            return OrchestratorResult.fromSucccess(new F.Tuple<>(companySummary, model.get()));
+        } catch (IOException e) {
+            return OrchestratorResult.fromFailure("Could not find company");
         }
     }
 }

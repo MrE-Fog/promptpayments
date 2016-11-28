@@ -22,16 +22,25 @@ public class ReportModelExamples {
                 15.0,
                 5.0,
 
-                2016,
-                0,
-                1,
+                "2016",
+                "1",
+                "1",
 
-                2016,
-                5,
-                30,
+                "2016",
+                "6",
+                "30",
 
                 "Payment terms",
+                "Maximum contract length",
+                true,
+                "Contract changes",
+                true,
+                "Notified suppliers of change description",
+                "Payment terms comment",
+
                 "Dispute resolution",
+
+                true,
                 "Payment codes",
 
                 true,
@@ -49,16 +58,25 @@ public class ReportModelExamples {
                 50.0,
                 10.0,
 
-                2017,
-                6,
-                2,
+                "2017",
+                "6",
+                "2",
 
-                2017,
-                11,
-                31,
+                "2017",
+                "11",
+                "31",
 
                 "Strange Payment terms",
+                "Extravagant max payment terms",
+                false,
+                "outstanding payment changes",
+                false,
+                "uproarious notifications",
+                "stranger Payment terms comments",
+
                 "Intriguing Dispute resolution",
+
+                false,
                 "Affronting Payment codes",
 
                 false,
@@ -81,11 +99,18 @@ public class ReportModelExamples {
                 start,
                 end,
                 "Payment terms",
+                "max contract length",
+                true,
+                "contract changes",
+                true,
+                "contract change notification",
+                "Payment terms comments",
                 "Dispute terms",
                 true,
                 true,
                 false,
                 false,
+                true,
                 "Prompt payment code");
     }
 
@@ -103,6 +128,13 @@ public class ReportModelExamples {
                 end,
                 null,
                 null,
+                false,
+                null,
+                false,
+                null,
+                null,
+                null,
+                false,
                 false,
                 false,
                 false,

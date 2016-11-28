@@ -64,7 +64,7 @@ final class JdbcReportsRepository implements ReportsRepository {
     @Override
     public Option<ReportModel> getReport(String company, int reportId) {
         List<ReportModel> reportModels = jdbcCommunicator.ExecuteQuery(
-                "SELECT Identifier, FilingDate, StartDate, EndDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ? LIMIT 1",
+                "SELECT Identifier, FilingDate, StartDate, EndDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, MaximumContractPeriod, PaymentTermsChanged, PaymentTermsChangedComment, PaymentTermsChangedNotified, PaymentTermsChangedNotifiedComment, PaymentTermsComment, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, HasPaymentCodes, PaymentCodes FROM Report WHERE CompaniesHouseIdentifier = ? AND Identifier = ? LIMIT 1",
                 new Object[]{company, reportId},
                 _ReportMapper(0));
 
@@ -73,31 +73,6 @@ final class JdbcReportsRepository implements ReportsRepository {
         } else {
             return Option.apply(reportModels.get(0));
         }
-    }
-
-    @Override
-    public PagedList<CompanySummary> getCompanySummaries(List<String> companiesHouseIdentifiers, int page, int itemsPerPage) {
-        if (companiesHouseIdentifiers.isEmpty())
-            return new PagedList<>(new ArrayList<>(), 0, 0, itemsPerPage);
-
-        //ewwwwww!
-        String parameters = String.join(", ", companiesHouseIdentifiers.stream().map(chi -> "?").collect(Collectors.toList()));
-
-        List<Object> identifiersAndPaging = new ArrayList<>(companiesHouseIdentifiers);
-        identifiersAndPaging.add(itemsPerPage);
-        identifiersAndPaging.add(page * itemsPerPage);
-
-        List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
-                String.format("SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier IN (%s) ORDER BY Name LIMIT ? OFFSET ?", parameters),
-                identifiersAndPaging.toArray(),
-                _CompanySummaryMapper);
-
-        Integer size = jdbcCommunicator.ExecuteQuery(
-                String.format("SELECT COUNT(*) FROM Company WHERE CompaniesHouseIdentifier IN (%s)", parameters),
-                companiesHouseIdentifiers.toArray(),
-                x -> x.getInt(1)).get(0);
-
-        return new PagedList<>(companySummaries, size, page, itemsPerPage);
     }
 
     @Override
@@ -121,7 +96,7 @@ final class JdbcReportsRepository implements ReportsRepository {
         );
 
         return jdbcCommunicator.ExecuteUpdate(
-                "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+                "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, MaximumContractPeriod, PaymentTermsChanged, PaymentTermsChangedComment, PaymentTermsChangedNotified, PaymentTermsChangedNotifiedComment, PaymentTermsComment, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, HasPaymentCodes, PaymentCodes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
                 new Object[] {
                         filingDate.getTime(),
                         rfm.getTargetCompanyCompaniesHouseIdentifier(),
@@ -133,11 +108,18 @@ final class JdbcReportsRepository implements ReportsRepository {
                         rfm.getStartDate().getTime(),
                         rfm.getEndDate().getTime(),
                         rfm.getPaymentTerms(),
+                        rfm.getMaximumContractPeriod(),
+                        rfm.isPaymentTermsChanged(),
+                        rfm.getPaymentTermsChangedComment(),
+                        rfm.isPaymentTermsChangedNotified(),
+                        rfm.getPaymentTermsChangedNotifiedComment(),
+                        rfm.getPaymentTermsComment(),
                         rfm.getDisputeResolution(),
                         rfm.isOfferEInvoicing(),
                         rfm.isOfferSupplyChainFinance(),
                         rfm.isRetentionChargesInPolicy(),
                         rfm.isRetentionChargesInPast(),
+                        rfm.isHasPaymentCodes(),
                         rfm.getPaymentCodes()
                 },
                 x -> x.getInt(1)
@@ -154,7 +136,7 @@ final class JdbcReportsRepository implements ReportsRepository {
         minDate.add(Calendar.MONTH, -1 * months);
 
         return jdbcCommunicator.ExecuteQuery(
-                "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.StartDate, Report.EndDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, PaymentCodes " +
+                "SELECT Company.Name, Company.CompaniesHouseIdentifier, Report.Identifier, Report.FilingDate, Report.StartDate, Report.EndDate, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, MaximumContractPeriod, PaymentTermsChanged, PaymentTermsChangedComment, PaymentTermsChangedNotified, PaymentTermsChangedNotifiedComment, PaymentTermsComment, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, HasPaymentCodes, PaymentCodes " +
                 "FROM Company INNER JOIN Report ON Company.CompaniesHouseIdentifier = Report.CompaniesHouseIdentifier " +
                 "WHERE Report.FilingDate >= ?" +
                 "LIMIT 100000",
@@ -165,28 +147,6 @@ final class JdbcReportsRepository implements ReportsRepository {
 
     }
 
-    @Override
-    public boolean linkAuthTokenToCompany(String authToken, String companiesHouseIdentifier) {
-        List<Boolean> result = jdbcCommunicator.ExecuteUpdate(
-                "INSERT INTO AuthTokens (Token, CompaniesHouseIdentifier, LoggingDate) SELECT ?, ?, ? " +
-                        "WHERE NOT EXISTS (SELECT * FROM AuthTokens WHERE Token = ?)",
-                new Object[]{authToken, companiesHouseIdentifier, timeProvider.Now().getTime(), authToken},
-                x -> true
-        );
-        return !result.isEmpty();
-    }
-
-    @Override
-    public boolean mayFileForCompany(String oAuthToken, String targetCompanyCompaniesHouseIdentifier) {
-        Calendar yesterday = timeProvider.Now();
-        yesterday.add(Calendar.DATE, -1);
-
-        List<Boolean> result = jdbcCommunicator.ExecuteQuery("SELECT 1 FROM AuthTokens WHERE Token = ? AND CompaniesHouseIdentifier = ? AND LoggingDate > ?",
-                new Object[]{oAuthToken, targetCompanyCompaniesHouseIdentifier, yesterday.getTime()},
-                x -> true);
-        //todo: timeout
-        return !result.isEmpty();
-    }
 
     @Override
     public PagedList<CompanySearchResult> getCompanySearchInfo(PagedList<CompanySummaryWithAddress> companySummaries) {
@@ -245,10 +205,17 @@ final class JdbcReportsRepository implements ReportsRepository {
                 results.getString(12 + offset),
                 results.getString(13 + offset),
                 results.getBoolean(14 + offset),
-                results.getBoolean(15 + offset),
+                results.getString(15 + offset),
                 results.getBoolean(16 + offset),
-                results.getBoolean(17 + offset),
-                results.getString(18 + offset));
+                results.getString(17 + offset),
+                results.getString(18 + offset),
+                results.getString(19 + offset),
+                results.getBoolean(20 + offset),
+                results.getBoolean(21 + offset),
+                results.getBoolean(22 + offset),
+                results.getBoolean(23 + offset),
+                results.getBoolean(24 + offset),
+                results.getString(25 + offset));
     }
 
 }

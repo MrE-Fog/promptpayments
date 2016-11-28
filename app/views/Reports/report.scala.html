@@ -27,19 +27,41 @@
     </p>
 
     <h3 class="heading-medium">Payment terms</h3>
-    <h4 class="heading-small">Standard payment period</h4>
-    <p></p>
+    <h4 class="heading-small">Standard payment terms</h4>
+    <p>
+        @model.PaymentTerms
+    </p>
     <h4 class="heading-small">Maximum contractual period</h4>
-    <p></p>
+    <p>
+        @model.MaximumContractPeriod
+    </p>
     <h4 class="heading-small">Were there any changes to the payment terms in the reporting period?</h4>
-    <p></p>
+    <p>
+        @if(model.PaymentTermsChanged) {
+            <strong>Yes </strong>&ndash; @model.PaymentTermsChangedComment
+        } else {
+            <strong>No</strong>
+        }
+    </p>
     <h4 class="heading-small">Were suppliers notified or consulted about these changes?</h4>
+        @if(model.PaymentTermsChanged) {
+            @if(model.PaymentTermsChangedNotified) {
+                <strong>Yes </strong>&ndash; @model.PaymentTermsChangedNotifiedComment
+            } else {
+                <strong>No</strong>
+            }
+        } else {
+            <em>N/A</em>
+        }
     <p></p>
     <h4 class="heading-small">Any other information about standard payment terms</h4>
-    <p></p>
-    <h4 class="heading-small">Standard payment period</h4>
-    <p></p>
-
+    <p>
+        @if(model.PaymentTermsComment == "") {
+            <em>N/A</em>
+        } else {
+            @model.PaymentTermsComment
+        }
+    </p>
     <h3 class="heading-medium">Dispute resolution policy</h3>
     <p>
         @model.DisputeResolution
@@ -51,7 +73,11 @@
         <span class="heading-secondary">For example, signatories to The Prompt Payment Code must commit to paying 95% of their invoices within 60 days.</span>
     </h4>
     <p>
-        @(model.PaymentCodes match {case "" => "No" case null => "No" case s => "Yes: " + s})
+        @if(model.HasPaymentCodes) {
+            <strong>Yes </strong>&ndash; @model.PaymentCodes
+        } else {
+            <strong>No</strong>
+        }
     </p>
     <h4 class="heading-small">
         Does this business offer e-invoicing?

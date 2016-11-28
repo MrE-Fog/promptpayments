@@ -3,6 +3,7 @@ package components;
 import models.CompanySummaryWithAddress;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -28,8 +29,21 @@ public class ApiCompaniesHouseCommunicatorTest {
     @Test
     public void tryGetCompany() throws Exception {
         assertEquals("EIGENCODE LTD", new ApiCompaniesHouseCommunicator().getCompany("10203299").Name);
-        assertNull(new ApiCompaniesHouseCommunicator().getCompany("123"));
+
     }
+
+    @Test
+    public void tryGetCompany_ThrowsWhenTheresNoCompany() throws Exception {
+
+        try {
+            new ApiCompaniesHouseCommunicator().getCompany("123");
+        } catch (IOException ignored){
+            return;
+        }
+        fail("Should throw");
+    }
+
+
 
     //@Test
     public void oauth() throws Exception {

@@ -1,8 +1,5 @@
 package models;
 
-/**
- * Created by daniel.rothig on 18/10/2016.
- */
 public class AllOkReportFilingModelValidation implements ReportFilingModelValidation {
     @Override
     public boolean isValid() {
@@ -55,9 +52,30 @@ public class AllOkReportFilingModelValidation implements ReportFilingModelValida
     }
 
     @Override
+    public FieldValidation validateMaximumContractPeriod() { return FieldValidation.ok(); }
+
+    @Override
+    public FieldValidation validatePaymentTermsChanged() { return FieldValidation.ok(); }
+
+    @Override
+    public FieldValidation validatePaymentTermsChangedComment() { return FieldValidation.ok(); }
+
+    @Override
+    public FieldValidation validatePaymentTermsChangedNotified() { return FieldValidation.ok(); }
+
+    @Override
+    public FieldValidation validatePaymentTermsChangedNotifiedComment() { return FieldValidation.ok(); }
+
+    @Override
+    public FieldValidation validatePaymentTermsComment() { return FieldValidation.ok(); }
+
+    @Override
     public FieldValidation validateDisputeResolution() {
         return FieldValidation.ok();
     }
+
+    @Override
+    public FieldValidation validateHasPaymentCodes() { return FieldValidation.ok(); }
 
     @Override
     public FieldValidation validatePaymentCodes() {

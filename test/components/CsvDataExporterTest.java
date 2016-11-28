@@ -80,14 +80,14 @@ public class CsvDataExporterTest {
     @Test
     public void generateCsv_HasTheExpectedColumns() throws Exception {
         assertEquals("ReportModel appears to have changed - ensure that CsvDataExporter::generateCsv covers all desirable columns",
-                15, ReflectiveObjectTester.countGettables(ReportModel.class));
+                22, ReflectiveObjectTester.countGettables(ReportModel.class));
         assertEquals("CompanySummary appears to have changed - ensure that CsvDataExporter::generateCsv covers all desirable columns",
                 2, ReflectiveObjectTester.countGettables(CompanySummary.class));
         assertEquals("ReportSummary appears to have changed - ensure that CsvDataExporter::generateCsv covers all desirable columns",
-                2, ReflectiveObjectTester.countGettables(ReportSummary.class));
+                4, ReflectiveObjectTester.countGettables(ReportSummary.class));
 
         String[] csv = getMockedCsvRows();
-        int expectedColumnCount = 17;
+        int expectedColumnCount = 24;
         assertEquals("Header row doesn't have the right number of columns",
                 expectedColumnCount, csv[0].split(",").length);
         assertEquals("Data row doesn't have the right number of columns",

@@ -80,6 +80,6 @@ public class ReportModelTest {
                 null, null, null, null, null,
                 start,
                 end,
-                null, null, false, false, false, false, null);
+                null, null, false, null, false, null, null, null, false, false, false, false, false, null);
     }
 }

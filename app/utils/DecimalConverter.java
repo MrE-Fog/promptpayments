@@ -14,7 +14,7 @@ public class DecimalConverter {
         }
         try {
             BigDecimal bigDecimal = new BigDecimal(val);
-            return bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return bigDecimal.setScale(0, BigDecimal.ROUND_HALF_UP);
         } catch (NumberFormatException e) {
             return null;
         }
@@ -25,12 +25,13 @@ public class DecimalConverter {
             return null;
         }
         BigDecimal bigDecimal = new BigDecimal(val);
-        return bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return bigDecimal.setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
     public static BigDecimal getBigDecimal(BigDecimal val) {
         if (val == null)
             return null;
-        return val.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return val.setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 }
+

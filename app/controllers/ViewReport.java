@@ -1,8 +1,12 @@
 package controllers;
 
+import components.CompaniesHouseCommunicator;
 import components.ReportsRepository;
 import models.CompanySummary;
 import models.ReportModel;
+import orchestrators.FileReportOrchestrator;
+import orchestrators.OrchestratorResult;
+import play.libs.F;
 import play.mvc.Result;
 
 import javax.inject.Inject;
@@ -16,12 +20,17 @@ import java.util.Arrays;
 public class ViewReport extends PageController {
 
     @Inject
-    private ReportsRepository reportsRepository;
+    private FileReportOrchestrator orchestrator;
 
     public Result view(String companiesHouseIdentifier, int reportId) {
+        OrchestratorResult<F.Tuple<CompanySummary, ReportModel>> report = orchestrator.getReport(companiesHouseIdentifier, reportId);
 
-        CompanySummary company = reportsRepository.getCompanySummaries(Arrays.asList(new String[]{companiesHouseIdentifier}), 0, 25).get(0);
-        ReportModel report = reportsRepository.getReport(companiesHouseIdentifier, reportId).get();
-        return ok(page(views.html.Reports.report.render(report, company)));
+        if (report.success()) {
+            return ok(page(views.html.Reports.report.render(
+                    report.get()._2,
+                    report.get()._1 )));
+        } else {
+            return status(500, report.message());
+        }
     }
 }

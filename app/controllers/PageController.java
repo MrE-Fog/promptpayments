@@ -15,4 +15,11 @@ class PageController extends Controller {
     protected Html page(Html content) {
         return views.html.common.page.govukTemplateDefaults.render("Payment practices duty", content);
     }
+
+    protected String getPostParameter(String key) {
+        String[] values = request().body().asFormUrlEncoded().get(key);
+        return values.length > 0
+                ? values[values.length - 1]
+                : null;
+    }
 }

@@ -26,7 +26,21 @@ public interface ReportFilingModelValidation {
 
     FieldValidation validatePaymentTerms();
 
+    FieldValidation validateMaximumContractPeriod();
+
+    FieldValidation validatePaymentTermsChanged();
+
+    FieldValidation validatePaymentTermsChangedComment();
+
+    FieldValidation validatePaymentTermsChangedNotified();
+
+    FieldValidation validatePaymentTermsChangedNotifiedComment();
+
+    FieldValidation validatePaymentTermsComment();
+
     FieldValidation validateDisputeResolution();
+
+    FieldValidation validateHasPaymentCodes();
 
     FieldValidation validatePaymentCodes();
 

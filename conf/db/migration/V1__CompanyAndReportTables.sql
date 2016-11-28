@@ -17,6 +17,13 @@ CREATE TABLE Report(
      EndDate TIMESTAMP,
 
      PaymentTerms VARCHAR,
+     MaximumContractPeriod VARCHAR,
+     PaymentTermsChanged BOOLEAN,
+     PaymentTermsChangedComment VARCHAR,
+     PaymentTermsChangedNotified BOOLEAN,
+     PaymentTermsChangedNotifiedComment VARCHAR,
+     PaymentTermsComment VARCHAR,
+
      DisputeResolution VARCHAR,
 
      OfferEInvoicing BOOLEAN DEFAULT FALSE,
@@ -24,5 +31,6 @@ CREATE TABLE Report(
      RetentionChargesInPolicy BOOLEAN DEFAULT FALSE,
      RetentionChargesInPast BOOLEAN DEFAULT FALSE,
 
+     HasPaymentCodes BOOLEAN,
      PaymentCodes VARCHAR
 );

@@ -10,6 +10,7 @@ GET     /About                      controllers.Home.about()
 GET     /DutyToReport               controllers.Home.ifGuide()
 GET     /HowToReport                controllers.Home.howGuide(page:Int = 0)
 GET     /HowToReport/:page          controllers.Home.howGuide(page:Int)
+POST    /HowToReport/1              controllers.Home.calculatePeriod()
 
 GET     /Data                       controllers.Home.accessData()
 GET     /Data/Export                       controllers.Home.export()

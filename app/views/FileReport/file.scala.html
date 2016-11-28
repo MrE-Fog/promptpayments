@@ -111,6 +111,66 @@
         <textarea class="form-control" id="RecordSix" name="PaymentTerms">@model.get().getPaymentTerms()</textarea>
     </fieldset>
 
+    <fieldset class="form-group @validation.validateMaximumContractPeriod().cssClass()">
+        <label class="form-label" for="MaximumContractPeriod">
+            <span class="bold-medium">Enter your maximum contractual payment period</span>
+            <span class="form-hint">This is the maximum payment period in a qualifying contract that you entered in the reporting period.</span>
+            <span class="error-message">@validation.validateMaximumContractPeriod().errorMessage()</span>
+        </label>
+        <textarea class="form-control" id="MaximumContractPeriod" name="MaximumContractPeriod">@model.get().getMaximumContractPeriod()</textarea>
+    </fieldset>
+
+    <div class="form-group @validation.validatePaymentTermsChanged().cssClass()">
+        <label class="form-label">
+            <span class="bold-medium">Were there any changes to your standard payment terms in the reporting period?</span>
+            <span class="error-message">@validation.validatePaymentTermsChanged().errorMessage()</span>
+        </label>
+        <label class="block-label" for="PaymentTermsChanged-yes">
+            <input id="PaymentTermsChanged-yes" name="PaymentTermsChanged" type="radio" value="1" @{if (model.get().isPaymentTermsChanged != null && model.get().isPaymentTermsChanged()) "checked='checked'"}>
+            Yes
+        </label>
+        <label class="block-label" for="PaymentTermsChanged-no">
+            <input id="PaymentTermsChanged-no" name="PaymentTermsChanged" type="radio" value="0" @{if(model.get().isPaymentTermsChanged != null && !model.get().isPaymentTermsChanged()) "checked='checked'"}>
+            No
+        </label>
+        <fieldset class="form-group @validation.validatePaymentTermsChangedComment().cssClass()">
+            <label class="form-label" for="PaymentTermsChangedComment">
+                <span class="bold-medium">Explain what the changes were</span>
+                <span class="error-message">@validation.validatePaymentTermsChangedComment().errorMessage()</span>
+            </label>
+            <textarea class="form-control" id="PaymentTermsChangedComment" name="PaymentTermsChangedComment">@model.get().getPaymentTermsChangedComment()</textarea>
+        </fieldset>
+        <div class="form-group @validation.validatePaymentTermsChangedNotified().cssClass()">
+            <label class="form-label">
+                <span class="bold-medium">Did you consult or notify suppliers before you made these changes?</span>
+                <span class="error-message">@validation.validatePaymentTermsChangedNotified().errorMessage()</span>
+            </label>
+            <label class="block-label" for="PaymentTermsChangedNotified-yes">
+                <input id="PaymentTermsChangedNotified-yes" name="PaymentTermsChangedNotified" type="radio" value="1" @{if (model.get().isPaymentTermsChangedNotified != null && model.get().isPaymentTermsChangedNotified()) "checked='checked'"}>
+                Yes
+            </label>
+            <label class="block-label" for="PaymentTermsChangedNotified-no">
+                <input id="PaymentTermsChangedNotified-no" name="PaymentTermsChangedNotified" type="radio" value="0" @{if(model.get().isPaymentTermsChangedNotified != null && !model.get().isPaymentTermsChangedNotified()) "checked='checked'"}>
+                No
+            </label>
+            <fieldset class="form-group @validation.validatePaymentTermsChangedNotifiedComment().cssClass()">
+                <label class="form-label" for="PaymentTermsChangedNotifiedComment">
+                    <span class="bold-medium">Explain how you did this</span>
+                    <span class="error-message">@validation.validatePaymentTermsChangedNotifiedComment().errorMessage()</span>
+                </label>
+                <textarea class="form-control" id="PaymentTermsChangedNotifiedComment" name="PaymentTermsChangedNotifiedComment">@model.get().getPaymentTermsChangedNotifiedComment()</textarea>
+            </fieldset>
+        </div>
+    </div>
+    <fieldset class="form-group @validation.validatePaymentTermsComment().cssClass()">
+        <label class="form-label" for="PaymentTermsComment">
+            <span class="bold-medium">Explain how you did this</span>
+            <span class="error-message">@validation.validatePaymentTermsComment().errorMessage()</span>
+        </label>
+        <textarea class="form-control" id="PaymentTermsComment" name="PaymentTermsComment">@model.get().getPaymentTermsComment()</textarea>
+    </fieldset>
+
+
     <h2 class="heading-large">Dispute resolution policy</h2>
     <fieldset class="form-group @validation.validateDisputeResolution().cssClass()">
         <label class="form-label" for="RecordSeven">
@@ -185,14 +245,27 @@
         </label>
     </fieldset>
 
-    <fieldset class="form-group @validation.validatePaymentCodes().cssClass()">
-        <label class="form-label" for="RecordEight">
+    <div class="form-group @validation.validateHasPaymentCodes().cssClass()">
+        <label class="form-label">
             <span class="bold-medium">Is your business a signatory to a code of practice for payment?</span>
-            <span class="form-hint">If yes, enter the name of the code</span>
-            <span class="error-message">@validation.validatePaymentCodes().errorMessage()</span>
+            <span class="error-message">@validation.validateHasPaymentCodes().errorMessage()</span>
         </label>
-        <textarea class="form-control" id="RecordEight" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
-    </fieldset>
+        <label class="block-label" for="HasPaymentCodes-yes">
+            <input id="HasPaymentCodes-yes" name="HasPaymentCodes" type="radio" value="1" @{if(model.get().isHasPaymentCodes() !=null && model.get().isHasPaymentCodes()) "checked='checked'"}>
+            Yes
+        </label>
+        <label class="block-label" for="HasPaymentCodes-no">
+            <input id="HasPaymentCodes-no" name="HasPaymentCodes" type="radio" value="0" @{if(model.get().isHasPaymentCodes() !=null && !model.get().isHasPaymentCodes()) "checked='checked'"}>
+            No
+        </label>
+        <div class="form-group @validation.validatePaymentCodes().cssClass()">
+            <label class="form-label" for="PaymentCodes">
+                <span class="bold-medium">Enter the name of the code</span>
+                <span class="error-message">@validation.validatePaymentCodes().errorMessage()</span>
+            </label>
+            <textarea class="form-control" id="PaymentCodes" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
+        </div>
+    </div>
 
     <input type="submit" class="button" value="Continue">
 </form>

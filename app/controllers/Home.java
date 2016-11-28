@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.inject.Inject;
 import components.CsvDataExporter;
+import models.CalculatorModel;
 import play.mvc.Result;
 
 /**
@@ -31,7 +32,20 @@ public class Home extends PageController {
     }
 
     public Result howGuide(int page) {
-        return ok(page(views.html.Home.howGuide.render(page)));
+        return ok(page(views.html.Home.howGuide.render(page, new CalculatorModel())));
+    }
+
+    public Result calculatePeriod() {
+        CalculatorModel model = new CalculatorModel(
+             getPostParameter("start-year"),
+             getPostParameter("start-month"),
+             getPostParameter("start-day"),
+             getPostParameter("end-year"),
+             getPostParameter("end-month"),
+             getPostParameter("end-day")
+        );
+
+        return ok(page(views.html.Home.howGuide.render(1, model)));
     }
 }
 

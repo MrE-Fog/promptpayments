@@ -14,9 +14,10 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
 
     private final String message_required = "Please answer this question";
     private final String message_nonnegative = "This should be a non-negative number";
+    private final String message_integer = "Please round up or down to the nearest whole number";
     private final String message_percentagebounds = "This should be a number between 0 and 100";
     private final String message_upperpercentagebounds = "This cannot exceed 100%";
-    private final String message_sumto100 = "These fields should sum to 100%";
+    private final String message_sumto100 = "Figures A,B and C do not add up to 100";
     private final String message_invaliddate = "This date is invalid";
     private final String message_future = "Reporting period cannot cover the future";
     private final String message_startbeforeend = "The end date cannot be before the start date";
@@ -53,6 +54,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validateAverageTimeToPay() {
         if (model.getAverageTimeToPay() == null || model.getAverageTimeToPay().equals("")) return FieldValidation.fail(message_required);
         if (model.getAverageTimeToPayAsDecimal() == null) return FieldValidation.fail(message_nonnegative);
+        try {Integer.parseInt(model.getAverageTimeToPay());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getAverageTimeToPayAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_nonnegative);
         return FieldValidation.ok();
     }
@@ -61,6 +63,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesPaidBeyondAgreedTerms() {
         if (model.getPercentInvoicesPaidBeyondAgreedTerms() == null || model.getPercentInvoicesPaidBeyondAgreedTerms().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
+        try {Integer.parseInt(model.getPercentInvoicesPaidBeyondAgreedTerms());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
@@ -70,6 +73,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesWithin30Days() {
         if (model.getPercentInvoicesWithin30Days() == null || model.getPercentInvoicesWithin30Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesWithin30DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
+        try {Integer.parseInt(model.getPercentInvoicesWithin30Days());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
@@ -79,6 +83,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesWithin60Days() {
         if (model.getPercentInvoicesWithin60Days() == null || model.getPercentInvoicesWithin60Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesWithin60DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
+        try {Integer.parseInt(model.getPercentInvoicesWithin60Days());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
@@ -88,6 +93,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesBeyond60Days() {
         if (model.getPercentInvoicesBeyond60Days() == null || model.getPercentInvoicesBeyond60Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesBeyond60DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
+        try {Integer.parseInt(model.getPercentInvoicesBeyond60Days());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
         return FieldValidation.ok();
@@ -103,7 +109,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
                 - model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue()
                 - model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue()
                 - model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue());
-        if (totalAbs > 0.001) return FieldValidation.fail(message_sumto100);
+        if (totalAbs > 2.001) return FieldValidation.fail(message_sumto100);
         return FieldValidation.ok();
     }
 
@@ -141,6 +147,61 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     }
 
     @Override
+    public FieldValidation validateMaximumContractPeriod() {
+        if (model.getMaximumContractPeriod() == null || model.getMaximumContractPeriod().isEmpty()) {
+            return FieldValidation.fail(message_required);
+        }
+        return FieldValidation.ok();
+    }
+
+    @Override
+    public FieldValidation validatePaymentTermsChanged() {
+        return model.isPaymentTermsChanged() == null
+                ? FieldValidation.fail(message_required)
+                : FieldValidation.ok();
+    }
+
+    @Override
+    public FieldValidation validatePaymentTermsChangedComment() {
+        if (!model.isPaymentTermsChanged().equals(true)) {
+            return FieldValidation.ok();
+        }
+
+        if (model.getPaymentTermsChangedComment() == null || model.getPaymentTermsChangedComment().isEmpty()) {
+            return FieldValidation.fail(message_required);
+        }
+        return FieldValidation.ok();
+    }
+
+    @Override
+    public FieldValidation validatePaymentTermsChangedNotified() {
+        if (!model.isPaymentTermsChanged().equals(true)) {
+            return FieldValidation.ok();
+        }
+
+        return model.isPaymentTermsChangedNotified() == null
+                ? FieldValidation.fail(message_required)
+                : FieldValidation.ok();
+    }
+
+    @Override
+    public FieldValidation validatePaymentTermsChangedNotifiedComment() {
+        if (!model.isPaymentTermsChanged().equals(true) || !model.isPaymentTermsChangedNotified().equals(true)) {
+            return FieldValidation.ok();
+        }
+
+        if (model.getPaymentTermsChangedNotifiedComment() == null || model.getPaymentTermsChangedNotifiedComment().isEmpty()) {
+            return FieldValidation.fail(message_required);
+        }
+        return FieldValidation.ok();
+    }
+
+    @Override
+    public FieldValidation validatePaymentTermsComment() {
+        return FieldValidation.ok();
+    }
+
+    @Override
     public FieldValidation validateDisputeResolution() {
         if (model.getDisputeResolution() == null || model.getDisputeResolution().equals(""))
             return FieldValidation.fail(message_required);
@@ -148,7 +209,21 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     }
 
     @Override
+    public FieldValidation validateHasPaymentCodes() {
+        return model.isHasPaymentCodes() == null
+                ? FieldValidation.fail(message_required)
+                : FieldValidation.ok();
+    }
+
+    @Override
     public FieldValidation validatePaymentCodes() {
+        if (!model.isHasPaymentCodes().equals(true)) {
+            return FieldValidation.ok();
+        }
+
+        if (model.getPaymentCodes() == null || model.getPaymentCodes().equals(""))
+            return FieldValidation.fail(message_required);
+
         return FieldValidation.ok();
     }
 

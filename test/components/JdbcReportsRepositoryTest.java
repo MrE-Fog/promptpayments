@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import play.libs.F;
+import scala.Option;
 import utils.MockUtcTimeProvider;
 import utils.ReportModelExamples;
 import utils.TimeProvider;
@@ -125,56 +126,6 @@ public class JdbcReportsRepositoryTest {
     }
 
     @Test
-    public void getCompanySummaries_withEmptyInput() throws Exception {
-        PagedList<CompanySummary> companySummaries = jdbcReportsRepository.getCompanySummaries(new ArrayList<>(), 0, 25);
-        assertEquals(0, companySummaries.size());
-    }
-
-    @Test
-    public void getCompanySummaries_paged() throws Exception {
-        List<String> companies = Arrays.asList("120", "121", "122");
-        PagedList<CompanySummary> result1 = jdbcReportsRepository.getCompanySummaries(companies, 0, 2);
-        PagedList<CompanySummary> result2 = jdbcReportsRepository.getCompanySummaries(companies, 1, 2);
-
-        assertEquals("The number of results should not exceed page size", 2, result1.size());
-        assertEquals("Page number should be accurately reported", 0, result1.pageNumber());
-        assertEquals("Total size should be accurately reported", 3, result1.totalSize());
-        assertEquals("CanGoBack should be accurately reported", false, result1.canGoBack());
-        assertEquals("CanGoNext should be accurately reported", true, result1.canGoNext());
-        assertEquals("CanPage should be accurately reported", true, result1.canPage());
-
-        assertEquals("The number of results should not exceed page size", 1, result2.size());
-        assertEquals("Page number should be accurately reported", 1, result2.pageNumber());
-        assertEquals("Total size should be accurately reported", 3, result2.totalSize());
-        assertEquals("CanGoBack bound should be accurately reported", true, result2.canGoBack());
-        assertEquals("CanGoNext bound should be accurately reported", false, result2.canGoNext());
-        assertEquals("CanPage bound should be accurately reported", true, result2.canPage());
-    }
-
-    @Test
-    public void getCompanySummaries_paged_alphabetic() throws Exception {
-        List<String> companies = Arrays.asList("120", "121", "122");
-
-        PagedList<CompanySummary> result1 = jdbcReportsRepository.getCompanySummaries(companies,0,2);
-        PagedList<CompanySummary> result2 = jdbcReportsRepository.getCompanySummaries(companies,1,2);
-
-        assertTrue(result1.get(0).Name.compareTo(result1.get(1).Name) <0);
-        assertTrue(result1.get(1).Name.compareTo(result2.get(0).Name) <0);
-    }
-
-    @Test
-    public void getCompanySummary_emptyforzeropagesize() throws Exception {
-        List<String> companies = Arrays.asList("120", "121", "122");
-
-        PagedList<CompanySummary> result = jdbcReportsRepository.getCompanySummaries(companies,0,0);
-        assertEquals(0, result.size());
-        assertEquals(3, result.totalSize());
-        assertEquals(false, result.canGoBack());
-        assertEquals(false, result.canGoNext());
-        assertEquals(false, result.canPage());
-    }
-
-    @Test
     public void getCompany_paged() throws Exception {
         PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 3).ReportSummaries;
         PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 1, 3).ReportSummaries;
@@ -216,11 +167,11 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0 , 25);
+        CompanyModel company = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "122"), 0 , 25);
 
-        assertEquals("Eigencode Ltd.", company.Info.Name);
+        assertEquals("Nicecorp", company.Info.Name);
         assertEquals(1, company.ReportSummaries.size());
-        assertEquals("May 2016", company.ReportSummaries.get(0).UiDateString());
+        assertEquals("1 May 2016", company.ReportSummaries.get(0).UiDateString());
     }
 
     @Test
@@ -247,44 +198,36 @@ public class JdbcReportsRepositoryTest {
         MockUtcTimeProvider expectedStartDate = new MockUtcTimeProvider(2016, 0, 1);
         MockUtcTimeProvider expectedEndDate = new MockUtcTimeProvider(2016, 4, 31);
 
-        assertEquals("Ensure that ALL fields are tested below", 15,ReportModel.class.getDeclaredFields().length);
+        assertEquals("Ensure that ALL fields are tested below", 22 ,ReportModel.class.getDeclaredFields().length);
 
-        assertEquals("February 2010", report.Info.UiDateString());
+        assertEquals("1 February 2010", report.Info.UiDateString());
         assertEquals(1, report.Info.Identifier);
-        assertEquals(new BigDecimal("31.00"), report.AverageTimeToPay);
-        assertEquals(new BigDecimal("10.00"), report.PercentInvoicesPaidBeyondAgreedTerms);
-        assertEquals(new BigDecimal("80.00"), report.PercentInvoicesWithin30Days);
-        assertEquals(new BigDecimal("15.00"), report.PercentInvoicesWithin60Days);
-        assertEquals(new BigDecimal( "5.00"), report.PercentInvoicesBeyond60Days);
+        assertEquals(new BigDecimal("31"), report.AverageTimeToPay);
+        assertEquals(new BigDecimal("10"), report.PercentInvoicesPaidBeyondAgreedTerms);
+        assertEquals(new BigDecimal("80"), report.PercentInvoicesWithin30Days);
+        assertEquals(new BigDecimal("15"), report.PercentInvoicesWithin60Days);
+        assertEquals(new BigDecimal( "5"), report.PercentInvoicesBeyond60Days);
         assertEquals(new UiDate(expectedStartDate.Now()).ToDateString(), new UiDate(report.StartDate).ToDateString());
         assertEquals(new UiDate(expectedEndDate.Now()).ToDateString(), new UiDate(report.EndDate).ToDateString());
         assertEquals("User-specified payment terms", report.PaymentTerms);
+        assertEquals("User-specified maximum contract length", report.MaximumContractPeriod);
+        assertEquals(true, report.PaymentTermsChanged);
+        assertEquals("User-specified payment terms change", report.PaymentTermsChangedComment);
+        assertEquals(true, report.PaymentTermsChangedNotified);
+        assertEquals("User-specified notification comment", report.PaymentTermsChangedNotifiedComment);
+        assertEquals("User-specified payment terms comment", report.PaymentTermsComment);
         assertEquals("User-specified dispute resolution", report.DisputeResolution);
         assertEquals(true, report.OfferEInvoicing);
         assertEquals(true, report.OfferSupplyChainFinance);
         assertEquals(false, report.RetentionChargesInPolicy);
         assertEquals(false, report.RetentionChargesInPast);
+        assertEquals(true, report.HasPaymentCodes);
         assertEquals("Prompt Payment Code", report.PaymentCodes);
     }
 
     @Test
     public void getReport_DoesntExist() throws Exception {
         assertTrue(jdbcReportsRepository.getReport("124", 10).isEmpty());
-    }
-
-    @Test
-    public void getCompanySummaries() throws Exception {
-        List<String> identifiers = new ArrayList<>();
-        identifiers.add("120");
-        identifiers.add("122");
-        identifiers.add("124"); //doesn't exist
-
-        List<CompanySummary> companySummaries = jdbcReportsRepository.getCompanySummaries(identifiers, 0, 100);
-        List<String> resultIdentifiers = companySummaries.stream().map(x -> x.CompaniesHouseIdentifier).collect(Collectors.toList());
-
-        assertEquals(2, companySummaries.size());
-        assertTrue(resultIdentifiers.contains("120"));
-        assertTrue(resultIdentifiers.contains("122"));
     }
 
     @Test
@@ -310,24 +253,31 @@ public class JdbcReportsRepositoryTest {
 
         ReportModel report = jdbcReportsRepository.getReport("122", result).get();
 
-        assertEquals("Ensure that ALL fields are tested below", 15,ReportModel.class.getDeclaredFields().length);
+        assertEquals("Ensure that ALL fields are tested below", 22,ReportModel.class.getDeclaredFields().length);
 
         assertEquals(report.Info.Identifier, result);
         assertEquals(time, report.Info.getFilingDate());
 
-        assertEquals(new BigDecimal("31.00"), report.AverageTimeToPay);
-        assertEquals(new BigDecimal("10.00"), report.PercentInvoicesPaidBeyondAgreedTerms);
-        assertEquals(new BigDecimal("80.00"), report.PercentInvoicesWithin30Days);
-        assertEquals(new BigDecimal("15.00"), report.PercentInvoicesWithin60Days);
-        assertEquals(new BigDecimal( "5.00"), report.PercentInvoicesBeyond60Days);
+        assertEquals(new BigDecimal("31"), report.AverageTimeToPay);
+        assertEquals(new BigDecimal("10"), report.PercentInvoicesPaidBeyondAgreedTerms);
+        assertEquals(new BigDecimal("80"), report.PercentInvoicesWithin30Days);
+        assertEquals(new BigDecimal("15"), report.PercentInvoicesWithin60Days);
+        assertEquals(new BigDecimal( "5"), report.PercentInvoicesBeyond60Days);
         assertEquals("1 January 2016", new UiDate(report.StartDate).ToDateString());
         assertEquals("30 June 2016", new UiDate(report.EndDate).ToDateString());
         assertEquals("Payment terms", report.PaymentTerms);
+        assertEquals("Maximum contract length", report.MaximumContractPeriod);
+        assertEquals(true, report.PaymentTermsChanged);
+        assertEquals("Contract changes", report.PaymentTermsChangedComment);
+        assertEquals(true, report.PaymentTermsChangedNotified);
+        assertEquals("Notified suppliers of change description", report.PaymentTermsChangedNotifiedComment);
+        assertEquals("Payment terms comment", report.PaymentTermsComment);
         assertEquals("Dispute resolution", report.DisputeResolution);
         assertEquals(true, report.OfferEInvoicing);
         assertEquals(false, report.OfferSupplyChainFinance);
         assertEquals(true, report.RetentionChargesInPolicy);
         assertEquals(false, report.RetentionChargesInPast);
+        assertEquals(true, report.HasPaymentCodes);
         assertEquals("Payment codes", report.PaymentCodes);
     }
 
@@ -338,10 +288,8 @@ public class JdbcReportsRepositoryTest {
         int result = jdbcReportsRepository.TryFileReport(rfm, newCorp, new UtcTimeProvider().Now());
         assertTrue(result > 0);
 
-        PagedList<CompanySummary> insertedCompanies = jdbcReportsRepository.getCompanySummaries(Collections.singletonList("124"), 0, 25);
-        assertEquals(1, insertedCompanies.size());
-        assertEquals("124", insertedCompanies.get(0).CompaniesHouseIdentifier);
-        assertEquals("New corp", insertedCompanies.get(0).Name);
+        Option<ReportModel> report = jdbcReportsRepository.getReport("124", result);
+        assertEquals(false, report.isEmpty());
     }
 
     @Test

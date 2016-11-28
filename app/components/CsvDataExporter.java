@@ -23,7 +23,7 @@ public class CsvDataExporter {
     private final ReportsRepository reportsRepository;
 
     @SuppressWarnings("FieldCanBeLocal")
-    private static String header="Start date,End date,Filing date,Company,Company number,Average time to pay,% Invoices paid late,% Invoices paid within 30 days,% Invoices paid within 60 days,% Invoices paid later than 60 days,E-Invoicing offered,Supply-chain financing offered,Policy covers charges for remaining on supplier list,Charges have been made for remaining on supplier list,Payment terms,Dispute resolution facilities,Payment codes membership\n";
+    private static String header="Start date,End date,Filing date,Company,Company number,Average time to pay,% Invoices paid late,% Invoices paid within 30 days,% Invoices paid within 60 days,% Invoices paid later than 60 days,E-Invoicing offered,Supply-chain financing offered,Policy covers charges for remaining on supplier list,Charges have been made for remaining on supplier list,Payment terms,Maximum Contract Length,Payment terms have changed,Payment terms have changed: comments,Suppliers notified of changes,Suppliers notified of changes: comments,Further remarks on payment terms,Dispute resolution facilities,Participates in payment codes,Payment codes\n";
 
     private static final int cacheMinutes = 30;
 
@@ -63,7 +63,14 @@ public class CsvDataExporter {
                 escape(x._2.RetentionChargesInPast),
 
                 escape(x._2.PaymentTerms),
+                escape(x._2.MaximumContractPeriod),
+                escape(x._2.PaymentTermsChanged),
+                escape(x._2.PaymentTermsChangedComment),
+                escape(x._2.PaymentTermsChangedNotified),
+                escape(x._2.PaymentTermsChangedNotifiedComment),
+                escape(x._2.PaymentTermsComment),
                 escape(x._2.DisputeResolution),
+                escape(x._2.HasPaymentCodes),
                 escape(x._2.PaymentCodes)
         ));
 

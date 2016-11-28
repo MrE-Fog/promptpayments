@@ -31,7 +31,7 @@ public class SearchReport extends PageController {
     }
 
     public Result handleSearch(int page) {
-        String company = request().body().asFormUrlEncoded().get("companyname")[0];
+        String company = getPostParameter("companyname");
         OrchestratorResult<PagedList<CompanySearchResult>> companies = orchestrator.trySearchCompanies(company, page, 25);
 
         if (companies.success()) {

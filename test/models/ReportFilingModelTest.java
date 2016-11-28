@@ -19,11 +19,11 @@ public class ReportFilingModelTest {
     public void computedGetters() throws Exception {
         ReportFilingModel rfm = ReportModelExamples.makeFullReportFilingModel("122");
 
-        assertEquals(new BigDecimal("31.00"), rfm.getAverageTimeToPayAsDecimal());
-        assertEquals(new BigDecimal("10.00"), rfm.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal());
-        assertEquals(new BigDecimal("80.00"), rfm.getPercentInvoicesWithin30DaysAsDecimal());
-        assertEquals(new BigDecimal("15.00"), rfm.getPercentInvoicesWithin60DaysAsDecimal());
-        assertEquals(new BigDecimal("5.00"), rfm.getPercentInvoicesBeyond60DaysAsDecimal());
+        assertEquals(new BigDecimal("31"), rfm.getAverageTimeToPayAsDecimal());
+        assertEquals(new BigDecimal("10"), rfm.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal());
+        assertEquals(new BigDecimal("80"), rfm.getPercentInvoicesWithin30DaysAsDecimal());
+        assertEquals(new BigDecimal("15"), rfm.getPercentInvoicesWithin60DaysAsDecimal());
+        assertEquals(new BigDecimal("5"), rfm.getPercentInvoicesBeyond60DaysAsDecimal());
         assertEquals("1 January 2016", new UiDate(rfm.getStartDate()).ToDateString());
         assertEquals("30 June 2016", new UiDate(rfm.getEndDate()).ToDateString());
 
@@ -37,7 +37,7 @@ public class ReportFilingModelTest {
         ReportFilingModel one = ReportModelExamples.makeFullReportFilingModel("122");
         ReportFilingModel two = ReportModelExamples.makeDifferentFullReportFilingModel("123");
 
-        ReflectiveObjectTester.assertSetAndGetAllFields(one, two, 19);
+        ReflectiveObjectTester.assertSetAndGetAllFields(one, two, 26);
     }
 
     @Test

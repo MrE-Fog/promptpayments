@@ -1,4 +1,5 @@
-@(page:Int)
+@(page:Int, calculator: CalculatorModel)
+@import utils.Ordinals
 <div class="breadcrumbs">
     <ol>
         <li><a href="@routes.Home.index()">@shared._name()</a></li>
@@ -65,18 +66,37 @@
             You need to submit a report twice per financial year, starting with your first financial year on or after 6 April 2017. The first reporting period is six months beginning on the first day of your financial year - and the deadline for the report is 30 days later.
         </p>
         <p class="bold-medium">
-            Calculate your reporting period and your deadline to report
+            Calculate your reporting period and your deadline to report <a id="calculator"></a>
         </p>
-        <form class="inline-wizard" method="GET" action="">
-            <p class="heading-small">Enter the start date of your financial year</p>
-            @shared._dateinput("start-")
+        <form class="inline-wizard" method="POST" action="#calculator">
+            <fieldset class='@(!calculator.isValid() match {case true => "error" case false => ""})'>
+                @if(!calculator.isValid()) {
+                    <span class="error-message">
+                        These dates are not valid
+                    </span>
+                }
 
-            <p class="heading-small">Enter the end date of your financial year</p>
-            @shared._dateinput("end-")
+                <p class="heading-small">Enter the start date of your next financial year</p>
+                @shared._dateinput("start-", calculator.startDay, calculator.startMonth, calculator.startYear)
+
+                <p class="heading-small">Enter the end date of your next financial year</p>
+                @shared._dateinput("end-", calculator.endDay, calculator.endMonth, calculator.endYear)
+            </fieldset>
 
             <input class="button" type="submit" value="Calculate your next reporting period">
+            @if(calculator.isValid() && !calculator.isEmpty()) {
             <div class="output">
+                <p class="bold-small">You must publish @(calculator.getReportingPeriods().size() match { case 1 => "1 report" case n => n + " reports"}) in the stated period.</p>
+                @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
+                    <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
+                    <p>
+                        Covers the period <span class="bold-small">@x.StartDate.ToDateString() &ndash; @x.EndDate.ToDateString()</span>
+                        <br>
+                        You must submit this report by <span class="bold-small">@x.FilingDeadline.ToDateString()</span>
+                    </p>
+                }
             </div>
+            }
         </form>
         <h4 class="heading-small">If your financial year isn’t 12 months long</h4>
         <p>

@@ -28,7 +28,17 @@ public class ReportFilingModel {
     private String EndDate_day;
 
     private String PaymentTerms;
+    private String MaximumContractPeriod;
+    private Boolean PaymentTermsChanged;
+    private String PaymentTermsChangedComment;
+    private Boolean PaymentTermsChangedNotified;
+    private String PaymentTermsChangedNotifiedComment;
+    private String PaymentTermsComment;
+
+
     private String DisputeResolution;
+
+    private Boolean HasPaymentCodes;
     private String PaymentCodes;
 
     private Boolean OfferEInvoicing = null;
@@ -89,7 +99,7 @@ public class ReportFilingModel {
         return rtn;
     }
 
-    public static ReportFilingModel makeReportFilingModel(String targetCompanyCompaniesHouseIdentifier, double averageTimeToPay, double percentInvoicesPaidBeyondAgreedTerms, double percentInvoicesWithin30Days, double percentInvoicesWithin60Days, double percentInvoicesBeyond60Days, String startDate_year, String startDate_month, String startDate_day, String endDate_year, String endDate_month, String endDate_day, String paymentTerms, String disputeResolution, String paymentCodes, Boolean offerEInvoicing, Boolean offerSupplyChainFinance, Boolean retentionChargesInPolicy, Boolean retentionChargesInPast) {
+    public static ReportFilingModel makeReportFilingModel(String targetCompanyCompaniesHouseIdentifier, double averageTimeToPay, double percentInvoicesPaidBeyondAgreedTerms, double percentInvoicesWithin30Days, double percentInvoicesWithin60Days, double percentInvoicesBeyond60Days, String startDate_year, String startDate_month, String startDate_day, String endDate_year, String endDate_month, String endDate_day, String paymentTerms, String maximumContractPeriod, Boolean paymentTermsChanged, String paymentTermsChangedComment, Boolean paymentTermsChangedNotified, String paymentTermsChangedNotifiedComment, String paymentTermsComment, String disputeResolution, Boolean hasPaymentCodes, String paymentCodes, Boolean offerEInvoicing, Boolean offerSupplyChainFinance, Boolean retentionChargesInPolicy, Boolean retentionChargesInPast) {
         ReportFilingModel rfm = new ReportFilingModel();
 
         rfm.TargetCompanyCompaniesHouseIdentifier = targetCompanyCompaniesHouseIdentifier;
@@ -105,7 +115,14 @@ public class ReportFilingModel {
         rfm.EndDate_month = endDate_month;
         rfm.EndDate_day = endDate_day;
         rfm.PaymentTerms = paymentTerms;
+        rfm.MaximumContractPeriod = maximumContractPeriod;
+        rfm.PaymentTermsChanged = paymentTermsChanged;
+        rfm.PaymentTermsChangedComment = paymentTermsChangedComment;
+        rfm.PaymentTermsChangedNotified = paymentTermsChangedNotified;
+        rfm.PaymentTermsChangedNotifiedComment = paymentTermsChangedNotifiedComment;
+        rfm.PaymentTermsComment = paymentTermsComment;
         rfm.DisputeResolution = disputeResolution;
+        rfm.HasPaymentCodes = hasPaymentCodes;
         rfm.PaymentCodes = paymentCodes;
         rfm.OfferEInvoicing = offerEInvoicing;
         rfm.OfferSupplyChainFinance = offerSupplyChainFinance;
@@ -221,6 +238,54 @@ public class ReportFilingModel {
         PaymentTerms = paymentTerms;
     }
 
+    public String getMaximumContractPeriod() {
+        return MaximumContractPeriod;
+    }
+
+    public void setMaximumContractPeriod(String maximumContractPeriod) {
+        MaximumContractPeriod = maximumContractPeriod;
+    }
+
+    public Boolean isPaymentTermsChanged() {
+        return PaymentTermsChanged;
+    }
+
+    public void setPaymentTermsChanged(Boolean paymentTermsChanged) {
+        PaymentTermsChanged = paymentTermsChanged;
+    }
+
+    public String getPaymentTermsChangedComment() {
+        return PaymentTermsChangedComment;
+    }
+
+    public void setPaymentTermsChangedComment(String paymentTermsChangedComment) {
+        PaymentTermsChangedComment = paymentTermsChangedComment;
+    }
+
+    public Boolean isPaymentTermsChangedNotified() {
+        return PaymentTermsChangedNotified;
+    }
+
+    public void setPaymentTermsChangedNotified(Boolean paymentTermsChangedNotified) {
+        PaymentTermsChangedNotified = paymentTermsChangedNotified;
+    }
+
+    public String getPaymentTermsChangedNotifiedComment() {
+        return PaymentTermsChangedNotifiedComment;
+    }
+
+    public void setPaymentTermsChangedNotifiedComment(String paymentTermsChangedNotifiedComment) {
+        PaymentTermsChangedNotifiedComment = paymentTermsChangedNotifiedComment;
+    }
+
+    public String getPaymentTermsComment() {
+        return PaymentTermsComment;
+    }
+
+    public void setPaymentTermsComment(String paymentTermsComment) {
+        PaymentTermsComment = paymentTermsComment;
+    }
+
     public String getDisputeResolution() {
         return DisputeResolution;
     }
@@ -228,6 +293,10 @@ public class ReportFilingModel {
     public void setDisputeResolution(String disputeResolution) {
         DisputeResolution = disputeResolution;
     }
+
+    public Boolean isHasPaymentCodes() { return HasPaymentCodes;    }
+
+    public void setHasPaymentCodes(Boolean hasPaymentCodes) { HasPaymentCodes = hasPaymentCodes; }
 
     public String getPaymentCodes() {
         return PaymentCodes;
