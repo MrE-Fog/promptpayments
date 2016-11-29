@@ -25,6 +25,11 @@ public class MockCompaniesHouseCommunicator implements CompaniesHouseCommunicato
     }
 
     @Override
+    public String getEmailAddress(String token) throws IOException {
+        return "daniel.rothig@digital.beis.gov.uk";
+    }
+
+    @Override
     public CompanySummary getCompany(String s) throws IOException {
         return inner.getCompany(s);
     }

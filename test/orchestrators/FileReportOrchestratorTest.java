@@ -1,10 +1,12 @@
 package orchestrators;
 
 import components.CompaniesHouseCommunicator;
+import components.GovUkNotifyEmailer;
 import components.ReportsRepository;
 import models.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.internal.RealSystem;
 import utils.MockUtcTimeProvider;
 import components.PagedList;
 
@@ -31,7 +33,7 @@ public class FileReportOrchestratorTest {
     public void setUp() throws Exception {
         reportsRepository = mock(ReportsRepository.class);
         communicator = mock(CompaniesHouseCommunicator.class);
-        orchestrator = new FileReportOrchestrator(communicator, reportsRepository, new MockUtcTimeProvider(2016,10,1));
+        orchestrator = new FileReportOrchestrator(communicator, reportsRepository, new GovUkNotifyEmailer(), new MockUtcTimeProvider(2016,10,1));
 
         companyModel = new CompanyModel(new CompanySummary("test", "122"), new PagedList<>(new ArrayList<>(), 50,0,25));
         noAuthorityCompanyModel = new CompanyModel(new CompanySummary("test", "120"), new PagedList<>(new ArrayList<>(), 50,0,25));
@@ -147,13 +149,13 @@ public class FileReportOrchestratorTest {
 
         when(reportsRepository.TryFileReport(eq(rfm), eq(companyModel.Info), any())).thenReturn(42);
 
-        OrchestratorResult<Integer> filingData = orchestrator.tryFileReport("somestuff", rfm);
+        OrchestratorResult<ReportSummary> filingData = orchestrator.tryFileReport("somestuff", rfm);
 
         verify(communicator, times(1)).getCompany("122");
         verify(reportsRepository, times(1)).TryFileReport(eq(rfm), eq(companyModel.Info), any());
 
         assertTrue(filingData.success());
-        assertEquals(new Integer(42), filingData.get());
+        assertEquals(42, filingData.get().Identifier);
     }
 
     @Test
@@ -166,13 +168,13 @@ public class FileReportOrchestratorTest {
 
         when(reportsRepository.TryFileReport(eq(rfm), eq(newCorp), any())).thenReturn(42);
 
-        OrchestratorResult<Integer> filingData = orchestrator.tryFileReport("somestuff", rfm);
+        OrchestratorResult<ReportSummary> filingData = orchestrator.tryFileReport("somestuff", rfm);
 
         verify(communicator, times(1)).getCompany("1234");
         verify(reportsRepository, times(1)).TryFileReport(eq(rfm), eq(newCorp), any());
 
         assertTrue(filingData.success());
-        assertEquals(new Integer(42), filingData.get());
+        assertEquals(42, filingData.get().Identifier);
     }
 
     @Test
@@ -182,7 +184,7 @@ public class FileReportOrchestratorTest {
         when(communicator.getCompany("122")).thenReturn(null);
         when(reportsRepository.TryFileReport(eq(rfm), any(), any())).thenReturn(-1);
 
-        OrchestratorResult<Integer> filingData = orchestrator.tryFileReport("somestuff", rfm);
+        OrchestratorResult<ReportSummary> filingData = orchestrator.tryFileReport("somestuff", rfm);
 
         verify(communicator, times(1)).getCompany("122");
         verify(reportsRepository, times(0)).TryFileReport(any(), any(), any());

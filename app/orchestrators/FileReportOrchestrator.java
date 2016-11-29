@@ -2,6 +2,7 @@ package orchestrators;
 
 import com.google.inject.Inject;
 import components.CompaniesHouseCommunicator;
+import components.GovUkNotifyEmailer;
 import components.PagedList;
 import components.ReportsRepository;
 import models.*;
@@ -12,6 +13,7 @@ import scala.Option;
 import utils.TimeProvider;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 /**
  * Created by daniel.rothig on 06/10/2016.
@@ -21,12 +23,14 @@ import java.io.IOException;
 public class FileReportOrchestrator {
     private CompaniesHouseCommunicator companiesHouseCommunicator;
     private ReportsRepository reportsRepository;
+    private GovUkNotifyEmailer emailer;
     private TimeProvider timeProvider;
 
     @Inject
-    FileReportOrchestrator(CompaniesHouseCommunicator companiesHouseCommunicator, ReportsRepository reportsRepository, TimeProvider timeProvider) {
+    FileReportOrchestrator(CompaniesHouseCommunicator companiesHouseCommunicator, ReportsRepository reportsRepository, GovUkNotifyEmailer emailer, TimeProvider timeProvider) {
         this.companiesHouseCommunicator = companiesHouseCommunicator;
         this.reportsRepository = reportsRepository;
+        this.emailer = emailer;
         this.timeProvider = timeProvider;
     }
 
@@ -77,7 +81,7 @@ public class FileReportOrchestrator {
         ));
     }
 
-    public OrchestratorResult<Integer> tryFileReport(String oAuthToken, ReportFilingModel model) {
+    public OrchestratorResult<ReportSummary> tryFileReport(String oAuthToken, ReportFilingModel model) {
         CompanySummary company = null;
         try {
             company = companiesHouseCommunicator.getCompany(model.getTargetCompanyCompaniesHouseIdentifier());
@@ -93,8 +97,13 @@ public class FileReportOrchestrator {
         //    return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
         //}
 
-        int i = reportsRepository.TryFileReport(model, company, timeProvider.Now());
-        return OrchestratorResult.fromSucccess(i);
+        Calendar now = timeProvider.Now();
+        int i = reportsRepository.TryFileReport(model, company, now);
+        return OrchestratorResult.fromSucccess(new ReportSummary(
+                i,
+                now,
+                model.getStartDate(),
+                model.getEndDate()));
     }
 
     public OrchestratorResult<PagedList<CompanySummaryWithAddress>> findRegisteredCompanies(String company, int page, int itemsPerPage) {
@@ -161,6 +170,31 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromSucccess(new F.Tuple<>(companySummary, model.get()));
         } catch (IOException e) {
             return OrchestratorResult.fromFailure("Could not find company");
+        }
+    }
+
+    public OrchestratorResult<String> getUserEmail(String auth) {
+        try {
+            String emailAddress = companiesHouseCommunicator.getEmailAddress(auth);
+            return emailAddress == null
+                    ? OrchestratorResult.fromFailure("Could not determine email address")
+                    : OrchestratorResult.fromSucccess(emailAddress);
+        } catch (IOException e) {
+            return OrchestratorResult.fromFailure("Could not connect to Companies House");
+        }
+    }
+
+    public void sendConfirmation(String auth, String targetCompanyCompaniesHouseIdentifier, ReportSummary reportSummary, String url) {
+        OrchestratorResult<String> email = getUserEmail(auth);
+        if (!email.success()) {
+            return;
+        }
+
+        try {
+            CompanySummary company = companiesHouseCommunicator.getCompany(targetCompanyCompaniesHouseIdentifier);
+            emailer.sendConfirmationEmail(email.get(), company, reportSummary, url);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

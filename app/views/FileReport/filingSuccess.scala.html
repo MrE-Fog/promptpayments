@@ -1,4 +1,4 @@
-@(company: String, id: Int)
+@(company: String, id: Int, email: String)
 <div class="breadcrumbs">
     <ol>
         <li><a href="@routes.Home.index()">@shared._name()</a></li>
@@ -13,7 +13,11 @@
             <strong class="heading-medium">@id</strong>
         </p>
     </div>
-    <p>We have sent you a confirmation email.</p>
+    @if(email != null) {
+        <p>We have sent a confirmation email to @email</p>
+    } else {
+        <p>We have sent you a confirmation email.</p>
+    }
 
     <h3 class="heading-medium">What happens next</h3>
     <p>Your report is now available to the public. You can see your public report <a href="@routes.ViewReport.view(company,id)">here</a>.</p>

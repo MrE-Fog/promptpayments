@@ -17,6 +17,7 @@ public interface CompaniesHouseCommunicator {
     String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier);
     PagedList<CompanySummaryWithAddress> searchCompanies(String search, int page, int itemsPerPage) throws IOException;
     String verifyAuthCode(String authCode, String redirectUri, String companiesHouseIdentifier) throws IOException;
+    String getEmailAddress(String token) throws IOException;
     CompanySummary getCompany(String s) throws IOException;
 }
 

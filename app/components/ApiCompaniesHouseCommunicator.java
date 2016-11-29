@@ -90,6 +90,17 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
         return access_token;
     }
 
+    @Override
+    public String getEmailAddress(String token) throws IOException {
+        URLConnection connection = new URL("https://account.companieshouse.gov.uk/user/profile").openConnection();
+        connection.setRequestProperty("Authorization", "Bearer " + token);
+        JsonNode parsed = Json.parse(connection.getInputStream());
+        if (!parsed.has("email")) {
+            return null;
+        }
+        return parsed.get("email").asText();
+    }
+
     private static String urlEncode(String authCode) throws UnsupportedEncodingException {
         return URLEncoder.encode(authCode, "UTF-8");
     }

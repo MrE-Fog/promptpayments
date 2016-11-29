@@ -43,17 +43,18 @@ public class ApiCompaniesHouseCommunicatorTest {
         fail("Should throw");
     }
 
-
-
     //@Test
     public void oauth() throws Exception {
         String url = new ApiCompaniesHouseCommunicator().getAuthorizationUri("https://paymentdutyregister.herokuapp.com/FileReport/cb", "10203299");
 
-        new ApiCompaniesHouseCommunicator().verifyAuthCode(
-                "iLwmKNd5-TX2CzFvQc2ANDxv-0c3nLS7fdVALdK7TI8",
-                "https://paymentdutyregister.herokuapp.com/FileReport/cb",
-                "10203299"
-        );
+        //String token = new ApiCompaniesHouseCommunicator().verifyAuthCode(
+        //        "b3D4vFtvsmXyh14UwzG78uJkf1un8k6EEMTAdm5JId4",
+        //        "https://paymentdutyregister.herokuapp.com/FileReport/cb",
+        //        "10203299"
+        //);
+
+        String token = "jAPoPSyvWWu8bz-f4o59eFbs0MhiRI87ZQzgGFHSLgBWlzaspGxuW1Sq6jZmpkeld67qnWDCnkr627nTGaRLZg";
+        String result = new ApiCompaniesHouseCommunicator().getEmailAddress(token);
 
     }
 }

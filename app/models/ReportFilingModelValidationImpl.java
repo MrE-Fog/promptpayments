@@ -54,8 +54,8 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validateAverageTimeToPay() {
         if (model.getAverageTimeToPay() == null || model.getAverageTimeToPay().equals("")) return FieldValidation.fail(message_required);
         if (model.getAverageTimeToPayAsDecimal() == null) return FieldValidation.fail(message_nonnegative);
-        try {Integer.parseInt(model.getAverageTimeToPay());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getAverageTimeToPayAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_nonnegative);
+        if (isNotWholeNumber(model.getAverageTimeToPay())) return FieldValidation.fail(message_integer);
         return FieldValidation.ok();
     }
 
@@ -63,9 +63,9 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesPaidBeyondAgreedTerms() {
         if (model.getPercentInvoicesPaidBeyondAgreedTerms() == null || model.getPercentInvoicesPaidBeyondAgreedTerms().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        try {Integer.parseInt(model.getPercentInvoicesPaidBeyondAgreedTerms());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesPaidBeyondAgreedTermsAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
+        if (isNotWholeNumber(model.getPercentInvoicesPaidBeyondAgreedTerms())) return FieldValidation.fail(message_integer);
         return FieldValidation.ok();
     }
 
@@ -73,9 +73,9 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesWithin30Days() {
         if (model.getPercentInvoicesWithin30Days() == null || model.getPercentInvoicesWithin30Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesWithin30DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        try {Integer.parseInt(model.getPercentInvoicesWithin30Days());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesWithin30DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
+        if (isNotWholeNumber(model.getPercentInvoicesWithin30Days())) return FieldValidation.fail(message_integer);
         return FieldValidation.ok();
     }
 
@@ -83,9 +83,9 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesWithin60Days() {
         if (model.getPercentInvoicesWithin60Days() == null || model.getPercentInvoicesWithin60Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesWithin60DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        try {Integer.parseInt(model.getPercentInvoicesWithin60Days());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesWithin60DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
+        if (isNotWholeNumber(model.getPercentInvoicesWithin60Days())) return FieldValidation.fail(message_integer);
         return FieldValidation.ok();
     }
 
@@ -93,9 +93,9 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public FieldValidation validatePercentInvoicesBeyond60Days() {
         if (model.getPercentInvoicesBeyond60Days() == null || model.getPercentInvoicesBeyond60Days().equals("")) return FieldValidation.fail(message_required);
         if (model.getPercentInvoicesBeyond60DaysAsDecimal() == null) return FieldValidation.fail(message_percentagebounds);
-        try {Integer.parseInt(model.getPercentInvoicesBeyond60Days());} catch (NumberFormatException e) {return FieldValidation.fail(message_integer);}
         if (model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue() < 0) return FieldValidation.fail(message_percentagebounds);
         if (model.getPercentInvoicesBeyond60DaysAsDecimal().doubleValue() > 100) return FieldValidation.fail(message_upperpercentagebounds);
+        if (isNotWholeNumber(model.getPercentInvoicesBeyond60Days())) return FieldValidation.fail(message_integer);
         return FieldValidation.ok();
     }
 
@@ -133,7 +133,6 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
             Calendar startDateClone = (Calendar) model.getStartDate().clone();
             startDateClone.add(Calendar.DATE, -1);
             startDateClone.add(Calendar.MONTH, 6);
-
             if (startDateClone.getTime().getTime() - model.getEndDate().getTime().getTime() > 100) {
                 return FieldValidation.fail(message_startsixmonthsbeforeend);
             }
@@ -251,5 +250,14 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     @Override
     public FieldValidation validateRetentionChargesInPast() {
         return model.isRetentionChargesInPast() == null ? FieldValidation.fail(message_required) : FieldValidation.ok();
+    }
+
+    private boolean isNotWholeNumber(String raw) {
+        try {
+            double v = Double.parseDouble(raw);
+            return Math.abs(Math.abs((v+0.5)%1) - 0.5) > 0.0001;
+        } catch (NumberFormatException e) {
+            return true;
+        }
     }
 }

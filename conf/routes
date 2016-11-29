@@ -3,36 +3,31 @@
 
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
-# POST    /journeyBack                controllers.common.journey.JourneyBackController.handleBack()
-
 GET     /                           controllers.Home.index()
-GET     /About                      controllers.Home.about()
 GET     /DutyToReport               controllers.Home.ifGuide()
 GET     /HowToReport                controllers.Home.howGuide(page:Int = 0)
 GET     /HowToReport/:page          controllers.Home.howGuide(page:Int)
 POST    /HowToReport/1              controllers.Home.calculatePeriod()
 
 GET     /Data                       controllers.Home.accessData()
-GET     /Data/Export                       controllers.Home.export()
+GET     /Data/Export                controllers.Home.export()
 
 GET     /Reports/Search controllers.SearchReport.search()
 POST    /Reports/Search controllers.SearchReport.handleSearch(page: Int ?= 0)
 GET     /Reports/Company/:company   controllers.SearchReport.company(company: String, page: Int ?= 0)
 GET     /Reports/Company/:company/Report/:report controllers.ViewReport.view(company: String, report: Int)
 
-
 GET     /Reports/Company/:company/File controllers.FileReport.startForCompany(company: String)
 GET     /Reports/Company/:company/PreLogIn controllers.FileReport.signInInterstitial(company: String)
-POST     /Reports/Company/:company/LogIn    controllers.FileReport.login(company: String)
-
+POST    /Reports/Company/:company/LogIn    controllers.FileReport.login(company: String)
 
 GET     /FileReport/cb    controllers.FileReport.loginCallback(state: String, code: String)
-POST     /FileReport/Edit      controllers.FileReport.editFiling()
+POST    /FileReport/Edit      controllers.FileReport.editFiling()
 POST    /FileReport/ReviewFiling    controllers.FileReport.reviewFiling()
 POST    /FileReport/SubmitFiling    controllers.FileReport.submitFiling()
 
 GET     /VisualTest     controllers.VisualTest.index()
 
 GET     /ch/p1/:id      controllers.CompaniesHouseMock.getPage1(id: String)
-POST     /ch/p1/:id      controllers.CompaniesHouseMock.postPage1(id: String)
-POST     /ch/p2/:id      controllers.CompaniesHouseMock.postPage2(id: String)
+POST    /ch/p1/:id      controllers.CompaniesHouseMock.postPage1(id: String)
+POST    /ch/p2/:id      controllers.CompaniesHouseMock.postPage2(id: String)

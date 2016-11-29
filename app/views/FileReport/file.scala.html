@@ -71,7 +71,7 @@
             <span class="form-hint">The percentage of invoices you failed to pay under the terms of your supplier contracts. This relates to the number of invoices, not their value.</span>
             <span class="error-message">@validation.validatePercentInvoicesPaidBeyondAgreedTerms().errorMessage()</span>
         </label>
-        <input class="form-control" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
+        <input class="form-control" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTerms()">
     </fieldset>
 
     <div class="form-group @validation.validateTimePercentages().cssClass()" style="margin-bottom:15px;">
@@ -83,21 +83,21 @@
                 <span>A) Percentage of invoices paid within 30 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin30Days().errorMessage()</span>
             </label>
-            <input class="form-control" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30DaysAsDecimal()">
+            <input class="form-control" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30Days()">
         </fieldset>
         <fieldset class="form-group @validation.validatePercentInvoicesWithin60Days().cssClass()">
             <label class="form-label" for="RecordFour">
                 <span>B) Percentage of invoices paid within 31 to 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin60Days().errorMessage()</span>
             </label>
-            <input class="form-control" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60DaysAsDecimal()">
+            <input class="form-control" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60Days()">
         </fieldset>
         <fieldset class="form-group @validation.validatePercentInvoicesBeyond60Days().cssClass()" style="margin-bottom:15px;">
             <label class="form-label" for="RecordFive">
                 <span>C) Percentage of invoices paid later than 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesBeyond60Days().errorMessage()</span>
             </label>
-            <input class="form-control" type="text" id="RecordFive" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60DaysAsDecimal()">
+            <input class="form-control" type="text" id="RecordFive" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60Days()">
         </fieldset>
     </div>
 

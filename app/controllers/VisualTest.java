@@ -82,9 +82,11 @@ public class VisualTest extends PageController {
 
 
         Html html = HtmlFormat.fill(JavaConversions.asScalaBuffer(Arrays.asList(
-
                 views.html.Home.index.render(),
-                views.html.Home.about.render(),
+                views.html.Home.ifGuide.render(),
+                views.html.Home.howGuide.render(0, new CalculatorModel()),
+                views.html.Home.howGuide.render(1, new CalculatorModel("2018", "1", "1", "2018", "12", "31")),
+                views.html.Home.howGuide.render(2, new CalculatorModel()),
                 views.html.Home.accessData.render(),
 
                 views.html.Reports.report.render(healthyReportModel, healthyCompanySearchResult),
@@ -93,12 +95,17 @@ public class VisualTest extends PageController {
                 views.html.Reports.results.render("cod", new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 0, 3)),
                 views.html.Reports.company.render(healthyCompanyModel),
 
+                views.html.FileReport.start.render(new CompanySummary("EIGENCODE LTD", "12345678")),
+                views.html.FileReport.signInInterstitial.render("123"),
+                views.html.FileReport.companiesHouseAccount.render(),
+
                 views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
                 views.html.FileReport.file.render(reportForm.fill(dateswappedFilingModel), new ReportFilingModelValidationImpl(dateswappedFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySearchResult, new UiDate(time), true)
+                views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySearchResult, new UiDate(time), true),
 
+                views.html.FileReport.filingSuccess.render("123", 1, "foobar@example.com")
         )).toList());
 
         return ok(page(html));
@@ -114,11 +121,11 @@ public class VisualTest extends PageController {
                 5,
 
                 "2016",
-                "0",
+                "1",
                 "1",
 
                 "2016",
-                "5",
+                "6",
                 "29",
 
                 "Payment terms",
@@ -148,11 +155,11 @@ public class VisualTest extends PageController {
                 50,
 
                 "2020",
-                "0",
+                "1",
                 "1",
 
                 "2019",
-                "1",
+                "2",
                 "31",
 
                 "",

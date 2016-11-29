@@ -113,11 +113,19 @@ public class FileReport extends PageController {
             return ok(page(views.html.FileReport.review.render(reportForm.fill(data.get().model), data.get().company, data.get().date, true)));
         }
 
-        OrchestratorResult<Integer> resultingId = fileReportOrchestrator.tryFileReport(request().cookie("auth").value(), model);
-        if (resultingId.success()) {
-            return ok(page(views.html.FileReport.filingSuccess.render(model.getTargetCompanyCompaniesHouseIdentifier(), resultingId.get())));
+        String auth = request().cookie("auth").value();
+
+        OrchestratorResult<ReportSummary> summary = fileReportOrchestrator.tryFileReport(auth, model);
+        if (summary.success()) {
+            String url = routes.ViewReport.view(model.getTargetCompanyCompaniesHouseIdentifier(), summary.get().Identifier).absoluteURL(request());
+
+            fileReportOrchestrator.sendConfirmation(auth, model.getTargetCompanyCompaniesHouseIdentifier(), summary.get(),url);
+            OrchestratorResult<String> email = fileReportOrchestrator.getUserEmail(request().cookie("auth").value());
+            String emailAddress = email.success() ? email.get() : null;
+
+            return ok(page(views.html.FileReport.filingSuccess.render(model.getTargetCompanyCompaniesHouseIdentifier(), summary.get().Identifier, emailAddress)));
         } else {
-            return status(401, resultingId.message());
+            return status(401, summary.message());
         }
     }
 }
