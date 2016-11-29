@@ -26,10 +26,7 @@ public class CalculatorModelTest {
     public void getReportingPeriods_preCutoff() throws Exception {
         List<CalculatorModel.ReportingPeriod> reportingPeriods = new CalculatorModel("2017", "1", "1", "2017", "12", "31").getReportingPeriods();
 
-        assertEquals(2, reportingPeriods.size());
-
-        assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
-        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "31 January 2019");
+        assertEquals(0, reportingPeriods.size());
     }
 
     @Test
@@ -87,12 +84,11 @@ public class CalculatorModelTest {
     public void getReportingPeriods_19MonthYearPlus() throws Exception {
         List<CalculatorModel.ReportingPeriod> reportingPeriods = new CalculatorModel("2018", "1", "1", "2019", "10", "1").getReportingPeriods();
 
-        assertEquals(4, reportingPeriods.size());
+        assertEquals(3, reportingPeriods.size());
 
         assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
         assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "31 January 2019");
-        assertPeriod(reportingPeriods.get(2), "1 January 2019", "30 June 2019", "30 July 2019");
-        assertPeriod(reportingPeriods.get(3), "1 July 2019", "1 October 2019", "1 November 2019");
+        assertPeriod(reportingPeriods.get(2), "1 January 2019", "1 October 2019", "1 November 2019");
     }
 
     @Test
@@ -109,12 +105,11 @@ public class CalculatorModelTest {
     public void getReportingPeriods_24MonthYear_StartingEndOfMonthHittingEndOfFebruary() throws Exception {
         List<CalculatorModel.ReportingPeriod> reportingPeriods = new CalculatorModel("2017", "8", "31", "2019", "8", "30").getReportingPeriods();
 
-        assertEquals(4, reportingPeriods.size());
+        assertEquals(3, reportingPeriods.size());
 
         assertPeriod(reportingPeriods.get(0), "31 August 2017", "27 February 2018", "27 March 2018");
         assertPeriod(reportingPeriods.get(1), "28 February 2018", "30 August 2018", "30 September 2018");
-        assertPeriod(reportingPeriods.get(2), "31 August 2018", "27 February 2019", "27 March 2019");
-        assertPeriod(reportingPeriods.get(3), "28 February 2019", "30 August 2019", "30 September 2019");
+        assertPeriod(reportingPeriods.get(2), "31 August 2018", "30 August 2019", "30 September 2019");
     }
 
     private void assertPeriod(CalculatorModel.ReportingPeriod p, String expectedStart, String expectedEnd, String expectedDeadline) {

@@ -55,19 +55,16 @@ public class CalculatorModel{
         Calendar startDate = tryMakeUtcDate(startYear, startMonth, startDay);
         Calendar endDate = tryMakeUtcDate(endYear, endMonth, endDay);
 
-        Calendar cutoff = tryMakeUtcDate("2017", "4", "30");
-
-        while (startDate.getTime().getTime() <= cutoff.getTime().getTime() ) {
-            // todo: check validity of logic for financial years != one year
-            startDate.add(Calendar.YEAR, 1);
-            endDate.add(Calendar.YEAR, 1);
-        }
+        Calendar cutoff = tryMakeUtcDate("2017", "4", "6");
 
         if (!isValid()) {
             return Lists.emptyList();
         }
 
-        // notimplemented
+        if (startDate.getTime().getTime() - cutoff.getTime().getTime() < 100) {
+            return Lists.emptyList();
+        }
+
         int months = countMonths(startDate, endDate);
         if (months == -1) {
             return Lists.emptyList();
@@ -76,7 +73,7 @@ public class CalculatorModel{
         List<ReportingPeriod> res = new ArrayList<>();
 
         int startDateOffset = 0;
-        while (months > 9) {
+        while (months > 9 && res.size() < 3) {
             Calendar intermediaryStartDate = (Calendar) startDate.clone();
             intermediaryStartDate.add(Calendar.MONTH, startDateOffset);
 
