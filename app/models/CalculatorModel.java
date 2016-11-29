@@ -61,7 +61,7 @@ public class CalculatorModel{
             return Lists.emptyList();
         }
 
-        if (startDate.getTime().getTime() - cutoff.getTime().getTime() < 100) {
+        if (startDate.getTime().getTime() - cutoff.getTime().getTime() < -100) {
             return Lists.emptyList();
         }
 
