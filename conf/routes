@@ -5,8 +5,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET     /                           controllers.Home.index()
 GET     /DutyToReport               controllers.Home.ifGuide()
-GET     /HowToReport                controllers.Home.howGuide(page:Int = 0)
-GET     /HowToReport/:page          controllers.Home.howGuide(page:Int)
+GET     /HowToReport                controllers.Home.howGuide(page:Int = 0, print: Int ?= 0)
+GET     /HowToReport/:page          controllers.Home.howGuide(page:Int, print: Int ?= 0)
 POST    /HowToReport/1              controllers.Home.calculatePeriod()
 
 GET     /Data                       controllers.Home.accessData()

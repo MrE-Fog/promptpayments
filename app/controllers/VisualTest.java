@@ -84,9 +84,9 @@ public class VisualTest extends PageController {
         Html html = HtmlFormat.fill(JavaConversions.asScalaBuffer(Arrays.asList(
                 views.html.Home.index.render(),
                 views.html.Home.ifGuide.render(),
-                views.html.Home.howGuide.render(0, new CalculatorModel()),
-                views.html.Home.howGuide.render(1, new CalculatorModel("2018", "1", "1", "2018", "12", "31")),
-                views.html.Home.howGuide.render(2, new CalculatorModel()),
+                views.html.Home.howGuide.render(0, false, new CalculatorModel()),
+                views.html.Home.howGuide.render(1, false, new CalculatorModel("2018", "1", "1", "2018", "12", "31")),
+                views.html.Home.howGuide.render(2, false, new CalculatorModel()),
                 views.html.Home.accessData.render(),
 
                 views.html.Reports.report.render(healthyReportModel, healthyCompanySearchResult),

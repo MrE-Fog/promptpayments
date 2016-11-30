@@ -1,4 +1,4 @@
-@(page:Int, calculator: CalculatorModel)
+@(page:Int, print: Boolean, calculator: CalculatorModel)
 @import utils.Ordinals
 <div class="breadcrumbs">
     <ol>
@@ -9,22 +9,24 @@
     <h1 class="heading-xlarge">
         How to report your payment practices: a guide for large businesses
     </h1>
-    <div class="grid-row">
-        <div class="column-half">
-            <ol class="list list-number">
-                <li>@_guidePageLink("Overview", 0, page)</li>
-                <li>@_guidePageLink("Deadlines", 1, page)</li>
-            </ol>
+    @if(!print) {
+        <div class="grid-row">
+            <div class="column-half">
+                <ol class="list list-number">
+                    <li>@_guidePageLink("Overview", 0, page)</li>
+                    <li>@_guidePageLink("Deadlines", 1, page)</li>
+                </ol>
+            </div>
+            <div class="column-half">
+                <ol start="3" class="list list-number">
+                    <li>@_guidePageLink("What to report", 2, page)</li>
+                </ol>
+            </div>
         </div>
-        <div class="column-half">
-            <ol start="3" class="list list-number">
-                <li>@_guidePageLink("What to report", 2, page)</li>
-            </ol>
-        </div>
-    </div>
-    <hr>
+        <hr>
+    }
 
-    @if(page == 0) {
+    @if(page == 0 || print) {
         <h2 class="heading-large">1. Overview</h2>
         <p>
             <a href="@routes.Home.ifGuide()">Most large businesses</a> must publish information about how they pay their suppliers. If you are in scope, you need to report on:
@@ -58,53 +60,57 @@
             </i>
             <strong>The report must be signed off by a director or a designated member of a Limited Liability Partnership. You must submit your report before the deadline and the report must be accurate and truthful. If not, the business and every director or designated member may be liable to a fine.</strong>
         </div>
-        @_pagination(0, null, "Deadlines")
+        @if(!print) {
+            @_pagination(0, null, "Deadlines")
+        }
     }
-    @if(page == 1) {
+    @if(page == 1 || print) {
         <h2 class="heading-large">2. Deadlines</h2>
         <p>
             You need to submit a report twice per financial year, starting with your first financial year on or after 6 April 2017. The first reporting period is six months beginning on the first day of your financial year - and the deadline for the report is 30 days later.
         </p>
-        <p class="bold-medium">
-            Calculate your reporting period and your deadline to report <a id="calculator"></a>
-        </p>
-        <form class="inline-wizard" method="POST" action="#calculator">
-            <fieldset class='@(!calculator.isValid() match {case true => "error" case false => ""})'>
-                @if(!calculator.isValid()) {
-                    <span class="error-message">
-                        These dates are not valid
-                    </span>
-                }
-
-                <p class="heading-small">Enter the start date of your financial year</p>
-                @shared._dateinput("start-", calculator.startDay, calculator.startMonth, calculator.startYear)
-
-                <p class="heading-small">Enter the end date of your financial year</p>
-                @shared._dateinput("end-", calculator.endDay, calculator.endMonth, calculator.endYear)
-            </fieldset>
-
-            <input class="button" type="submit" value="Calculate your next reporting period">
-            @if(calculator.isValid() && !calculator.isEmpty()) {
-            <div class="output">
-                <p class="bold-small">You must publish @(calculator.getReportingPeriods().size() match { case 1 => "1 report" case n => n + " reports"}) in the stated period.</p>
-                @if(calculator.getReportingPeriods().isEmpty()) {
-                    <h3 class="bold-medium">You don't have to report for this financial year.</h3>
-                    <p>
-                        You only need to report for financial years starting on or after <span class="bold-small">6 April 2017</span>.
-                    </p>
-                } else {
-                    @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
-                        <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
-                        <p>
-                            Covers the period <span class="bold-small">@x.StartDate.ToDateString() &ndash; @x.EndDate.ToDateString()</span>
-                            <br>
-                            You must submit this report by <span class="bold-small">@x.FilingDeadline.ToDateString()</span>
-                        </p>
+        @if(!print) {
+            <p class="bold-medium">
+                Calculate your reporting period and your deadline to report <a id="calculator"></a>
+            </p>
+            <form class="inline-wizard" method="POST" action="#calculator">
+                <fieldset class='@(!calculator.isValid() match {case true => "error" case false => ""})'>
+                    @if(!calculator.isValid()) {
+                        <span class="error-message">
+                            These dates are not valid
+                        </span>
                     }
+
+                    <p class="heading-small">Enter the start date of your financial year</p>
+                    @shared._dateinput("start-", calculator.startDay, calculator.startMonth, calculator.startYear)
+
+                    <p class="heading-small">Enter the end date of your financial year</p>
+                    @shared._dateinput("end-", calculator.endDay, calculator.endMonth, calculator.endYear)
+                </fieldset>
+
+                <input class="button" type="submit" value="Calculate your next reporting period">
+                @if(calculator.isValid() && !calculator.isEmpty()) {
+                <div class="output">
+                    @if(calculator.getReportingPeriods().isEmpty()) {
+                        <h3 class="bold-medium">You don't have to report for this financial year.</h3>
+                        <p>
+                            You only need to report for financial years starting on or after <span class="bold-small">6 April 2017</span>.
+                        </p>
+                    } else {
+                        <p class="bold-small">You must publish @(calculator.getReportingPeriods().size() match { case 1 => "1 report" case n => n + " reports"}) in the stated period.</p>
+                        @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
+                            <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
+                            <p>
+                                Covers the period <span class="bold-small">@x.StartDate.ToDateString() &ndash; @x.EndDate.ToDateString()</span>
+                                <br>
+                                You must submit this report by <span class="bold-small">@x.FilingDeadline.ToDateString()</span>
+                            </p>
+                        }
+                    }
+                </div>
                 }
-            </div>
-            }
-        </form>
+            </form>
+        }
         <h4 class="heading-small">If your financial year isn’t 12 months long</h4>
         <p>
             If you have altered your financial year length, you may have a financial year that is less or more than 12 months.
@@ -121,10 +127,12 @@
             </i>
             <strong>You must <a href="@routes.SearchReport.search()">publish your report online</a> by your submission date.</strong>
         </div>
-        @_pagination(1, "Overview", "What you must report")
+        @if(!print) {
+            @_pagination(1, "Overview", "What you must report")
+        }
     }
 
-    @if(page==2) {
+    @if(page==2 || print) {
         <h2 class="heading-large">3. What you must report</h2>
         <p>
             You need to prepare the information for your report and get sign-off by a director (or, in an limited liability partnership, by a <a href="">designated member</a>) before entering the information into the online form. You need to provide the following information:
@@ -156,6 +164,11 @@
             <li>Whether your business charges has a policy of deducting sums from payments as a charge for remaining on a supplier list.</li>
             <li>Whether your business is a member of a payment code such as the <a href="http://www.promptpaymentcode.org.uk/">Prompt Payment Code</a>.</li>
         </ul>
-        @_pagination(2, "Deadlines", null)
+        @if(!print) {
+            @_pagination(2, "Deadlines", null)
+        }
     }
+    <p class="print-link">
+        <a href="?print=1">Print entire guide</a>
+    </p>
 </div>

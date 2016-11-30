@@ -28,8 +28,8 @@ public class Home extends PageController {
         return ok(page(views.html.Home.ifGuide.render()));
     }
 
-    public Result howGuide(int page) {
-        return ok(page(views.html.Home.howGuide.render(page, new CalculatorModel())));
+    public Result howGuide(int page, int print) {
+        return ok(page(views.html.Home.howGuide.render(page, print == 1, new CalculatorModel())));
     }
 
     public Result calculatePeriod() {
@@ -42,7 +42,7 @@ public class Home extends PageController {
              getPostParameter("end-day")
         );
 
-        return ok(page(views.html.Home.howGuide.render(1, model)));
+        return ok(page(views.html.Home.howGuide.render(1, false, model)));
     }
 }
 
