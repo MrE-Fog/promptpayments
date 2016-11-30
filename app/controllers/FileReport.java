@@ -96,7 +96,15 @@ public class FileReport extends PageController {
         }
     }
 
-    public Result editFiling() {
+    public Result submitFiling() {
+        if (getPostParameter("revise") != null) {
+            return editFiling();
+        } else {
+            return doSubmitFiling();
+        }
+    }
+
+    private Result editFiling() {
         OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
         if (data.success()) {
             return ok(page(views.html.FileReport.file.render(reportForm.fill(data.get().model), data.get().validation, data.get().company, data.get().date, new DatePickerHelper(timeProvider))));
@@ -105,7 +113,7 @@ public class FileReport extends PageController {
         }
     }
 
-    public Result submitFiling() {
+    private Result doSubmitFiling() {
         ReportFilingModel model = reportForm.bindFromRequest(request()).get();
         Boolean confirmed = Arrays.stream(request().body().asFormUrlEncoded().get("confirmed")).anyMatch(x -> x.equals("1"));
         if (!confirmed) {

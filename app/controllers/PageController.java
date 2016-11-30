@@ -17,9 +17,13 @@ class PageController extends Controller {
     }
 
     protected String getPostParameter(String key) {
-        String[] values = request().body().asFormUrlEncoded().get(key);
-        return values.length > 0
-                ? values[values.length - 1]
-                : null;
+        try {
+            String[] values = request().body().asFormUrlEncoded().get(key);
+            return values.length > 0
+                    ? values[values.length - 1]
+                    : "";
+        } catch (NullPointerException ignored) {
+            return null;
+        }
     }
 }

@@ -5,6 +5,18 @@
     max-width: 640px;
 }
 
+.button-secondary {
+    margin-left:1.5em;
+    background-color: #bbb;
+    -webkit-box-shadow: 0 2px 0 #555;
+    -moz-box-shadow: 0 2px 0 #555;
+    box-shadow: 0 2px 0 #555;
+}
+.button-secondary:hover,
+.button-secondary:focus {
+    background-color: #999;
+}
+
 .nowrap {
     white-space:nowrap;
 }
@@ -29,6 +41,7 @@
 .hidden {
    display:none;
 }
+
 .button {
     margin-top:1.7em;
 }

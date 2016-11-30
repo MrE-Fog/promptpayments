@@ -22,7 +22,6 @@ GET     /Reports/Company/:company/PreLogIn controllers.FileReport.signInIntersti
 POST    /Reports/Company/:company/LogIn    controllers.FileReport.login(company: String)
 
 GET     /FileReport/cb    controllers.FileReport.loginCallback(state: String, code: String)
-POST    /FileReport/Edit      controllers.FileReport.editFiling()
 POST    /FileReport/ReviewFiling    controllers.FileReport.reviewFiling()
 POST    /FileReport/SubmitFiling    controllers.FileReport.submitFiling()
 

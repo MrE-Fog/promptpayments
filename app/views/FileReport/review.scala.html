@@ -204,7 +204,7 @@
 
 </table>
 
-<form action="@routes.FileReport.submitFiling()" method="POST">
+<form action="@routes.FileReport.submitFiling()" method="POST" style="float:left; margin-right:2em;">
     <input type="hidden" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
     <input type="hidden" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
     <input type="hidden" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
@@ -249,40 +249,6 @@
         </label>
     </fieldset>
     <input type="submit" class="button" value="Publish your report">
+    <input type="submit" name="revise" class="button button-secondary" value="Revise">
     </div>
-</form>
-
-<form action="@routes.FileReport.editFiling()" method="POST">
-    <input type="hidden" name="TargetCompanyCompaniesHouseIdentifier" value="@company.CompaniesHouseIdentifier">
-    <input type="hidden" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
-    <input type="hidden" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTermsAsDecimal()">
-    <input type="hidden" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30DaysAsDecimal()">
-    <input type="hidden" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60DaysAsDecimal()">
-    <input type="hidden" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60DaysAsDecimal()">
-
-    <input type="hidden" name="StartDate_year" value="@model.get().getStartDate_year()">
-    <input type="hidden" name="StartDate_month" value="@model.get().getStartDate_month()">
-    <input type="hidden" name="StartDate_day" value="@model.get().getStartDate_day()">
-
-    <input type="hidden" name="EndDate_year" value="@model.get().getEndDate_year()">
-    <input type="hidden" name="EndDate_month" value="@model.get().getEndDate_month()">
-    <input type="hidden" name="EndDate_day" value="@model.get().getEndDate_day()">
-
-    <input type="hidden" name="PaymentTerms" value="@model.get().getPaymentTerms()">
-    <input type="hidden" name="MaximumContractPeriod" value="@model.get().getMaximumContractPeriod()">
-    <input type="hidden" name="PaymentTermsChanged" value="@model.get().isPaymentTermsChanged()">
-    <input type="hidden" name="PaymentTermsChangedComment" value="@model.get().getPaymentTermsChangedComment()">
-    <input type="hidden" name="PaymentTermsChangedNotified" value="@model.get().isPaymentTermsChangedNotified()">
-    <input type="hidden" name="PaymentTermsChangedNotifiedComment" value="@model.get().getPaymentTermsChangedNotifiedComment()">
-    <input type="hidden" name="PaymentTermsComment" value="@model.get().getPaymentTermsComment()">
-
-    <input type="hidden" name="DisputeResolution" value="@model.get().getDisputeResolution()">
-    <input type="hidden" name="OfferEInvoicing" value="@model.get().isOfferEInvoicing()">
-    <input type="hidden" name="OfferSupplyChainFinance" value="@model.get().isOfferSupplyChainFinance()">
-    <input type="hidden" name="RetentionChargesInPolicy" value="@model.get().isRetentionChargesInPolicy()">
-    <input type="hidden" name="RetentionChargesInPast" value="@model.get().isRetentionChargesInPast()">
-    <input type="hidden" name="HasPaymentCodes" value="@model.get().isHasPaymentCodes()">
-    <input type="hidden" name="PaymentCodes" value="@model.get().getPaymentCodes()">
-
-    <input type="submit" class="button" value="Correct">
 </form>
