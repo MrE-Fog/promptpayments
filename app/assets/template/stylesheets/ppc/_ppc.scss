@@ -1,3 +1,18 @@
+/*
+    LAYOUT AND GOV.UK OVERRIDES
+*/
+
+.link {
+    margin:0;
+    padding:0;
+    color: #005ea5;
+    text-decoration:underline;
+    display:inline;
+    border:none;
+    background:none;
+    cursor:pointer;
+}
+
 .notice {
     margin-bottom: 2em;
 }
@@ -5,25 +20,43 @@
     max-width: 640px;
 }
 
+.hidden {
+   display:none;
+}
+
+.button {
+    margin-top:1.7em;
+}
+
+.block {
+    display: block;
+}
+
+.separator {
+    height: 10px;
+    background-color: #005ea5;
+}
+
+
+/*
+    SECONDARY BUTTONS
+*/
+
 .button-secondary {
     margin-left:1.5em;
     background-color: #bbb;
     -webkit-box-shadow: 0 2px 0 #555;
     -moz-box-shadow: 0 2px 0 #555;
     box-shadow: 0 2px 0 #555;
-}
-.button-secondary:hover,
-.button-secondary:focus {
-    background-color: #999;
+
+    &:hover, &:focus {
+        background-color: #999;
+    }
 }
 
-.nowrap {
-    white-space:nowrap;
-}
-.separator {
-    height: 10px;
-    background-color: #005ea5;
-}
+/*
+    TYPOGRAPHY
+*/
 
 .small-aside {
     font-size:18px;
@@ -38,17 +71,10 @@
     margin-top: 0.5em;
     margin-bottom: .83333em;
 }
-.hidden {
-   display:none;
-}
 
-.button {
-    margin-top:1.7em;
-}
-
-.block {
-    display: block;
-}
+/*
+    FORM LAYOUT
+*/
 
 .fieldcaption {
     font-weight:bold;
@@ -66,76 +92,76 @@ fieldset {
     padding-left:0;
 }
 
-.confirmation {
-    margin-top:2em;
-    padding-top:10px;
-    padding-bottom:10px;
-}
-/* Guidance pages */
-
-.inline-wizard {
-    background-color: #dee0e2;
-    padding: 1.5em;
-}
-
-.inline-wizard .output {
-    border-left: solid 10px black;
-    padding-left: 10px;
-    margin-top: 2em;
-}
-
 .input-float-left {
     float: left;
     width: 2.5em;
     margin-right:1em;
-}
 
-.input-float-left.wide {
-    width: 3.5em;
-}
-.input-float-left input {
-    width:100%;
-    text-align:right;
-    padding-right:10px;
+    &.wide {
+        width: 3.5em;
+    }
+
+    input {
+        width:100%;
+        text-align:right;
+        padding-right:10px;
+    }
 }
 
 .key-column {
  width: 30%;
 }
-/* Search results */
+
+.confirmation {
+    margin-top:2em;
+    padding-top:10px;
+    padding-bottom:10px;
+}
+
+/*
+    GUIDANCE PAGES
+*/
+
+.inline-wizard {
+    background-color: #dee0e2;
+    padding: 1.5em;
+
+    .output {
+        border-left: solid 10px black;
+        padding-left: 10px;
+        margin-top: 2em;
+    }
+}
+
+/*
+    SEARCH RESULTS
+*/
+
 .paging .page {
     display:inline;
     margin-right:1em;
+
+    .thispage {
+        font-weight:bold;
+    }
 }
 
-.paging .page .thispage {
-    font-weight:bold;
-}
-
-.link {
-    margin:0;
-    padding:0;
-    color: #005ea5;
-    text-decoration:underline;
-    display:inline;
-    border:none;
-    background:none;
-    cursor:pointer;
-}
 .searchresults {
     margin: 0 0 2em;
+    p {
+        margin: 0;
+        color: #616a6e;
+    }
+
+    .heading-medium {
+        margin-bottom:15px;
+    }
 }
 
-.searchresult p {
-    margin: 0;
-    color: #616a6e;
-}
-.searchresult .heading-medium {
-    margin-bottom:15px;
-}
+/*
+    SEARCH BOX - stolen from companies house
+*/
 
-
-/* Search box */
 .search-bar-active {
   background: #E5E5E5;
   padding: 0.5em;
