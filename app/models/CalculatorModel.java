@@ -1,6 +1,7 @@
 package models;
 
 import org.assertj.core.util.Lists;
+import utils.UtcConverter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,8 +36,8 @@ public class CalculatorModel{
 
     public boolean isValid() {
         if (isEmpty()) return true;
-        Calendar startDate = tryMakeUtcDate(startYear, startMonth, startDay);
-        Calendar endDate = tryMakeUtcDate(endYear, endMonth, endDay);
+        Calendar startDate = UtcConverter.tryMakeUtcDate(startYear, startMonth, startDay);
+        Calendar endDate = UtcConverter.tryMakeUtcDate(endYear, endMonth, endDay);
 
         return startDate != null && endDate != null && startDate.getTime().getTime() < endDate.getTime().getTime();
     }
@@ -50,10 +51,10 @@ public class CalculatorModel{
     }
 
     public List<ReportingPeriod> getReportingPeriods() {
-        Calendar startDate = tryMakeUtcDate(startYear, startMonth, startDay);
-        Calendar endDate = tryMakeUtcDate(endYear, endMonth, endDay);
+        Calendar startDate = UtcConverter.tryMakeUtcDate(startYear, startMonth, startDay);
+        Calendar endDate = UtcConverter.tryMakeUtcDate(endYear, endMonth, endDay);
 
-        Calendar cutoff = tryMakeUtcDate("2017", "4", "6");
+        Calendar cutoff = UtcConverter.tryMakeUtcDate("2017", "4", "6");
 
         if (!isValid()) {
             return Lists.emptyList();
@@ -103,22 +104,6 @@ public class CalculatorModel{
             if (endDate.getTime().getTime() - c.getTime().getTime() < 100) return res;
         }
         return -1;
-    }
-
-    private Calendar tryMakeUtcDate(String year, String month, String day) {
-        // todo:make reusable
-        if (year == null || year.isEmpty()) return null;
-        if (month == null || month.isEmpty()) return null;
-        if (day == null || day.isEmpty()) return null;
-        try {
-            Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            calendar.setLenient(false);
-            calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day));
-            calendar.getTime(); // this throws if the year-month-day combination is invalid.
-            return calendar;
-        } catch (Exception ignored) {
-            return null;
-        }
     }
 
     public class ReportingPeriod {
