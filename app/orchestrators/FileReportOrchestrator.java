@@ -6,8 +6,6 @@ import components.GovUkNotifyEmailer;
 import components.PagedList;
 import components.ReportsRepository;
 import models.*;
-import org.assertj.core.groups.Tuple;
-import play.libs.F;
 import play.mvc.Http;
 import scala.Option;
 import utils.TimeProvider;
@@ -26,6 +24,9 @@ public class FileReportOrchestrator {
     private GovUkNotifyEmailer emailer;
     private TimeProvider timeProvider;
 
+    private final String authorizedCallbackUri = "https://paymentdutyregister.herokuapp.com/FileReport/cb";
+
+
     @Inject
     FileReportOrchestrator(CompaniesHouseCommunicator companiesHouseCommunicator, ReportsRepository reportsRepository, GovUkNotifyEmailer emailer, TimeProvider timeProvider) {
         this.companiesHouseCommunicator = companiesHouseCommunicator;
@@ -35,15 +36,9 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<FilingData> tryMakeReportFilingModel(String token, String companiesHouseIdentifier) {
-        CompanySummary company = null;
-        try {
-            company = companiesHouseCommunicator.getCompany(companiesHouseIdentifier);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return OrchestratorResult.fromFailure("Cannot retrieve companies");
-        }
-        if (company == null) {
-            return OrchestratorResult.fromFailure("Unknown company");
+        OrchestratorResult<CompanySummary> company = getCompanySummary(companiesHouseIdentifier);
+        if (!company.success()) {
+            return OrchestratorResult.fromFailure(company.message());
         }
 
         //if (!reportsRepository.mayFileForCompany(token,companiesHouseIdentifier)) {
@@ -54,21 +49,14 @@ public class FileReportOrchestrator {
 
         return OrchestratorResult.fromSucccess(new FilingData(
                 rfm,
-                company,
+                company.get(),
                 new UiDate(timeProvider.Now())
         ));
     }
-
     public OrchestratorResult<ValidatedFilingData> tryValidateReportFilingModel(ReportFilingModel model) {
-        CompanySummary company = null;
-        try {
-            company = companiesHouseCommunicator.getCompany(model.getTargetCompanyCompaniesHouseIdentifier());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return OrchestratorResult.fromFailure("Cannot retrieve companies");
-        }
-        if (company == null) {
-            return OrchestratorResult.fromFailure("Unknown company");
+        OrchestratorResult<CompanySummary> company = getCompanySummary(model.getTargetCompanyCompaniesHouseIdentifier());
+        if (!company.success()) {
+            return OrchestratorResult.fromFailure(company.message());
         }
 
         ReportFilingModelValidation validation = new ReportFilingModelValidationImpl(model, timeProvider.Now());
@@ -76,21 +64,15 @@ public class FileReportOrchestrator {
         return OrchestratorResult.fromSucccess(new ValidatedFilingData(
                 model,
                 validation,
-                company,
+                company.get(),
                 new UiDate(timeProvider.Now())
         ));
     }
 
-    public OrchestratorResult<ReportSummary> tryFileReport(String oAuthToken, ReportFilingModel model) {
-        CompanySummary company = null;
-        try {
-            company = companiesHouseCommunicator.getCompany(model.getTargetCompanyCompaniesHouseIdentifier());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return OrchestratorResult.fromFailure("Cannot retrieve companies");
-        }
-        if (company == null) {
-            return OrchestratorResult.fromFailure("Unknown company");
+    public OrchestratorResult<FilingOutcome> tryFileReport(String oAuthToken, ReportFilingModel model, UrlMapper urlMapper) {
+        OrchestratorResult<CompanySummary> company = getCompanySummary(model.getTargetCompanyCompaniesHouseIdentifier());
+        if (!company.success()) {
+            return OrchestratorResult.fromFailure(company.message());
         }
 
         //if (!reportsRepository.mayFileForCompany(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
@@ -98,12 +80,15 @@ public class FileReportOrchestrator {
         //}
 
         Calendar now = timeProvider.Now();
-        int i = reportsRepository.TryFileReport(model, company, now);
-        return OrchestratorResult.fromSucccess(new ReportSummary(
-                i,
-                now,
-                model.getStartDate(),
-                model.getEndDate()));
+        ReportSummary summary = reportsRepository.tryFileReport(model, company.get(), now);
+
+        String emailAddress = sendConfirmation(oAuthToken, company.get(), summary, urlMapper.getUrlFromReportId(summary.Identifier));
+
+        return OrchestratorResult.fromSucccess(new FilingOutcome(
+                company.get(),
+                summary.Identifier,
+                emailAddress
+        ));
     }
 
     public OrchestratorResult<PagedList<CompanySummaryWithAddress>> findRegisteredCompanies(String company, int page, int itemsPerPage) {
@@ -114,8 +99,6 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure("Internal error: Couldn't search companies");
         }
     }
-    String authorizedCallbackUri = "https://paymentdutyregister.herokuapp.com/FileReport/cb";
-
 
     public String getAuthorizationUri(String companiesHouseIdentifier) {
         return companiesHouseCommunicator.getAuthorizationUri(authorizedCallbackUri, companiesHouseIdentifier);
@@ -150,51 +133,66 @@ public class FileReportOrchestrator {
     }
 
     public OrchestratorResult<CompanyModel> getCompanyModel(String company, int page, int itemsPerPage) {
-        try {
-            CompanySummary companySummary = companiesHouseCommunicator.getCompany(company);
-            CompanyModel companyModel = reportsRepository.getCompanyModel(companySummary, page, itemsPerPage);
-            return OrchestratorResult.fromSucccess(companyModel);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return OrchestratorResult.fromFailure("Could not retrieve companies");
+        OrchestratorResult<CompanySummary> companySummary = getCompanySummary(company);
+        if (!companySummary.success()) {
+            return OrchestratorResult.fromFailure(companySummary.message());
         }
+
+        PagedList<ReportSummary> reportSummaries = reportsRepository.getReportSummaries(company, page, itemsPerPage);
+        return OrchestratorResult.fromSucccess(new CompanyModel(companySummary.get(), reportSummaries));
     }
 
-    public OrchestratorResult<F.Tuple<CompanySummary, ReportModel>> getReport(String companiesHouseIdentifier, int reportId) {
+    public OrchestratorResult<CompanySummaryAndReport> getReport(String companiesHouseIdentifier, int reportId) {
+        OrchestratorResult<CompanySummary> companySummary = getCompanySummary(companiesHouseIdentifier);
+        if (!companySummary.success()) {
+            return OrchestratorResult.fromFailure(companySummary.message());
+        }
+
+        Option<ReportModel> model = reportsRepository.getReport(companiesHouseIdentifier, reportId);
+        if(model.isEmpty()) {
+            return OrchestratorResult.fromFailure("Could not find report");
+        }
+
+        return OrchestratorResult.fromSucccess(new CompanySummaryAndReport(companySummary.get(), model.get()));
+    }
+
+
+    private OrchestratorResult<CompanySummary> getCompanySummary(String companiesHouseIdentifier) {
         try {
-            CompanySummary companySummary = companiesHouseCommunicator.getCompany(companiesHouseIdentifier);
-            Option<ReportModel> model = reportsRepository.getReport(companiesHouseIdentifier, reportId);
-            if(model.isEmpty()) {
-                return OrchestratorResult.fromFailure("Could not find report");
+            CompanySummary company = companiesHouseCommunicator.getCompany(companiesHouseIdentifier);
+            if (company == null) {
+                return OrchestratorResult.fromFailure("Unknown company");
             }
-            return OrchestratorResult.fromSucccess(new F.Tuple<>(companySummary, model.get()));
-        } catch (IOException e) {
-            return OrchestratorResult.fromFailure("Could not find company");
-        }
-    }
-
-    public OrchestratorResult<String> getUserEmail(String auth) {
-        try {
-            String emailAddress = companiesHouseCommunicator.getEmailAddress(auth);
-            return emailAddress == null
-                    ? OrchestratorResult.fromFailure("Could not determine email address")
-                    : OrchestratorResult.fromSucccess(emailAddress);
-        } catch (IOException e) {
-            return OrchestratorResult.fromFailure("Could not connect to Companies House");
-        }
-    }
-
-    public void sendConfirmation(String auth, String targetCompanyCompaniesHouseIdentifier, ReportSummary reportSummary, String url) {
-        OrchestratorResult<String> email = getUserEmail(auth);
-        if (!email.success()) {
-            return;
-        }
-
-        try {
-            CompanySummary company = companiesHouseCommunicator.getCompany(targetCompanyCompaniesHouseIdentifier);
-            emailer.sendConfirmationEmail(email.get(), company, reportSummary, url);
+            return OrchestratorResult.fromSucccess(company);
         } catch (IOException e) {
             e.printStackTrace();
+            return OrchestratorResult.fromFailure("Cannot retrieve companies");
         }
+    }
+
+
+    private String sendConfirmation(String auth, CompanySummary company, ReportSummary reportSummary, String url) {
+        String email = getUserEmail(auth);
+        if (email == null) {
+            return null;
+        }
+
+        if(emailer.sendConfirmationEmail(email, company, reportSummary, url)) {
+            return email;
+        } else {
+            return null;
+        }
+    }
+
+    private String getUserEmail(String auth) {
+        try {
+            return companiesHouseCommunicator.getEmailAddress(auth);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public interface UrlMapper {
+        public String getUrlFromReportId(int reportId);
     }
 }

@@ -16,12 +16,12 @@ import java.util.List;
 @ImplementedBy(JdbcReportsRepository.class)
 public interface ReportsRepository {
     PagedList<CompanySummary> searchCompanies(String company, int page, int itemsPerPage);
-    CompanyModel getCompanyModel(CompanySummary companySummary, int page, int itemsPerPage);
+    PagedList<ReportSummary> getReportSummaries(String companiesHouseIdentifier, int page, int itemsPerPage);
     Option<ReportModel> getReport(String company, int reportId);
 
-    int TryFileReport(ReportFilingModel rfm, CompanySummary company, Calendar filingDate);
+    ReportSummary tryFileReport(ReportFilingModel rfm, CompanySummary company, Calendar filingDate);
 
-    List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months);
+    List<F.Tuple<CompanySummary, ReportModel>> exportData(int months);
 
     PagedList<CompanySearchResult> getCompanySearchInfo(PagedList<CompanySummaryWithAddress> companySummaries);
 }

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class JdbcReportsRepositoryTest {
@@ -127,8 +128,8 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompany_paged() throws Exception {
-        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 3).ReportSummaries;
-        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 1, 3).ReportSummaries;
+        PagedList<ReportSummary> result = jdbcReportsRepository.getReportSummaries("120", 0, 3);
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getReportSummaries("120", 1, 3);
 
         assertEquals("The number of results should not exceed page size", 3, result.size());
         assertEquals("Page number should be accurately reported", 0, result.pageNumber());
@@ -147,8 +148,8 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompany_paged_chronological() throws Exception {
-        PagedList<ReportSummary> result1 = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 3).ReportSummaries;
-        PagedList<ReportSummary> result2 = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 1, 3).ReportSummaries;
+        PagedList<ReportSummary> result1 = jdbcReportsRepository.getReportSummaries("120", 0, 3);
+        PagedList<ReportSummary> result2 = jdbcReportsRepository.getReportSummaries("120", 1, 3);
 
         assertTrue(result1.get(0).getFilingDate().compareTo(result1.get(1).getFilingDate()) > 0);
         assertTrue(result1.get(1).getFilingDate().compareTo(result1.get(2).getFilingDate()) > 0);
@@ -157,7 +158,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompany_emptyforzeropagesize() throws Exception {
-        PagedList<ReportSummary> result = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 0).ReportSummaries;
+        PagedList<ReportSummary> result = jdbcReportsRepository.getReportSummaries("120", 0, 0);
         assertEquals(0, result.size());
         assertEquals(4, result.totalSize());
         assertEquals(false, result.canGoBack());
@@ -167,27 +168,26 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "122"), 0 , 25);
+        PagedList<ReportSummary> reportSummaries = jdbcReportsRepository.getReportSummaries("122", 0, 25);
 
-        assertEquals("Nicecorp", company.Info.Name);
-        assertEquals(1, company.ReportSummaries.size());
-        assertEquals("1 May 2016", company.ReportSummaries.get(0).UiDateString());
+        assertEquals(1, reportSummaries.size());
+        assertEquals("1 May 2016", reportSummaries.get(0).UiDateString());
     }
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_ReportsChronological() throws Exception {
-        CompanyModel company = jdbcReportsRepository.getCompanyModel(new CompanySummary("Nicecorp", "120"), 0, 25);
+        PagedList<ReportSummary> reportSummaries = jdbcReportsRepository.getReportSummaries("120", 0, 25);
 
-        assertEquals(4, company.ReportSummaries.size());
+        assertEquals(4, reportSummaries.size());
 
-        assertTrue(company.ReportSummaries.get(0).getFilingDate().compareTo(company.ReportSummaries.get(1).getFilingDate()) > 0);
-        assertTrue(company.ReportSummaries.get(1).getFilingDate().compareTo(company.ReportSummaries.get(2).getFilingDate()) > 0);
-        assertTrue(company.ReportSummaries.get(2).getFilingDate().compareTo(company.ReportSummaries.get(3).getFilingDate()) > 0);
+        assertTrue(reportSummaries.get(0).getFilingDate().compareTo(reportSummaries.get(1).getFilingDate()) > 0);
+        assertTrue(reportSummaries.get(1).getFilingDate().compareTo(reportSummaries.get(2).getFilingDate()) > 0);
+        assertTrue(reportSummaries.get(2).getFilingDate().compareTo(reportSummaries.get(3).getFilingDate()) > 0);
     }
 
     @Test
     public void getCompanyByCompaniesHouseIdentifier_DoesntExist() throws Exception {
-        assertTrue(jdbcReportsRepository.getCompanyModel(new CompanySummary("Fakecorp", "124"), 0,25).ReportSummaries.isEmpty());
+        assertTrue(jdbcReportsRepository.getReportSummaries("124", 0,25).isEmpty());
     }
 
 
@@ -236,7 +236,7 @@ public class JdbcReportsRepositoryTest {
             Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
             gmt.set(2016,9,1);
 
-            jdbcReportsRepository.TryFileReport(ReportModelExamples.makeFullReportFilingModel("120"), new CompanySummary("Some Company", "122"), gmt);
+            jdbcReportsRepository.tryFileReport(ReportModelExamples.makeFullReportFilingModel("120"), new CompanySummary("Some Company", "122"), gmt);
         } catch (InvalidParameterException e) {
             return;
         }
@@ -247,15 +247,16 @@ public class JdbcReportsRepositoryTest {
         Calendar time = new UtcTimeProvider().Now();
         ReportFilingModel rfm = ReportModelExamples.makeFullReportFilingModel("122");
 
-        int result = jdbcReportsRepository.TryFileReport(rfm, new CompanySummary("Some Company", "122"), time);
+        ReportSummary reportSummary = jdbcReportsRepository.tryFileReport(rfm, new CompanySummary("Some Company", "122"), time);
 
-        assertTrue(result > 0);
+        assertNotNull(reportSummary);
+        assertTrue(reportSummary.Identifier > 0);
 
-        ReportModel report = jdbcReportsRepository.getReport("122", result).get();
+        ReportModel report = jdbcReportsRepository.getReport("122", reportSummary.Identifier).get();
 
         assertEquals("Ensure that ALL fields are tested below", 22,ReportModel.class.getDeclaredFields().length);
 
-        assertEquals(report.Info.Identifier, result);
+        assertEquals(report.Info.Identifier, reportSummary.Identifier);
         assertEquals(time, report.Info.getFilingDate());
 
         assertEquals(new BigDecimal("31"), report.AverageTimeToPay);
@@ -285,17 +286,18 @@ public class JdbcReportsRepositoryTest {
     public void tryFileReport_WhenCompanyUnknown() throws Exception {
         ReportFilingModel rfm = ReportModelExamples.makeFullReportFilingModel("124");
         CompanySummary newCorp = new CompanySummary("New corp", "124");
-        int result = jdbcReportsRepository.TryFileReport(rfm, newCorp, new UtcTimeProvider().Now());
-        assertTrue(result > 0);
+        ReportSummary reportSummary = jdbcReportsRepository.tryFileReport(rfm, newCorp, new UtcTimeProvider().Now());
+        assertTrue(reportSummary != null);
+        assertTrue(reportSummary.Identifier > 0);
 
-        Option<ReportModel> report = jdbcReportsRepository.getReport("124", result);
+        Option<ReportModel> report = jdbcReportsRepository.getReport("124", reportSummary.Identifier);
         assertEquals(false, report.isEmpty());
     }
 
     @Test
     public void tryFileReport_MistmatchingModels() throws Exception {
         try {
-            jdbcReportsRepository.TryFileReport(
+            jdbcReportsRepository.tryFileReport(
                     ReportFilingModel.MakeEmptyModelForTarget("120"),
                     new CompanySummary("mismatching company","121"),
                     new UtcTimeProvider().Now()
@@ -303,18 +305,18 @@ public class JdbcReportsRepositoryTest {
         } catch (IllegalArgumentException e) {
             return;
         }
-        fail("if models mismatch, TryFileReport should fail");
+        fail("if models mismatch, tryFileReport should fail");
     }
 
     @Test
     public void exportData_withInvalidRange() throws Exception {
-        List<F.Tuple<CompanySummary, ReportModel>> tuples = jdbcReportsRepository.ExportData(-1);
+        List<F.Tuple<CompanySummary, ReportModel>> tuples = jdbcReportsRepository.exportData(-1);
         assertEquals(0, tuples.size());
     }
 
     @Test
     public void exportData() throws Exception {
-        List<F.Tuple<CompanySummary, ReportModel>> data = jdbcReportsRepository.ExportData(24);
+        List<F.Tuple<CompanySummary, ReportModel>> data = jdbcReportsRepository.exportData(24);
 
         assertEquals("Should return all reports except oldest one: " + data.size(), 6, data.size());
     }

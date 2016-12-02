@@ -1,6 +1,8 @@
 package controllers;
 
+import orchestrators.OrchestratorResult;
 import play.mvc.Controller;
+import play.mvc.Result;
 import play.twirl.api.Html;
 import scala.Option;
 
@@ -12,6 +14,14 @@ import scala.Option;
  *
  */
 class PageController extends Controller {
+
+    protected <T> Result renderOrchestratorResult(OrchestratorResult<T> result, OrchestratorResultMapper<T> mapper) {
+        if (result.success()) {
+            return mapper.map(result.get());
+        } else {
+            return status(500, result.message());
+        }
+    }
     protected Html page(Html content) {
         return views.html.common.page.govukTemplateDefaults.render("Payment practices reporting", content);
     }
@@ -25,5 +35,9 @@ class PageController extends Controller {
         } catch (NullPointerException ignored) {
             return null;
         }
+    }
+
+    protected interface OrchestratorResultMapper<T> {
+        public Result map(T orchestratorResultData);
     }
 }

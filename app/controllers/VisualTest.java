@@ -8,7 +8,6 @@ import play.mvc.Result;
 import play.twirl.api.Html;
 import play.twirl.api.HtmlFormat;
 import scala.collection.JavaConversions;
-import utils.DatePickerHelper;
 import utils.MockUtcTimeProvider;
 import components.PagedList;
 import utils.TimeProvider;
@@ -99,10 +98,10 @@ public class VisualTest extends PageController {
                 views.html.FileReport.signInInterstitial.render("123"),
                 views.html.FileReport.companiesHouseAccount.render(),
 
-                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
-                views.html.FileReport.file.render(reportForm.fill(dateswappedFilingModel), new ReportFilingModelValidationImpl(dateswappedFilingModel, time), healthyCompanySearchResult, new UiDate(time), new DatePickerHelper(timeProvider)),
+                views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time)),
+                views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time)),
+                views.html.FileReport.file.render(reportForm.fill(faultyReportFilingModel), new ReportFilingModelValidationImpl(faultyReportFilingModel, time), healthyCompanySearchResult, new UiDate(time)),
+                views.html.FileReport.file.render(reportForm.fill(dateswappedFilingModel), new ReportFilingModelValidationImpl(dateswappedFilingModel, time), healthyCompanySearchResult, new UiDate(time)),
                 views.html.FileReport.review.render(reportForm.fill(completeReportFilingModel), healthyCompanySearchResult, new UiDate(time), true),
 
                 views.html.FileReport.filingSuccess.render("123", 1, "foobar@example.com")

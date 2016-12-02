@@ -1,17 +1,16 @@
 package orchestrators;
 
-import components.CompaniesHouseCommunicator;
-import components.GovUkNotifyEmailer;
-import components.ReportsRepository;
+import components.*;
 import models.*;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.internal.RealSystem;
 import utils.MockUtcTimeProvider;
-import components.PagedList;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -25,18 +24,23 @@ public class FileReportOrchestratorTest {
     private ReportsRepository reportsRepository;
     private FileReportOrchestrator orchestrator;
     private CompaniesHouseCommunicator communicator;
+    private GovUkNotifyEmailer emailer;
 
     private CompanyModel companyModel;
-    private CompanyModel noAuthorityCompanyModel;
+    private Calendar utcNow;
 
     @Before
     public void setUp() throws Exception {
         reportsRepository = mock(ReportsRepository.class);
         communicator = mock(CompaniesHouseCommunicator.class);
-        orchestrator = new FileReportOrchestrator(communicator, reportsRepository, new GovUkNotifyEmailer(), new MockUtcTimeProvider(2016,10,1));
+        emailer = mock(GovUkNotifyEmailer.class);
+
+        utcNow = new GregorianCalendar();
+        utcNow.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        orchestrator = new FileReportOrchestrator(communicator, reportsRepository, emailer, new MockUtcTimeProvider(2016,10,1));
 
         companyModel = new CompanyModel(new CompanySummary("test", "122"), new PagedList<>(new ArrayList<>(), 50,0,25));
-        noAuthorityCompanyModel = new CompanyModel(new CompanySummary("test", "120"), new PagedList<>(new ArrayList<>(), 50,0,25));
     }
 
     @Test
@@ -143,38 +147,58 @@ public class FileReportOrchestratorTest {
     @Test
     public void tryFileReport() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
+        rfm.setStartDate_year("2001");
+        rfm.setStartDate_month("1");
+        rfm.setStartDate_day("1");
 
-        //when(reportsRepository.mayFileForCompany("somestuff", "122")).thenReturn(true);
+        rfm.setEndDate_year("2001");
+        rfm.setEndDate_month("5");
+        rfm.setEndDate_day("31");
+
         when(communicator.getCompany("122")).thenReturn(companyModel.Info);
+        when(communicator.getEmailAddress("somestuff")).thenReturn("foo@bar.com");
+        when(emailer.sendConfirmationEmail(any(), any(), any(), any())).thenReturn(true);
 
-        when(reportsRepository.TryFileReport(eq(rfm), eq(companyModel.Info), any())).thenReturn(42);
+        when(reportsRepository.tryFileReport(eq(rfm), eq(companyModel.Info), any())).thenReturn(new ReportSummary(42, utcNow, rfm.getStartDate(), rfm.getEndDate()));
 
-        OrchestratorResult<ReportSummary> filingData = orchestrator.tryFileReport("somestuff", rfm);
+        OrchestratorResult<FilingOutcome> filingData = orchestrator.tryFileReport("somestuff", rfm, x -> "" + x);
 
         verify(communicator, times(1)).getCompany("122");
-        verify(reportsRepository, times(1)).TryFileReport(eq(rfm), eq(companyModel.Info), any());
+        verify(reportsRepository, times(1)).tryFileReport(eq(rfm), eq(companyModel.Info), any());
+        verify(emailer, times(1)).sendConfirmationEmail(eq("foo@bar.com"), eq(companyModel.Info), any(), eq("42"));
 
         assertTrue(filingData.success());
-        assertEquals(42, filingData.get().Identifier);
+        assertEquals(42, filingData.get().reportId);
     }
 
     @Test
     public void tryFileReport_newcompany() throws Exception {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("1234");
+        rfm.setStartDate_year("2001");
+        rfm.setStartDate_month("1");
+        rfm.setStartDate_day("1");
+
+        rfm.setEndDate_year("2001");
+        rfm.setEndDate_month("5");
+        rfm.setEndDate_day("31");
+
         CompanySummary newCorp = new CompanySummary("New Corp", "1234");
 
         //when(reportsRepository.mayFileForCompany("somestuff", "1234")).thenReturn(true);
         when(communicator.getCompany("1234")).thenReturn(newCorp);
+        when(communicator.getEmailAddress("somestuff")).thenReturn("foo@bar.com");
+        when(emailer.sendConfirmationEmail(any(), any(), any(), any())).thenReturn(true);
 
-        when(reportsRepository.TryFileReport(eq(rfm), eq(newCorp), any())).thenReturn(42);
+        when(reportsRepository.tryFileReport(eq(rfm), eq(newCorp), any())).thenReturn(new ReportSummary(42, utcNow, rfm.getStartDate(), rfm.getEndDate()));
 
-        OrchestratorResult<ReportSummary> filingData = orchestrator.tryFileReport("somestuff", rfm);
+        OrchestratorResult<FilingOutcome> filingData = orchestrator.tryFileReport("somestuff", rfm, x -> ""+x);
 
         verify(communicator, times(1)).getCompany("1234");
-        verify(reportsRepository, times(1)).TryFileReport(eq(rfm), eq(newCorp), any());
+        verify(reportsRepository, times(1)).tryFileReport(eq(rfm), eq(newCorp), any());
+        verify(emailer, times(1)).sendConfirmationEmail(eq("foo@bar.com"), eq(newCorp), any(), eq("42"));
 
         assertTrue(filingData.success());
-        assertEquals(42, filingData.get().Identifier);
+        assertEquals(42, filingData.get().reportId);
     }
 
     @Test
@@ -182,12 +206,13 @@ public class FileReportOrchestratorTest {
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget("122");
 
         when(communicator.getCompany("122")).thenReturn(null);
-        when(reportsRepository.TryFileReport(eq(rfm), any(), any())).thenReturn(-1);
+        when(reportsRepository.tryFileReport(eq(rfm), any(), any())).thenReturn(null);
 
-        OrchestratorResult<ReportSummary> filingData = orchestrator.tryFileReport("somestuff", rfm);
+        OrchestratorResult<FilingOutcome> filingData = orchestrator.tryFileReport("somestuff", rfm, x-> ""+x);
 
         verify(communicator, times(1)).getCompany("122");
-        verify(reportsRepository, times(0)).TryFileReport(any(), any(), any());
+        verify(reportsRepository, times(0)).tryFileReport(any(), any(), any());
+        verify(emailer, times(0)).sendConfirmationEmail(any(),any(),any(),any());
 
         assertFailureResponse(filingData);
         assertTrue(filingData.message().contains("Unknown"));

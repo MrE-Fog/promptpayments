@@ -59,7 +59,7 @@ public class JdbcCommunicatorTest {
     @Test
     public void executeUpdate() throws Exception {
         List<Integer> insertedKeys = communicator.ExecuteUpdate("INSERT INTO Report (CompaniesHouseIdentifier, Identifier, FilingDate) VALUES (?,?,?);",
-                new Object[]{"120", 999, new GregorianCalendar().getTime()},
+                new Object[]{"10203299", 999, new GregorianCalendar().getTime()},
                 x -> x.getInt(1));
 
         assertEquals(1, insertedKeys.size());

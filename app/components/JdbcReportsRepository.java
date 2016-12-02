@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import java.security.InvalidParameterException;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by daniel.rothig on 03/10/2016.
@@ -45,20 +44,18 @@ final class JdbcReportsRepository implements ReportsRepository {
     }
 
     @Override
-    public CompanyModel getCompanyModel(CompanySummary companySummary, int page, int itemsPerPage) {
+    public PagedList<ReportSummary> getReportSummaries(String companiesHouseIdentifier, int page, int itemsPerPage) {
         List<ReportSummary> reports = jdbcCommunicator.ExecuteQuery(
                 "SELECT Identifier, FilingDate, StartDate, EndDate FROM Report WHERE CompaniesHouseIdentifier = ? ORDER BY FilingDate DESC LIMIT ? OFFSET ?",
-                new Object[]{companySummary.CompaniesHouseIdentifier, itemsPerPage, page * itemsPerPage},
+                new Object[]{companiesHouseIdentifier, itemsPerPage, page * itemsPerPage},
                 _ReportSummaryMapper);
 
         Integer total = jdbcCommunicator.ExecuteQuery(
                 "SELECT COUNT(*) FROM Report WHERE CompaniesHouseIdentifier = ?",
-                new Object[]{companySummary.CompaniesHouseIdentifier},
+                new Object[]{companiesHouseIdentifier},
                 x -> x.getInt(1)).get(0);
 
-        PagedList<ReportSummary> pagedReports = new PagedList<>(reports, total, page, itemsPerPage);
-
-        return new CompanyModel(companySummary, pagedReports);
+        return new PagedList<>(reports, total, page, itemsPerPage);
     }
 
     @Override
@@ -76,7 +73,7 @@ final class JdbcReportsRepository implements ReportsRepository {
     }
 
     @Override
-    public int TryFileReport(ReportFilingModel rfm, CompanySummary company, Calendar filingDate) {
+    public ReportSummary tryFileReport(ReportFilingModel rfm, CompanySummary company, Calendar filingDate) {
         if (!filingDate.getTimeZone().equals(TimeZone.getTimeZone("UTC"))) {
             throw new InvalidParameterException("filingDate must be UTC");
         }
@@ -95,7 +92,7 @@ final class JdbcReportsRepository implements ReportsRepository {
                 x -> x.getInt(1)
         );
 
-        return jdbcCommunicator.ExecuteUpdate(
+        int i = jdbcCommunicator.ExecuteUpdate(
                 "INSERT INTO Report (FilingDate, CompaniesHouseIdentifier, AverageTimeToPay, PercentInvoicesPaidBeyondAgreedTerms, PercentInvoicesPaidWithin30Days, PercentInvoicesPaidWithin60Days, PercentInvoicesPaidBeyond60Days, StartDate, EndDate, PaymentTerms, MaximumContractPeriod, PaymentTermsChanged, PaymentTermsChangedComment, PaymentTermsChangedNotified, PaymentTermsChangedNotifiedComment, PaymentTermsComment, DisputeResolution, OfferEInvoicing, OfferSupplyChainFinance, RetentionChargesInPolicy, RetentionChargesInPast, HasPaymentCodes, PaymentCodes) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
                 new Object[] {
                         filingDate.getTime(),
@@ -124,10 +121,12 @@ final class JdbcReportsRepository implements ReportsRepository {
                 },
                 x -> x.getInt(1)
         ).get(0);
+
+        return new ReportSummary(i, filingDate, rfm.getStartDate(), rfm.getEndDate());
     }
 
     @Override
-    public List<F.Tuple<CompanySummary, ReportModel>> ExportData(int months) {
+    public List<F.Tuple<CompanySummary, ReportModel>> exportData(int months) {
         if (months < 1) {
             return new ArrayList<>();
         }

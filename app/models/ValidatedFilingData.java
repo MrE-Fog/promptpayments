@@ -16,3 +16,4 @@ public class ValidatedFilingData {
         this.date = date;
     }
 }
+

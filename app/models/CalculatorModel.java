@@ -72,7 +72,7 @@ public class CalculatorModel{
         List<ReportingPeriod> res = new ArrayList<>();
 
         int startDateOffset = 0;
-        while (months > 9 && res.size() < 3) {
+        while (months > 9 && res.size() < 2) {
             Calendar intermediaryStartDate = (Calendar) startDate.clone();
             intermediaryStartDate.add(Calendar.MONTH, startDateOffset);
 

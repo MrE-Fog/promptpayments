@@ -7,7 +7,6 @@ import org.junit.Test;
 import play.libs.F;
 import utils.*;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -22,7 +21,7 @@ public class CsvDataExporterTest {
         new CsvDataExporter(reportsRepository, new UtcTimeProvider()).GenerateCsv();
 
         int expectedRequestedMonths = 24;
-        verify(reportsRepository).ExportData(expectedRequestedMonths);
+        verify(reportsRepository).exportData(expectedRequestedMonths);
     }
 
     @Test
@@ -30,14 +29,14 @@ public class CsvDataExporterTest {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
         ReportModel reportModel = ReportModelExamples.makeEmptyReportModel();
 
-        when(reportsRepository.ExportData(24)).thenReturn(Collections.singletonList(new F.Tuple<>(
+        when(reportsRepository.exportData(24)).thenReturn(Collections.singletonList(new F.Tuple<>(
                 new CompanySummary(null, null),
                 reportModel)));
 
         String csv = new CsvDataExporter(reportsRepository, new UtcTimeProvider()).GenerateCsv();
 
         int expectedRequestedMonths = 24;
-        verify(reportsRepository).ExportData(expectedRequestedMonths);
+        verify(reportsRepository).exportData(expectedRequestedMonths);
         assertTrue(csv.split("\n")[1].contains(",,,,"));
 
     }
@@ -50,7 +49,7 @@ public class CsvDataExporterTest {
         csvDataExporter.GenerateCsv();
         csvDataExporter.GenerateCsv();
 
-        verify(reportsRepository, times(1)).ExportData(anyInt());
+        verify(reportsRepository, times(1)).exportData(anyInt());
     }
 
     @Test
@@ -66,7 +65,7 @@ public class CsvDataExporterTest {
         when(timeProvider.Now()).thenReturn(new MockUtcTimeProvider(2016, 1, 2).Now());
         csvDataExporter.GenerateCsv();
 
-        verify(reportsRepository, times(2)).ExportData(anyInt());
+        verify(reportsRepository, times(2)).exportData(anyInt());
     }
 
     @Test
@@ -128,7 +127,7 @@ public class CsvDataExporterTest {
 
     private String[] getMockedCsvRows() {
         ReportsRepository reportsRepository = mock(ReportsRepository.class);
-        when(reportsRepository.ExportData(anyInt())).thenReturn(sampleExport());
+        when(reportsRepository.exportData(anyInt())).thenReturn(sampleExport());
         CsvDataExporter csvDataExporter = new CsvDataExporter(reportsRepository, new UtcTimeProvider());
 
         return csvDataExporter.GenerateCsv().split("\n");

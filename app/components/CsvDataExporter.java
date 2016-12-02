@@ -43,7 +43,7 @@ public class CsvDataExporter {
             return cachedCsv;
         }
 
-        List<F.Tuple<CompanySummary, ReportModel>> data = reportsRepository.ExportData(24);
+        List<F.Tuple<CompanySummary, ReportModel>> data = reportsRepository.exportData(24);
 
         Stream<String> stringStream = data.stream().map(x -> String.join(",",
                 escape(new UiDate(x._2.StartDate).ToFriendlyString()),
