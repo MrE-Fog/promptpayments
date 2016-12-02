@@ -33,19 +33,27 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     public boolean isValid() {
         return
                 validateAverageTimeToPay().isOk() &&
-                        validatePercentInvoicesPaidBeyondAgreedTerms().isOk() &&
-                        validatePercentInvoicesWithin30Days().isOk() &&
-                        validatePercentInvoicesWithin60Days().isOk() &&
-                        validateTimePercentages().isOk() &&
-                        validateStartDate().isOk() &&
-                        validateEndDate().isOk() &&
-                        validatePaymentTerms().isOk() &&
-                        validateDisputeResolution().isOk() &&
-                        validatePaymentCodes().isOk() &&
-                        validateOfferEInvoicing().isOk() &&
-                        validateOfferSupplyChainFinance().isOk() &&
-                        validateRetentionChargesInPast().isOk() &&
-                        validateRetentionChargesInPolicy().isOk();
+                validatePercentInvoicesPaidBeyondAgreedTerms().isOk() &&
+                validatePercentInvoicesWithin30Days().isOk() &&
+                validatePercentInvoicesWithin60Days().isOk() &&
+                validatePercentInvoicesBeyond60Days().isOk() &&
+                validateTimePercentages().isOk() &&
+                validateStartDate().isOk() &&
+                validateEndDate().isOk() &&
+                validatePaymentTerms().isOk() &&
+                validateMaximumContractPeriod().isOk() &&
+                validatePaymentTermsChanged().isOk() &&
+                validatePaymentTermsChangedComment().isOk() &&
+                validatePaymentTermsChangedNotified().isOk() &&
+                validatePaymentTermsChangedNotifiedComment().isOk() &&
+                validatePaymentTermsComment().isOk() &&
+                validateDisputeResolution().isOk() &&
+                validateHasPaymentCodes().isOk() &&
+                validatePaymentCodes().isOk() &&
+                validateOfferEInvoicing().isOk() &&
+                validateOfferSupplyChainFinance().isOk() &&
+                validateRetentionChargesInPast().isOk() &&
+                validateRetentionChargesInPolicy().isOk();
     }
 
     @Override
