@@ -29,13 +29,12 @@
     @if(page == 0 || print) {
         <h2 class="heading-large">1. Overview</h2>
         <p>
-            <a href="@routes.Home.ifGuide()">Most large businesses</a> must publish information about how they pay their suppliers. If you are in scope, you need to report on:
+            <a href="@routes.Home.ifGuide()">Large businesses</a> must publish information about how they pay their suppliers, including:
         </p>
         <ul class="list list-bullet">
-            <li>your payment terms</li>
-            <li>how well you perform against those terms</li>
-            <li>how well you perform against those terms</li>
-            <li>your payment practices</li>
+            <li>their payment terms</li>
+            <li>how well they perform against those terms</li>
+            <li>their payment practices</li>
         </ul>
         <p>
             This applies to private and public companies and limited liability partnerships (LLPs).
@@ -44,7 +43,7 @@
             You have to report every six months. The start date depends on <a href="routes.Home.howGuide(1)">your business’s financial year</a>.
         </p>
         <p>
-            The information you need to publish should cover payments under your contracts with other businesses for goods, services and intangible assets, but not:
+            The report should cover payments under your contracts with other businesses for goods, services and intangible assets, but not:
         </p>
         <ul class="list list-bullet">
             <li><a href="">contracts for financial services</a></li>
@@ -67,7 +66,10 @@
     @if(page == 1 || print) {
         <h2 class="heading-large">2. Deadlines</h2>
         <p>
-            You need to submit a report twice per financial year, starting with your first financial year on or after 6 April 2017. The first reporting period is six months beginning on the first day of your financial year - and the deadline for the report is 30 days later.
+            If your financial year runs for 12 months, you need to publish a report twice in each period. There are different rules if your financial year is less than 9 months or longer than 15 months: the calculator below explains how many reports you'll need to publish and your deadlines.
+        </p>
+        <p>
+            Your first reporting period will always start from the beginning of the first financial year which starts on or after 6 April 2017. However long your reporting periods are, your deadline to report is always 30 days from the end of the reporting period.
         </p>
         @if(!print) {
             <p class="bold-medium">
@@ -101,7 +103,7 @@
                         @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
                             <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
                             <p>
-                                Covers the period <span class="bold-small">@x.StartDate.ToDateString() &ndash; @x.EndDate.ToDateString()</span>
+                                Covers the period <span class="bold-small">@x.StartDate.ToDateString() to @x.EndDate.ToDateString()</span>
                                 <br>
                                 You must submit this report by <span class="bold-small">@x.FilingDeadline.ToDateString()</span>
                             </p>
@@ -113,12 +115,12 @@
         }
         <h4 class="heading-small">If your financial year isn’t 12 months long</h4>
         <p>
-            If you have altered your financial year length, you may have a financial year that is less or more than 12 months.
+            There are different rules for businesses with non standard financial years. If your financial year is:
         </p>
         <ul class="list list-bullet">
-            <li>If your financial year is less than 9 months, you only need to report once per financial year: this report will cover your whole financial year.</li>
-            <li>If it’s between 9 and 15 months, your first report covers 6 months, and your second report will cover the rest of the financial year.</li>
-            <li>If it’s more than 15 months, you must report 3 times.</li>
+            <li>less than 9 months, you only need to report once per financial year and  this report will cover your whole financial year</li>
+            <li>between 9 and 15 months, your first report will cover 6 months, and your second report will cover the rest of the financial year</li>
+            <li>more than 15 months, you must report 3 times</li>
         </ul>
 
         <div class="notice">
@@ -137,18 +139,15 @@
         <p>
             You need to prepare the information for your report and get sign-off by a director (or, in an limited liability partnership, by a <a href="">designated member</a>) before entering the information into the online form. You need to provide the following information:
         </p>
-        <h3 class="heading-medium">Your payment terms, which must include the following</h3>
-        <ul class="list list-bullet">
-            <li>Your standard or ‘default’ payment terms. This must include your standard payment period.</li>
-            <li>Your maximum contractual payment period,</li>
-            <li>Any changes you have made to standard terms during the reporting period.</li>
-            <li>If so, whether suppliers have been notified or consulted on these  changes.</li>
-        </ul>
-        <h3 class="heading-medium">Your payment performance</h3>
-        <ul class="list list-bullet">
-            <li>The average time to pay invoices.</li>
-            <li>The proportion of invoices paid within 30 days, between 31 and 60 days and 61+ days.</li>
-            <li>The proportion of invoices not paid within agreed terms.</li>
+         <h3 class="heading-medium">Aged creditors report</h3>
+         <p>
+             You need to report:
+         </p>
+         
+         <ul class="list list-bullet">
+            <li>the average time to pay invoices</li>
+            <li>the proportion of invoices paid within 30 days, between 31 and 60 days and 61+ days</li>
+            <li>the proportion of invoices not paid within agreed terms</li>
         </ul>
         <div class="notice">
             <i class="icon icon-important">
@@ -156,13 +155,27 @@
             </i>
             <strong>You should calculate your time to pay from the date you receive an invoice or other payment notice (eg a timesheet). This is ‘day zero’.</strong>
         </div>
-        <h3 class="heading-medium">How you deal with suppliers</h3>
+        <h3 class="heading-medium">Your payment terms</h3>
+          <p>
+              You need to report:
+          </p>
         <ul class="list list-bullet">
-            <li>Any processes you have for dispute resolution related to payment.</li>
-            <li>Whether suppliers are offered e-invoicing.</li>
-            <li>Whether suppliers are offered supply chain finance.</li>
-            <li>Whether your business charges has a policy of deducting sums from payments as a charge for remaining on a supplier list.</li>
-            <li>Whether your business is a member of a payment code such as the <a href="http://www.promptpaymentcode.org.uk/">Prompt Payment Code</a>.</li>
+            <li>your standard payment terms</li>
+            <li>your maximum contractual payment period</li>
+            <li>any changes you've made to standard terms and whether you told suppliers or consulted with them before making changes</li>
+        </ul>
+       
+       
+        <h3 class="heading-medium">How you deal with suppliers</h3>
+          <p>
+              You need to report:
+          </p>
+        <ul class="list list-bullet">
+            <li>whether you use dispute resolution services for payment disputes</li>
+            <li>whether you offer suppliers an e-invoicing facility</li>
+            <li>whether you offer suppliers supply chain finance</li>
+            <li>whether your business charges suppliers to remain on your supplier list.</li>
+            <li>whether your business is a member of a payment code such as the <a href="http://www.promptpaymentcode.org.uk/">Prompt Payment Code</a></li>
         </ul>
         @if(!print) {
             @_pagination(2, "Deadlines", null)

@@ -9,24 +9,27 @@
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">
         @company.Name:
-        <span class="nowrap">@model.getStartDateString()</span> &ndash; <span class="nowrap">@model.getEndDateString()</span>
+        <span class="nowrap">@model.getStartDateString()</span> to <span class="nowrap">@model.getEndDateString()</span>
         <hr>
     </h1>
 
     <p class="small-aside">Company number: @company.CompaniesHouseIdentifier</p>
-    <h3 class="heading-medium">Key statistics</h3>
+    <h3 class="heading-medium">Summary</h3>
     <p>Average time taken to pay invoices: <span class="datum">@model.AverageTimeToPay days</span></p>
     <p>Invoices not paid within agreed terms: <span class="datum">@model.PercentInvoicesPaidBeyondAgreedTerms%</span></p>
     <p>
         Invoices paid
-        <ul class="list list-bullet">
-            <li>within 30 days: <span class="datum">@model.PercentInvoicesWithin30Days%</span></li>
-            <li>within 31 to 60 days: <span class="datum">@model.PercentInvoicesWithin60Days%</span></li>
-            <li>later than 60 days: <span class="datum">@model.PercentInvoicesBeyond60Days%</span></li>
-        </ul>
     </p>
+    <ul class="list list-bullet">
+        <li>within 30 days: <span class="datum">@model.PercentInvoicesWithin30Days%</span></li>
+        <li>between 31 and 60 days: <span class="datum">@model.PercentInvoicesWithin60Days%</span></li>
+        <li>later than 60 days: <span class="datum">@model.PercentInvoicesBeyond60Days%</span></li>
+    </ul>
 
     <h3 class="heading-medium">Payment terms</h3>
+    <p class="small-aside">
+        All the answers below are in the company's own words.
+    </p>
     <h4 class="heading-small">Standard payment terms</h4>
     <p>
         @model.PaymentTerms
@@ -62,7 +65,7 @@
             @model.PaymentTermsComment
         }
     </p>
-    <h3 class="heading-medium">Dispute resolution policy</h3>
+    <h3 class="heading-medium">Does this business have a dispute resolution policy</h3>
     <p>
         @model.DisputeResolution
     </p>
