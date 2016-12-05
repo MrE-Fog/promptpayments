@@ -15,7 +15,19 @@
 
 .notice {
     margin-bottom: 2em;
+    background-color: #9AD9D8;
+    /* 8CDBDA  #93DBDA*/
+    padding: 25px;
+
+    .icon {
+        left:20px;
+    }
+
+    ul {
+        margin-bottom:0;
+    }
 }
+
 .scannable-wrapper {
     max-width: 640px;
 }

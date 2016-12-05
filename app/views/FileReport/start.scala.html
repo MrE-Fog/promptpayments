@@ -8,6 +8,18 @@
     <h1 class="heading-xlarge">Publish a report for @company.Name</h1>
     <p class="bold-medium">Company number: @company.CompaniesHouseIdentifier</p>
     <p class="lede">Large businesses must publish payment reports</p>
+    <div class="notice">
+        <i class="icon icon-important">
+            <span class="visually-hidden">Warning</span>
+        </i>
+        <strong>
+            You could be fined if:
+            <ul class="list list-bullet">
+                <li>you don’t publish your payment report by the deadline</li>
+                <li>your report is false or misleading</li>
+            </ul>
+        </strong>
+    </div>
     <a href="@routes.FileReport.signInInterstitial(company.CompaniesHouseIdentifier)" class="button button-start">File a payment report</a>
 
     <h2 class="heading-medium">Before you start</h2>
