@@ -250,6 +250,12 @@ public class FileReportOrchestratorTest {
     }
 
     @Test
+    public void getAuthorizationUri_nulltest() throws Exception {
+        when(communicator.getAuthorizationUri(any(), eq("123"))).thenThrow(IOException.class);
+        assertNull(orchestrator.getAuthorizationUri("123"));
+    }
+
+    @Test
     public void tryAuthorise_success() throws Exception {
         when(communicator.verifyAuthCode(eq("code"), any(), eq("123"))).thenReturn("expected-cookie");
         OrchestratorResult<Http.Cookie> result = orchestrator.tryAuthorize("code", "123");

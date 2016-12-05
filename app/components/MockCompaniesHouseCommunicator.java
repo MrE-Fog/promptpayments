@@ -7,7 +7,7 @@ import models.CompanySummaryWithAddress;
 import java.io.IOException;
 
 public class MockCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
-    private CompaniesHouseCommunicator inner = new ApiCompaniesHouseCommunicator();
+    private CompaniesHouseCommunicator inner = new ApiCompaniesHouseCommunicator(new HttpWrapper());
 
     @Override
     public String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier) {

@@ -248,12 +248,8 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
         return model.isRetentionChargesInPast() == null ? FieldValidation.fail(message_required) : FieldValidation.ok();
     }
 
-    private boolean isNotWholeNumber(String raw) {
-        try {
-            double v = Double.parseDouble(raw);
-            return Math.abs(Math.abs((v+0.5)%1) - 0.5) > 0.0001;
-        } catch (NumberFormatException e) {
-            return true; //this should never happen
-        }
+    private boolean isNotWholeNumber(String definitelyNumeric) {
+        double v = Double.parseDouble(definitelyNumeric);
+        return Math.abs(Math.abs((v+0.5)%1) - 0.5) > 0.0001;
     }
 }

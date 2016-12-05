@@ -101,7 +101,11 @@ public class FileReportOrchestrator {
     }
 
     public String getAuthorizationUri(String companiesHouseIdentifier) {
-        return companiesHouseCommunicator.getAuthorizationUri(authorizedCallbackUri, companiesHouseIdentifier);
+        try {
+            return companiesHouseCommunicator.getAuthorizationUri(authorizedCallbackUri, companiesHouseIdentifier);
+        } catch (IOException shouldNeverHappen) {
+            return null;
+        }
     }
 
     public OrchestratorResult<Http.Cookie> tryAuthorize(String code, String companiesHouseIdentifier) {

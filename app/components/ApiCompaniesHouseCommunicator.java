@@ -1,18 +1,20 @@
 package components;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
+import com.typesafe.config.ConfigException;
 import models.CompanySummary;
 import models.CompanySummaryWithAddress;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import play.libs.Json;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,27 +31,27 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
     private String clientId = System.getenv().get("COMPANIESHOUSE_CLIENTID");
     private String clientSecret = System.getenv().get("COMPANIESHOUSE_CLIENTSECRET");
 
+    @Inject
+    private HttpWrapper httpWrapper;
+
+    ApiCompaniesHouseCommunicator(HttpWrapper httpWrapper) {
+        this.httpWrapper = httpWrapper;
+    }
 
     @Override
-    public String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier) {
-        try {
-            return String.format("https://account.companieshouse.gov.uk/oauth2/authorise" +
-                    "?response_type=code&client_id=%s" +
-                    "&redirect_uri=%s" +
-                    "&scope=%s" +
-                    "&state=%s",
-                    urlEncode(clientId),
-                    urlEncode(callbackUri),
-                    urlEncode("http://ch.gov.uk/company/" + companiesHouseIdentifier),
-                    urlEncode(companiesHouseIdentifier));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier) throws IOException {
+        return String.format("https://account.companieshouse.gov.uk/oauth2/authorise" +
+                "?response_type=code&client_id=%s" +
+                "&redirect_uri=%s" +
+                "&scope=%s" +
+                "&state=%s",
+                urlEncode(clientId),
+                urlEncode(callbackUri),
+                urlEncode("http://ch.gov.uk/company/" + companiesHouseIdentifier),
+                urlEncode(companiesHouseIdentifier));
     }
 
     public String verifyAuthCode(String authCode, String redirectUri, String companiesHouseIdentifier) throws IOException {
-        HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("https://account.companieshouse.gov.uk/oauth2/token");
 
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode((clientId+":"+clientSecret).getBytes()));
@@ -71,15 +73,9 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
         );
 
         post.setEntity(new ByteArrayEntity(body.getBytes("UTF-8")));
-        HttpResponse response = client.execute(post);
 
-        BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        StringBuffer result = new StringBuffer();
-        String line = "";
-        while ((line = rd.readLine()) != null)
-            result.append(line);
+        JsonNode json = httpWrapper.post(post);
 
-        JsonNode json = Json.parse(result.toString());
         if (!json.has("access_token")) {
             return null;
         }
@@ -92,9 +88,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
 
     @Override
     public String getEmailAddress(String token) throws IOException {
-        URLConnection connection = new URL("https://account.companieshouse.gov.uk/user/profile").openConnection();
-        connection.setRequestProperty("Authorization", "Bearer " + token);
-        JsonNode parsed = Json.parse(connection.getInputStream());
+        JsonNode parsed = httpWrapper.get("https://account.companieshouse.gov.uk/user/profile", "Bearer " + token);
         if (!parsed.has("email")) {
             return null;
         }
@@ -113,11 +107,9 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
                 urlEncode(Integer.toString(itemsPerPage)),
                 urlEncode(Integer.toString(page*itemsPerPage)));
 
-        URLConnection connection = new URL(query).openConnection();
-
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode(apiKey.getBytes()));
-        connection.setRequestProperty("Authorization", basicAuth);
-        JsonNode parsed = Json.parse(connection.getInputStream());
+        JsonNode parsed = httpWrapper.get(query, basicAuth);
+
         List<CompanySummaryWithAddress> rtn = new ArrayList<>();
 
         Iterator<JsonNode> items = parsed.get("items").elements();
@@ -136,16 +128,31 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
     @Override
     public CompanySummary getCompany(String companiesHouseIdentifier) throws IOException {
 
-            String query = String.format("https://api.companieshouse.gov.uk/company/%s",
-                    urlEncode(companiesHouseIdentifier));
+        String query = String.format("https://api.companieshouse.gov.uk/company/%s",
+                urlEncode(companiesHouseIdentifier));
 
-            URLConnection connection = new URL(query).openConnection();
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode(apiKey.getBytes()));
+        JsonNode parsed = httpWrapper.get(query, basicAuth);
+        if (!parsed.has("company_name") || !parsed.has("company_number")) {
+            return null;
+        }
 
-            String basicAuth = "Basic " + new String(Base64.getEncoder().encode(apiKey.getBytes()));
-            connection.setRequestProperty("Authorization", basicAuth);
-            JsonNode parsed = Json.parse(connection.getInputStream());
+        return new CompanySummary(parsed.get("company_name").asText(), parsed.get("company_number").asText());
 
-            return new CompanySummary(parsed.get("company_name").asText(), parsed.get("company_number").asText());
+    }
+}
 
+class HttpWrapper {
+    public JsonNode post(HttpPost post) throws IOException {
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response = client.execute(post);
+        return Json.parse(response.getEntity().getContent());
+    }
+
+    public JsonNode get(String url, String authorization) throws IOException {
+        HttpUriRequest request = new HttpGet(url);
+        if (authorization != null) request.setHeader("Authorization", authorization);
+        HttpResponse response = new DefaultHttpClient().execute(request);
+        return Json.parse(response.getEntity().getContent());
     }
 }

@@ -1,5 +1,6 @@
 package utils;
 
+import models.UiDate;
 import org.junit.Test;
 
 import java.time.Month;
@@ -12,6 +13,10 @@ import static org.junit.Assert.*;
  * Created by daniel.rothig on 02/12/2016.
  */
 public class UtcConverterTest {
+    @Test
+    public void tryMakeUtcDate1() throws Exception {
+        assertEquals("30 June 2016", new UiDate(UtcConverter.tryMakeUtcDate("2016", "6", "30")).ToDateString());
+    }
 
     @Test
     public void tryMakeUtcDate() throws Exception {

@@ -11,7 +11,7 @@ public class UtcConverter {
         try {
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
             calendar.setLenient(false);
-            calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day));
+            calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(day), 0, 0, 0);
             calendar.getTime(); // this throws if the year-month-day combination is invalid.
             return calendar;
         } catch (Exception ignored) {

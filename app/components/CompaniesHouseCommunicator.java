@@ -14,7 +14,7 @@ import java.io.UnsupportedEncodingException;
  */
 @ImplementedBy(MockCompaniesHouseCommunicator.class)
 public interface CompaniesHouseCommunicator {
-    String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier);
+    String getAuthorizationUri(String callbackUri, String companiesHouseIdentifier) throws IOException;
     PagedList<CompanySummaryWithAddress> searchCompanies(String search, int page, int itemsPerPage) throws IOException;
     String verifyAuthCode(String authCode, String redirectUri, String companiesHouseIdentifier) throws IOException;
     String getEmailAddress(String token) throws IOException;
