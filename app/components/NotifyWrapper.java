@@ -15,11 +15,8 @@ interface NotifyWrapper {
 }
 
 class NotifyWrapperImpl implements NotifyWrapper {
-    private final NotificationClient client;
-
-    public NotifyWrapperImpl(String apiKey) {
-        client = new NotificationClient(apiKey == null ? System.getenv().get("GOVUKNOTIFY_API") : apiKey);
-    }
+    private final String apiKey = System.getenv().get("GOVUKNOTIFY_API");
+    private final NotificationClient client = new NotificationClient(apiKey);
 
     @Override
     public void sendEmail(String templateId, String recipient, HashMap<String, String> params) throws NotificationClientException {
