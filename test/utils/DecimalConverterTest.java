@@ -18,7 +18,25 @@ public class DecimalConverterTest {
     }
 
     @Test
+    public void conversions() throws Exception {
+        assertEquals(new BigDecimal("123"), DecimalConverter.getBigDecimal("123.456"));
+        assertEquals(new BigDecimal("123"), DecimalConverter.getBigDecimal(new BigDecimal("123.456")));
+        assertEquals(new BigDecimal("123"), DecimalConverter.getBigDecimal(123.456));
+
+        assertEquals(new BigDecimal("-123"), DecimalConverter.getBigDecimal("-123.456"));
+        assertEquals(new BigDecimal("-123"), DecimalConverter.getBigDecimal(new BigDecimal("-123.456")));
+        assertEquals(new BigDecimal("-123"), DecimalConverter.getBigDecimal(-123.456));
+    }
+
+    @Test
+    public void badData() throws Exception {
+        assertNull(DecimalConverter.getBigDecimal("blue"));
+        assertNull(DecimalConverter.getBigDecimal(""));
+    }
+
+    @Test
     public void nullConversions() throws Exception {
+        assertNull(DecimalConverter.getBigDecimal((String) null));
         assertNull(DecimalConverter.getBigDecimal((Double) null));
         assertNull(DecimalConverter.getBigDecimal((BigDecimal) null));
     }

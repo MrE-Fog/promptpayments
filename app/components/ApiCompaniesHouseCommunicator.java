@@ -144,9 +144,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
             String basicAuth = "Basic " + new String(Base64.getEncoder().encode(apiKey.getBytes()));
             connection.setRequestProperty("Authorization", basicAuth);
             JsonNode parsed = Json.parse(connection.getInputStream());
-            if (!parsed.has("company_name") || !parsed.has("company_number")) {
-                return null;
-            }
+
             return new CompanySummary(parsed.get("company_name").asText(), parsed.get("company_number").asText());
 
     }

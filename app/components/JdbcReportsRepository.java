@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import java.security.InvalidParameterException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by daniel.rothig on 03/10/2016.
@@ -150,39 +151,29 @@ final class JdbcReportsRepository implements ReportsRepository {
     @Override
     public PagedList<CompanySearchResult> getCompanySearchInfo(PagedList<CompanySummaryWithAddress> companySummaries) {
         if (companySummaries.isEmpty()) {
-            return new PagedList<CompanySearchResult>(new ArrayList<CompanySearchResult>(), companySummaries.totalSize(), companySummaries.pageNumber(), companySummaries.pageNumber());
+            return new PagedList<>(new ArrayList<CompanySearchResult>(), companySummaries.totalSize(), companySummaries.pageNumber(), companySummaries.pageSize());
         }
-        HashMap<String, CompanySummaryWithAddress> companies = new HashMap<>();
-        for (CompanySummaryWithAddress c : companySummaries) companies.put(c.CompaniesHouseIdentifier, c);
 
-        String parameters = "('" + String.join("'), ('", companies.keySet()) + "')";
+        String parameters = companySummaries.stream()
+                .map(x -> "('" + x.CompaniesHouseIdentifier + "')")
+                .collect(Collectors.joining(","));
 
-        List<CompanySearchResult> ts = jdbcCommunicator.ExecuteQuery(
+        Map<String, Integer> reportCounts = jdbcCommunicator.ExecuteQuery(
                 String.format(
                         "SELECT chis.chi, COALESCE(ReportCounts.ReportCount,0) " +
-                        "FROM (SELECT CompaniesHouseIdentifier, COUNT(*) as ReportCount FROM Report GROUP BY CompaniesHouseIdentifier) " +
-                        "AS ReportCounts " +
-                        "RIGHT JOIN (values %s) as chis(chi) ON chis.chi = CompaniesHouseIdentifier",
+                                "FROM (SELECT CompaniesHouseIdentifier, COUNT(*) as ReportCount FROM Report GROUP BY CompaniesHouseIdentifier) " +
+                                "AS ReportCounts " +
+                                "RIGHT JOIN (values %s) as chis(chi) ON chis.chi = CompaniesHouseIdentifier",
                         parameters),
                 new Object[]{},
-                x -> {
-                    System.out.println("companies house identifier: " + x.getString(1));
-                    return new CompanySearchResult(companies.get(x.getString(1)), x.getInt(2));
-                });
+                x -> new F.Tuple<>(x.getString(1), x.getInt(2)))
+                .stream().collect(Collectors.toMap(x -> x._1, x -> x._2));
+
+        List<CompanySearchResult> ts = companySummaries.stream()
+                .map(x -> new CompanySearchResult(x, reportCounts.getOrDefault(x.CompaniesHouseIdentifier, 0)))
+                .collect(Collectors.toList());
 
         return new PagedList<>(ts, companySummaries.totalSize(), companySummaries.pageNumber(), companySummaries.pageSize());
-    }
-
-    private Option<CompanySummary> GetCompanySummaryByIdentifier(String identifier) {
-        List<CompanySummary> companySummaries = jdbcCommunicator.ExecuteQuery(
-                "SELECT Name, CompaniesHouseIdentifier FROM Company WHERE CompaniesHouseIdentifier = ? LIMIT 1",
-                new String[]{identifier},
-                _CompanySummaryMapper);
-        if (companySummaries.isEmpty()) {
-            return Option.empty();
-        } else {
-            return Option.apply(companySummaries.get(0));
-        }
     }
 
     private JdbcCommunicator.Mapper<CompanySummary> _CompanySummaryMapper =

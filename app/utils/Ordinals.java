@@ -1,7 +1,7 @@
 package utils;
 
 public class Ordinals {
-    private String[] wordOrdinals = {
+    private static String[] wordOrdinals = {
             "zeroth",
             "first",
             "second",
@@ -18,8 +18,11 @@ public class Ordinals {
             "thirteenth",
     };
 
-    public String forNumber(int i) {
-        if (i < wordOrdinals.length) return wordOrdinals[i];
+    public static String forNumber(int i) throws IllegalArgumentException {
+        if (i < 0) throw new IllegalArgumentException("number must be non-negative");
+        if (i < wordOrdinals.length && i >= 0) return wordOrdinals[i];
+
+
 
         return i % 10 == 1 ? i + "st"
              : i % 10 == 2 ? i + "nd"
@@ -30,6 +33,7 @@ public class Ordinals {
     private int number;
 
     public Ordinals(int number) {
+        if (number < 0) throw new IllegalArgumentException("number must be non-negative");
         this.number = number;
     }
 

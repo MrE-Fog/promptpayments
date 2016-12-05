@@ -26,6 +26,8 @@ public class PagedListTest {
 
         assertFalse(list.canGoBack());
         assertFalse(list.canGoNext());
+
+        assertTrue(list.canGo(list.pageNumber()));
     }
 
     @Test
@@ -42,6 +44,8 @@ public class PagedListTest {
 
         assertTrue(list.canGoBack());
         assertTrue(list.canGoNext());
+
+        assertTrue(list.canGo(list.pageNumber()));
     }
 
     @Test
@@ -50,5 +54,7 @@ public class PagedListTest {
 
         assertFalse(list.canGoBack());
         assertTrue(list.canGoNext());
+
+        assertTrue(list.canGo(list.pageNumber()));
     }
 }

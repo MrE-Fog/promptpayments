@@ -2,13 +2,9 @@ package components;
 
 import com.google.inject.Inject;
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.MigrationInfo;
-import org.flywaydb.core.api.callback.FlywayCallback;
-import org.flywaydb.core.internal.dbsupport.sybase.ase.SybaseASEDbSupport;
 import play.Logger;
 import play.db.Database;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -73,9 +69,7 @@ class JdbcCommunicator {
             if (conn != null) {
                 try {
                     conn.close();
-                } catch (SQLException e1) {
-                    Logger.error("Could not close connection :(");
-                }
+                } catch (SQLException ignored) { }
             }
 
             return new ArrayList<>();

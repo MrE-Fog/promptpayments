@@ -112,6 +112,27 @@ public class CalculatorModelTest {
         assertPeriod(reportingPeriods.get(2), "31 August 2018", "30 August 2019", "30 September 2019");
     }
 
+    @Test
+    public void emptyConstructor() throws Exception {
+        CalculatorModel model = new CalculatorModel();
+
+        assertTrue(model.isEmpty());
+        assertTrue(model.isValid());
+    }
+
+    @Test
+    public void getReportingPeriods_forAges() throws Exception {
+        List<CalculatorModel.ReportingPeriod> reportingPeriods = new CalculatorModel("2018", "1", "1", "3018", "1", "1").getReportingPeriods();
+        assertEquals(0, reportingPeriods.size());
+    }
+
+    @Test
+    public void getReportingPeriods_forBadDates() throws Exception {
+        assertEquals(0, new CalculatorModel("2018", "1", "1", "2018", "1", "1").getReportingPeriods().size());
+        assertEquals(0, new CalculatorModel("2018", "1", "1", "2017", "1", "1").getReportingPeriods().size());
+        assertEquals(0, new CalculatorModel("2018", "2", "40", "2019", "1", "1").getReportingPeriods().size());
+    }
+
     private void assertPeriod(CalculatorModel.ReportingPeriod p, String expectedStart, String expectedEnd, String expectedDeadline) {
         assertEquals("Start date", expectedStart, p.StartDate.ToDateString());
         assertEquals("End date", expectedEnd, p.EndDate.ToDateString());

@@ -50,12 +50,7 @@ public class ReportModel {
     }
 
     public ReportModel(ReportSummary info, BigDecimal averageTimeToPay, BigDecimal percentInvoicesPaidBeyondAgreedTerms, BigDecimal percentInvoicesWithin30Days, BigDecimal percentInvoicesWithin60Days, BigDecimal percentInvoicesBeyond60Days, Calendar startDate, Calendar endDate, String paymentTerms, String maximumContractPeriod, boolean paymentTermsChanged, String paymentTermsChangedComment, boolean paymentTermsChangedNotified, String paymentTermsChangedNotifiedComment, String paymentTermsComment, String disputeResolution, boolean offerEInvoicing, boolean offerSupplyChainFinance, boolean retentionChargesInPolicy, boolean retentionChargesInPast, boolean hasPaymentCodes, String paymentCodes) {
-        if (!startDate.getTimeZone().equals(TimeZone.getTimeZone("UTC"))) {
-            throw new InvalidParameterException("startDate must be UTC");
-        }
-        if (!endDate.getTimeZone().equals(TimeZone.getTimeZone("UTC"))) {
-            throw new InvalidParameterException("endDate must be UTC");
-        }
+        // todo: remove dates, as they are now in the summary
 
         Info = info;
         AverageTimeToPay = averageTimeToPay;

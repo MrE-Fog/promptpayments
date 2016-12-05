@@ -122,7 +122,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     @Override
     public FieldValidation validateStartDate() {
         if (model.getStartDate() == null) return FieldValidation.fail(message_invaliddate);
-        if (model.getStartDate().getTime().getTime() > utcNow.getTime().getTime())
+        if (model.getStartDate().getTime().getTime() - utcNow.getTime().getTime() > 86400000)
             return FieldValidation.fail(message_future);
         return FieldValidation.ok();
     }
@@ -130,9 +130,9 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     @Override
     public FieldValidation validateEndDate() {
         if (model.getEndDate() == null) return FieldValidation.fail(message_invaliddate);
-        if (model.getEndDate().getTime().getTime() > utcNow.getTime().getTime())
+        if (model.getEndDate().getTime().getTime() - utcNow.getTime().getTime() > 86400000)
             return FieldValidation.fail(message_future);
-        if (validateStartDate().isOk() && model.getEndDate().getTime().getTime() <= model.getStartDate().getTime().getTime())
+        if (validateStartDate().isOk() && model.getStartDate().getTime().getTime() - model.getEndDate().getTime().getTime() > 100)
             return FieldValidation.fail(message_startbeforeend);
         return FieldValidation.ok();
     }
@@ -253,7 +253,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
             double v = Double.parseDouble(raw);
             return Math.abs(Math.abs((v+0.5)%1) - 0.5) > 0.0001;
         } catch (NumberFormatException e) {
-            return true;
+            return true; //this should never happen
         }
     }
 }

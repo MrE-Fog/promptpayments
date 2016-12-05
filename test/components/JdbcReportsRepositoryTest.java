@@ -1,6 +1,7 @@
 package components;
 
 import models.*;
+import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -201,6 +202,8 @@ public class JdbcReportsRepositoryTest {
         assertEquals("Ensure that ALL fields are tested below", 22 ,ReportModel.class.getDeclaredFields().length);
 
         assertEquals("1 February 2010", report.Info.UiDateString());
+        assertEquals("1 January 2016", report.Info.StartDateString());
+        assertEquals("31 May 2016", report.Info.EndDateString());
         assertEquals(1, report.Info.Identifier);
         assertEquals(new BigDecimal("31"), report.AverageTimeToPay);
         assertEquals(new BigDecimal("10"), report.PercentInvoicesPaidBeyondAgreedTerms);
@@ -306,6 +309,36 @@ public class JdbcReportsRepositoryTest {
             return;
         }
         fail("if models mismatch, tryFileReport should fail");
+    }
+
+    @Test
+    public void getCompanySearchInfo() throws Exception {
+        PagedList<CompanySearchResult> results = jdbcReportsRepository.getCompanySearchInfo(new PagedList<>(Arrays.asList(
+                new CompanySummaryWithAddress("Corp1", "120", "Address1"),
+                new CompanySummaryWithAddress("Corp3", "122", "Address3"),
+                new CompanySummaryWithAddress("NonexistCorp", "124", "Address4"),
+                new CompanySummaryWithAddress("Corp2", "121", "Address2")),
+                50, 0, 3));
+
+        assertEquals(4, results.size());
+        assertEquals(4, results.get(0).ReportCount);
+        assertEquals(1, results.get(1).ReportCount);
+        assertEquals(0, results.get(2).ReportCount);
+        assertEquals(2, results.get(3).ReportCount);
+
+        assertEquals(50, results.totalSize());
+        assertEquals(0, results.pageNumber());
+        assertEquals(3, results.pageSize());
+
+    }
+
+    @Test
+    public void getCompanySearchInfo_EmptyInput() throws Exception {
+        PagedList<CompanySearchResult> results = jdbcReportsRepository.getCompanySearchInfo(new PagedList<>(Lists.emptyList(), 0, 0, 3));
+        assertEquals(0, results.size());
+        assertEquals(0, results.totalSize());
+        assertEquals(0, results.pageNumber());
+        assertEquals(3, results.pageSize());
     }
 
     @Test
