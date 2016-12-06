@@ -181,7 +181,13 @@
             @_pagination(2, "Deadlines", null)
         }
     }
-    <p class="print-link">
-        <a href="?print=1">Print entire guide</a>
-    </p>
+    @if(!print) {
+        <p class="print-link">
+            <a href="?print=1">Print entire guide</a>
+        </p>
+    } else {
+        <script type="text/javascript">
+            window.onload = function() {window.print(); };
+        </script>
+    }
 </div>
