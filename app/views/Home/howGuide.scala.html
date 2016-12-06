@@ -5,7 +5,8 @@
         <li><a href="@routes.Home.index()">@shared._name()</a></li>
     </ol>
 </div>
-<div class="scannable-wrapper">
+<div class="grid-row">
+<div class="column-two-thirds">
     <h1 class="heading-xlarge">
         How to report your payment practices: a guide for large businesses
     </h1>
@@ -190,4 +191,15 @@
             window.onload = function() {window.print(); };
         </script>
     }
+</div>
+<div class="column-one-third">
+    <div class="separator"></div>
+    <h3 class="heading-sidebar">Are you ready to publish?</h3>
+    <p>
+        Once you have read this guide and prepared your report, you can:
+    </p>
+    <p>
+        <a class="button" href="@routes.SearchReport.search()">Get started</a>
+    </p>
+</div>
 </div>
