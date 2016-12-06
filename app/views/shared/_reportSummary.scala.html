@@ -2,7 +2,7 @@
 <li class="searchresult">
     <h2 class="heading-medium">
         <a href="@routes.SearchReport.view(companiesHouseIdentifier, report.Identifier)">
-            @report.StartDateString() to @report.EndDateString()
+            <span class="nowrap">@report.StartDateString()</span> to <span class="nowrap">@report.EndDateString()</span>
         </a>
     </h2>
     <p>

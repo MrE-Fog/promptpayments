@@ -103,9 +103,9 @@
                         @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
                             <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
                             <p>
-                                Covers the period <span class="bold-small">@x.StartDate.ToDateString() to @x.EndDate.ToDateString()</span>
+                                Covers the period <span class="bold-small"><span clas="nowrap">@x.StartDate.ToDateString()</span> to <span class="nowrap">@x.EndDate.ToDateString()</span></span>
                                 <br>
-                                You must submit this report by <span class="bold-small">@x.FilingDeadline.ToDateString()</span>
+                                You must submit this report by <span class="bold-small nowrap">@x.FilingDeadline.ToDateString()</span>
                             </p>
                         }
                     }
