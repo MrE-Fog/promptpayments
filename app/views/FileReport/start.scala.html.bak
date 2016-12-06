@@ -23,10 +23,9 @@
     <a href="@routes.FileReport.signInInterstitial(company.CompaniesHouseIdentifier)" class="button button-start">File a payment report</a>
 
     <h2 class="heading-medium">Before you start</h2>
-	<p>You need to:</p>
     <ul class="list list-bullet">
-        <li>check your business counts as a <a href="@routes.Home.ifGuide()">large business</a>, and find out <a href="@routes.Home.howGuide(2)">what you need to report</a></li>
-        <li>register an <a href="https://beta.companieshouse.gov.uk/signin">account with Companies House</a> &ndash; you’ll need to make sure you’re authorised to file reports for your business.</li>
-        <li>prepare your report data in advance</li>
+        <li>Check your business counts as a <a href="@routes.Home.ifGuide()">large business</a>, and find out <a href="@routes.Home.howGuide(2)">what you need to report</a>.</li>
+        <li>Register an <a href="https://beta.companieshouse.gov.uk/signin">account with Companies House</a> &ndash; you’ll need to make sure you’re authorised to file reports for your business.</li>
+        <li>Prepare your report data in advance.</li>
     </ul>
 </div>

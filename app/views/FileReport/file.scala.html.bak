@@ -170,7 +170,7 @@
 
     <fieldset class="form-group @validation.validatePaymentTermsComment().cssClass()">
         <label class="form-label" for="PaymentTermsComment">
-            <span class="bold-medium">Optional: any further information about your payment terms</span>
+            <span class="bold-medium">Optional: any further information about payment terms</span>
             <span class="error-message">@validation.validatePaymentTermsComment().errorMessage()</span>
         </label>
         <textarea class="form-control" id="PaymentTermsComment" name="PaymentTermsComment">@model.get().getPaymentTermsComment()</textarea>

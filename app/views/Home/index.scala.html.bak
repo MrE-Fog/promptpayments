@@ -12,7 +12,7 @@
 <ul class="list list-bullet">
     <li><a href="@routes.Home.ifGuide()">find out if your business needs to report</a> on its payment practices</li>
     <li><a href="@routes.Home.howGuide(0)">find out how to report on your payment practices</a> if you're a large business</li>
-    <li><a href="@routes.SearchReport.search()">search for a large business's payment reports if you're planning to do business with them</li>
+    <li>search for a large business's payment reports if you're planning to do business with them</li>
 </ul>
 
 

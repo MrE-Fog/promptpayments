@@ -154,7 +154,7 @@
             <i class="icon icon-important">
                 <span class="visually-hidden">Warning</span>
             </i>
-            <strong>You should calculate your time to pay from the date you receive an invoice or other payment notice such as a timesheet. This is ‘day zero’.</strong>
+            <strong>You should calculate your time to pay from the date you receive an invoice or other payment notice (eg a timesheet). This is ‘day zero’.</strong>
         </div>
         <h3 class="heading-medium">Your payment terms</h3>
           <p>
@@ -178,15 +178,6 @@
             <li>whether your business charges suppliers to remain on your supplier list.</li>
             <li>whether your business is a member of a payment code such as the <a href="http://www.promptpaymentcode.org.uk/">Prompt Payment Code</a></li>
         </ul>
-        
-        <div class="notice">
-            <i class="icon icon-important">
-                <span class="visually-hidden">Warning</span>
-            </i>
-            
-            <strong>You must <a href="@routes.SearchReport.search()">publish your report online</a> by your submission date.</strong>
-        </div>
-        
         @if(!print) {
             @_pagination(2, "Deadlines", null)
         }
