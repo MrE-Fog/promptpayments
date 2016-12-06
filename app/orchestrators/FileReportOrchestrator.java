@@ -96,7 +96,7 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromSucccess(companiesHouseCommunicator.searchCompanies(company, page, itemsPerPage));
         } catch (IOException e) {
             e.printStackTrace();
-            return OrchestratorResult.fromFailure("Internal error: Couldn't search companies");
+            return OrchestratorResult.fromFailure("Could not query companies");
         }
     }
 

@@ -146,13 +146,21 @@ class HttpWrapper {
     public JsonNode post(HttpPost post) throws IOException {
         HttpClient client = new DefaultHttpClient();
         HttpResponse response = client.execute(post);
-        return Json.parse(response.getEntity().getContent());
+        try {
+            return Json.parse(response.getEntity().getContent());
+        } catch (Exception e) {
+            throw new IOException("Could not parse response", e);
+        }
     }
 
     public JsonNode get(String url, String authorization) throws IOException {
         HttpUriRequest request = new HttpGet(url);
         if (authorization != null) request.setHeader("Authorization", authorization);
         HttpResponse response = new DefaultHttpClient().execute(request);
-        return Json.parse(response.getEntity().getContent());
+        try {
+            return Json.parse(response.getEntity().getContent());
+        } catch (Exception e) {
+            throw new IOException("Could not parse response", e);
+        }
     }
 }
