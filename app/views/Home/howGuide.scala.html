@@ -90,7 +90,7 @@
                     @shared._dateinput("end-", calculator.endDay, calculator.endMonth, calculator.endYear)
                 </fieldset>
 
-                <input class="button" type="submit" value="Calculate your next reporting period">
+                <input class="button" type="submit" value="Calculate your reporting periods">
                 @if(calculator.isValid() && !calculator.isEmpty()) {
                 <div class="output">
                     @if(calculator.getReportingPeriods().isEmpty()) {
