@@ -46,17 +46,16 @@
             <strong>No</strong>
         }
     </p>
-    <h4 class="heading-small">Were suppliers notified or consulted about these changes?</h4>
-        @if(model.PaymentTermsChanged) {
+    @if(model.PaymentTermsChanged) {
+        <h4 class="heading-small">Were suppliers notified or consulted about these changes?</h4>
+        <p>
             @if(model.PaymentTermsChangedNotified) {
                 <strong>Yes </strong>&ndash; @model.PaymentTermsChangedNotifiedComment
             } else {
                 <strong>No</strong>
             }
-        } else {
-            <em>N/A</em>
-        }
-    <p></p>
+        </p>
+    }
     <h4 class="heading-small">Any other information about standard payment terms</h4>
     <p>
         @if(model.PaymentTermsComment == "") {

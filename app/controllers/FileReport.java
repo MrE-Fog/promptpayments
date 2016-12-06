@@ -8,6 +8,7 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Http;
 import play.mvc.Result;
+import views.html.FileReport.*;
 
 /**
  * Created by daniel.rothig on 27/09/2016.
@@ -29,19 +30,18 @@ public class FileReport extends PageController {
 
     public Result startForCompany(String company) {
         OrchestratorResult<CompanyModel> companyModel = fileReportOrchestrator.getCompanyModel(company, 0, 0);
-        return renderOrchestratorResult(companyModel, x -> ok(page(views.html.FileReport.start.render(x.Info))));
+        return renderOrchestratorResult(companyModel, x -> ok(page(start.render(x.Info))));
     }
 
     public Result signInInterstitial(String company) {
-        return ok(page(views.html.FileReport.signInInterstitial.render(company)));
+        return ok(page(signInInterstitial.render(company)));
     }
 
     public Result login(String companiesHouseIdentifier) {
-        String hasAccount = request().body().asFormUrlEncoded().get("account")[0];
-        if (hasAccount.equals("1")) {
+        if (getPostParameter("account").equals("1")) {
             return redirect(fileReportOrchestrator.getAuthorizationUri(companiesHouseIdentifier));
         } else {
-            return ok(page(views.html.FileReport.companiesHouseAccount.render()));
+            return ok(page(companiesHouseAccount.render()));
         }
     }
 
@@ -58,7 +58,7 @@ public class FileReport extends PageController {
         String auth = request().cookie("auth").value();
         OrchestratorResult<FilingData> orchestratorResult = fileReportOrchestrator.tryMakeReportFilingModel(auth, company);
         return renderOrchestratorResult(orchestratorResult,
-                model -> ok(page(views.html.FileReport.file.render(
+                model -> ok(page(file.render(
                         reportForm.fill(model.model),
                         new AllOkReportFilingModelValidation(),
                         model.company,
@@ -70,8 +70,8 @@ public class FileReport extends PageController {
     public Result reviewFiling(boolean needsConfirmationReminder) {
         OrchestratorResult<ValidatedFilingData> orchestratorResult = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
         return renderOrchestratorResult(orchestratorResult, data -> data.validation.isValid()
-                ? ok(page(views.html.FileReport.review.render(reportForm.fill(data.model), data.company, data.date, needsConfirmationReminder)))
-                : ok(page(views.html.FileReport.file.render(reportForm.fill(data.model), data.validation, data.company, data.date)))
+                ? ok(page(review.render(reportForm.fill(data.model), data.company, data.date, needsConfirmationReminder)))
+                : ok(page(file.render(reportForm.fill(data.model), data.validation, data.company, data.date)))
         );
     }
 
@@ -88,7 +88,7 @@ public class FileReport extends PageController {
     private Result editFiling() {
         OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
         return renderOrchestratorResult(data, d ->
-                ok(page(views.html.FileReport.file.render(reportForm.fill(d.model), d.validation, d.company, d.date))));
+                ok(page(file.render(reportForm.fill(d.model), d.validation, d.company, d.date))));
     }
 
     private Result doSubmitFiling() {
@@ -98,7 +98,7 @@ public class FileReport extends PageController {
         OrchestratorResult<FilingOutcome> outcome = fileReportOrchestrator.tryFileReport(auth, model, getReportUrlMapper(model));
 
         return renderOrchestratorResult(outcome, d ->
-                ok(page(views.html.FileReport.filingSuccess.render(d.company.CompaniesHouseIdentifier, d.reportId, d.confirmationEmailRecipient))));
+                ok(page(filingSuccess.render(d.company.CompaniesHouseIdentifier, d.reportId, d.confirmationEmailRecipient))));
     }
 
     private FileReportOrchestrator.UrlMapper getReportUrlMapper(ReportFilingModel model) {

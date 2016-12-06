@@ -8,9 +8,11 @@ Code stolen shamelessly from [lite-play-common](https://github.com/BISDigital/li
 
 ## How?!?!
 
-You'll need to set the following environment variables:
-- JDBC_DATABASE_URL, JDBC_DATABASE_USERNAME, JDBC_DATABASE_PASSWORD -- connection details for your to your postgres database
+You'll need to set the following environment variables for running the server or the tests:
+- JDBC_DATABASE_URL, JDBC_DATABASE_USERNAME, JDBC_DATABASE_PASSWORD -- connection details to your postgres database
 - COMPANIESHOUSE_API -- the API key for companies house
+- COMPANIESHOUSE_CLIENTID and COMPANIESHOUSE_CLIENTSECRET -- the public and private identifiers for using Companies House as an OAuth 2.0 server
+- GOVUKNOTIFY_API -- the API key for the GOV.UK notify service (used to send emails)
 
 Your PC needs the following components
 
