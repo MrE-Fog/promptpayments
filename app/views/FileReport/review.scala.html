@@ -102,7 +102,7 @@
             Payment terms
         </td>
         <td>
-            @model.get().getPaymentTerms()
+            @shared._multiline(model.get().getPaymentTerms())
         </td>
     </tr>
     <tr>
@@ -110,7 +110,7 @@
             Maximum contract period
         </td>
         <td>
-            @model.get().getMaximumContractPeriod()
+            @shared._multiline(model.get().getMaximumContractPeriod())
         </td>
     </tr>
     <tr>
@@ -119,7 +119,7 @@
         </td>
         <td>
             @if(model.get().isPaymentTermsChanged() != null && model.get().isPaymentTermsChanged()) {
-                <strong>Yes </strong>&ndash; @model.get().getPaymentTermsChangedComment()
+                <strong>Yes </strong>&ndash; @shared._multiline(model.get().getPaymentTermsChangedComment())
             } else {
                 <strong>No</strong>
             }
@@ -134,7 +134,7 @@
             <em>N/A</em>
             } else {
                 @if(model.get().isPaymentTermsChangedNotified() != null && model.get().isPaymentTermsChangedNotified()) {
-                    <strong>Yes </strong>&ndash; @model.get().getPaymentTermsChangedNotifiedComment()
+                    <strong>Yes </strong>&ndash; @shared._multiline(model.get().getPaymentTermsChangedNotifiedComment())
                 } else {
                     <strong>No</strong>
                 }
@@ -146,7 +146,7 @@
             Further remarks on payment terms
         </td>
         <td>
-            @model.get().getPaymentTermsComment()
+            @shared._multiline(model.get().getPaymentTermsComment())
         </td>
     </tr>
     <tr>
@@ -154,7 +154,7 @@
             Dispute resolution
         </td>
         <td>
-            @model.get().getDisputeResolution()
+            @shared._multiline(model.get().getDisputeResolution())
         </td>
     </tr>
     <tr>
@@ -195,7 +195,7 @@
         </td>
         <td>
             @if(model.get().isHasPaymentCodes() != null && model.get().isHasPaymentCodes()) {
-                <strong>Yes </strong>&ndash; @model.get().getPaymentCodes()
+                <strong>Yes </strong>&ndash; @shared._multiline(model.get().getPaymentCodes())
             } else {
                 <strong>None</strong>
             }

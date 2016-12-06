@@ -19,7 +19,7 @@ class PageController extends Controller {
         if (result.success()) {
             return mapper.map(result.get());
         } else {
-            return status(500, result.message());
+            return status(500, page(views.html.Home.error.render(result.message())));
         }
     }
     protected Html page(Html content) {

@@ -96,7 +96,7 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromSucccess(companiesHouseCommunicator.searchCompanies(company, page, itemsPerPage));
         } catch (IOException e) {
             e.printStackTrace();
-            return OrchestratorResult.fromFailure("Could not query companies");
+            return OrchestratorResult.fromFailure("Could not retrieve companies");
         }
     }
 
@@ -132,7 +132,7 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromSucccess(results);
         } catch (IOException e) {
             e.printStackTrace();
-            return OrchestratorResult.fromFailure("Could not query companies");
+            return OrchestratorResult.fromFailure("Could not retrieve companies");
         }
     }
 

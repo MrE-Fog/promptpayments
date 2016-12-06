@@ -32,16 +32,16 @@
     </p>
     <h4 class="heading-small">Standard payment terms</h4>
     <p>
-        @model.PaymentTerms
+        @shared._multiline(model.PaymentTerms)
     </p>
     <h4 class="heading-small">Maximum contractual period</h4>
     <p>
-        @model.MaximumContractPeriod
+        @shared._multiline(model.MaximumContractPeriod)
     </p>
     <h4 class="heading-small">Were there any changes to the payment terms in the reporting period?</h4>
     <p>
         @if(model.PaymentTermsChanged) {
-            <strong>Yes </strong>&ndash; @model.PaymentTermsChangedComment
+            <strong>Yes </strong>&ndash; @shared._multiline(model.PaymentTermsChangedComment)
         } else {
             <strong>No</strong>
         }
@@ -50,7 +50,7 @@
         <h4 class="heading-small">Were suppliers notified or consulted about these changes?</h4>
         <p>
             @if(model.PaymentTermsChangedNotified) {
-                <strong>Yes </strong>&ndash; @model.PaymentTermsChangedNotifiedComment
+                <strong>Yes </strong>&ndash; @shared._multiline(model.PaymentTermsChangedNotifiedComment)
             } else {
                 <strong>No</strong>
             }
@@ -61,12 +61,12 @@
         @if(model.PaymentTermsComment == "") {
             <em>N/A</em>
         } else {
-            @model.PaymentTermsComment
+            @shared._multiline(model.PaymentTermsComment)
         }
     </p>
     <h3 class="heading-medium">Does this business have a dispute resolution policy</h3>
     <p>
-        @model.DisputeResolution
+        @shared._multiline(model.DisputeResolution)
     </p>
 
     <h3 class="heading-medium">Other payment information</h3>
@@ -76,7 +76,7 @@
     </h4>
     <p>
         @if(model.HasPaymentCodes) {
-            <strong>Yes </strong>&ndash; @model.PaymentCodes
+            <strong>Yes </strong>&ndash; @shared._multiline(model.PaymentCodes)
         } else {
             <strong>No</strong>
         }
