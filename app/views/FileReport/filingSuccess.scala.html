@@ -16,6 +16,9 @@
     @if(email != null) {
         <p>We have sent a confirmation email to @email</p>
     }
+    <p>
+        You can view your published report <a href="@routes.SearchReport.view(company,id)">here</a>.
+    </p>
 
     <h3 class="heading-medium">Help us improve this service</h3>
     <p>

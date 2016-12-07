@@ -9,9 +9,7 @@ import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by daniel.rothig on 02/12/2016.
- */
+
 public class UtcConverterTest {
     @Test
     public void tryMakeUtcDate1() throws Exception {
@@ -20,12 +18,26 @@ public class UtcConverterTest {
 
     @Test
     public void tryMakeUtcDate() throws Exception {
-        Calendar calendar = UtcConverter.tryMakeUtcDate("2016", "1", "1");
+        assertDate("2016", "1", "1", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", "1", "1st", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", "1", "\t1st ", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", "jAn ", "1", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", "  January ", "1", 2016, Calendar.JANUARY, 1);
+        assertDate(" 2016", "1", "1", 2016, Calendar.JANUARY, 1);
+        assertDate("2016 ", "1", "1", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", " 1", "1", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", "1 ", "1", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", "1", "1 ", 2016, Calendar.JANUARY, 1);
+        assertDate("2016", "1", " 1", 2016, Calendar.JANUARY, 1);
+    }
+
+    private void assertDate(String year, String month, String day, int expectedYear, int expectedMonth, int expectedDay) {
+        Calendar calendar = UtcConverter.tryMakeUtcDate(year, month, day);
 
         assertEquals(TimeZone.getTimeZone("UTC"), calendar.getTimeZone());
-        assertEquals(2016, calendar.get(Calendar.YEAR));
-        assertEquals(Calendar.JANUARY, calendar.get(Calendar.MONTH));
-        assertEquals(1, calendar.get(Calendar.DATE));
+        assertEquals(expectedYear, calendar.get(Calendar.YEAR));
+        assertEquals(expectedMonth, calendar.get(Calendar.MONTH));
+        assertEquals(expectedDay, calendar.get(Calendar.DATE));
     }
 
     @Test
@@ -43,7 +55,6 @@ public class UtcConverterTest {
         assertNull(UtcConverter.tryMakeUtcDate("2016", "1", "0"));
         assertNull(UtcConverter.tryMakeUtcDate("2016", "1", "32"));
         assertNull(UtcConverter.tryMakeUtcDate("Foo", "1", "1"));
-        assertNull(UtcConverter.tryMakeUtcDate("2016", "January", "1"));
         assertNull(UtcConverter.tryMakeUtcDate("2016", "1", "Monday"));
     }
 

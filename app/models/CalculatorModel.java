@@ -116,9 +116,8 @@ public class CalculatorModel{
             EndDate = new UiDate(endDate);
 
             Calendar c = (Calendar) endDate.clone();
-            c.add(Calendar.MONTH, 1);
+            c.add(Calendar.DATE, 30);
             FilingDeadline = new UiDate(c);
-
         }
     }
 }

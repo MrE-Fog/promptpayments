@@ -95,9 +95,12 @@
                 @if(calculator.isValid() && !calculator.isEmpty()) {
                 <div class="output">
                     @if(calculator.getReportingPeriods().isEmpty()) {
-                        <h3 class="bold-medium">You don't have to report for this financial year.</h3>
+                        <h3 class="bold-medium">You don't have to report for that financial year.</h3>
                         <p>
-                            You only need to report for financial years starting on or after <span class="bold-small">6 April 2017</span>.
+                            You only need to report for financial years starting on or after <span class="bold-small nowrap">6 April 2017</span>.
+                        </p>
+                        <p>
+                            You may determine your first reporting period by entering the first financial year starting on or after <span class="bold-small nowrap">6 April 2017</span>.
                         </p>
                     } else {
                         <p class="bold-small">You must publish @(calculator.getReportingPeriods().size() match { case 1 => "1 report" case n => n + " reports"}) in the stated period.</p>

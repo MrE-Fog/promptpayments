@@ -6,9 +6,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by daniel.rothig on 28/11/2016.
- */
 public class CalculatorModelTest {
 
     @Test
@@ -18,7 +15,7 @@ public class CalculatorModelTest {
         assertEquals(2, reportingPeriods.size());
 
         assertPeriod(reportingPeriods.get(0), "1 January 2020", "30 June 2020", "30 July 2020");
-        assertPeriod(reportingPeriods.get(1), "1 July 2020", "31 December 2020", "31 January 2021");
+        assertPeriod(reportingPeriods.get(1), "1 July 2020", "31 December 2020", "30 January 2021");
 
     }
 
@@ -35,7 +32,7 @@ public class CalculatorModelTest {
 
         assertEquals(2, reportingPeriods.size());
 
-        assertPeriod(reportingPeriods.get(0), "1 September 2017", "28 February 2018", "28 March 2018");
+        assertPeriod(reportingPeriods.get(0), "1 September 2017", "28 February 2018", "30 March 2018");
         assertPeriod(reportingPeriods.get(1), "1 March 2018", "31 August 2018", "30 September 2018");
     }
 
@@ -65,7 +62,7 @@ public class CalculatorModelTest {
         assertEquals(3, reportingPeriods.size());
 
         assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
-        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "31 January 2019");
+        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "30 January 2019");
         assertPeriod(reportingPeriods.get(2), "1 January 2019", "1 April 2019", "1 May 2019");
     }
 
@@ -76,7 +73,7 @@ public class CalculatorModelTest {
         assertEquals(3, reportingPeriods.size());
 
         assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
-        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "31 January 2019");
+        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "30 January 2019");
         assertPeriod(reportingPeriods.get(2), "1 January 2019", "30 September 2019", "30 October 2019");
     }
 
@@ -87,8 +84,8 @@ public class CalculatorModelTest {
         assertEquals(3, reportingPeriods.size());
 
         assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
-        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "31 January 2019");
-        assertPeriod(reportingPeriods.get(2), "1 January 2019", "1 October 2019", "1 November 2019");
+        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "30 January 2019");
+        assertPeriod(reportingPeriods.get(2), "1 January 2019", "1 October 2019", "31 October 2019");
     }
 
     @Test
@@ -98,7 +95,7 @@ public class CalculatorModelTest {
         assertEquals(2, reportingPeriods.size());
 
         assertPeriod(reportingPeriods.get(0), "1 March 2018", "31 August 2018", "30 September 2018");
-        assertPeriod(reportingPeriods.get(1), "1 September 2018", "28 February 2019", "28 March 2019");
+        assertPeriod(reportingPeriods.get(1), "1 September 2018", "28 February 2019", "30 March 2019");
     }
 
     @Test
@@ -107,9 +104,9 @@ public class CalculatorModelTest {
 
         assertEquals(3, reportingPeriods.size());
 
-        assertPeriod(reportingPeriods.get(0), "31 August 2017", "27 February 2018", "27 March 2018");
-        assertPeriod(reportingPeriods.get(1), "28 February 2018", "30 August 2018", "30 September 2018");
-        assertPeriod(reportingPeriods.get(2), "31 August 2018", "30 August 2019", "30 September 2019");
+        assertPeriod(reportingPeriods.get(0), "31 August 2017", "27 February 2018", "29 March 2018");
+        assertPeriod(reportingPeriods.get(1), "28 February 2018", "30 August 2018", "29 September 2018");
+        assertPeriod(reportingPeriods.get(2), "31 August 2018", "30 August 2019", "29 September 2019");
     }
 
     @Test

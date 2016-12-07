@@ -125,22 +125,20 @@
             }
         </td>
     </tr>
-    <tr>
-        <td  class="key-column">
-            Suppliers notified of changes
-        </td>
-        <td>
-            @if(model.get().isPaymentTermsChanged() == null || !model.get().isPaymentTermsChanged()) {
-            <em>N/A</em>
-            } else {
+    @if(model.get().isPaymentTermsChanged()) {
+        <tr>
+            <td  class="key-column">
+                Suppliers notified of changes
+            </td>
+            <td>
                 @if(model.get().isPaymentTermsChangedNotified() != null && model.get().isPaymentTermsChangedNotified()) {
                     <strong>Yes </strong>&ndash; @shared._multiline(model.get().getPaymentTermsChangedNotifiedComment())
                 } else {
                     <strong>No</strong>
                 }
-            }
-        </td>
-    </tr>
+            </td>
+        </tr>
+    }
     <tr>
         <td  class="key-column">
             Further remarks on payment terms
