@@ -63,7 +63,7 @@
             <span class="form-hint">Out all of the payments you have made in the reporting period, the average time it took to pay.</span>
             <span class="error-message">@validation.validateAverageTimeToPay().errorMessage()</span>
         </label>
-        <input class="form-control" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPayAsDecimal()">
+        <input class="form-control" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPay()">
     </fieldset>
     <fieldset class="form-group @validation.validatePercentInvoicesPaidBeyondAgreedTerms().cssClass()">
         <label class="form-label" for="RecordTwo">
