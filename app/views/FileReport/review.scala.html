@@ -24,7 +24,7 @@
     </p>
 </div>
 }
-<table>
+<table class="check-answers">
     <tr>
         <td class="key-column">
             Company
@@ -97,6 +97,8 @@
             @model.get().getPercentInvoicesBeyond60DaysAsDecimal()%
         </td>
     </tr>
+</table>
+<table class="check-answers check-answers-essay">
     <tr>
         <td  class="key-column">
             Payment terms
@@ -155,6 +157,8 @@
             @shared._multiline(model.get().getDisputeResolution())
         </td>
     </tr>
+</table>
+<table class="check-answers">
     <tr>
         <td  class="key-column">
             Offer E-Invoicing
