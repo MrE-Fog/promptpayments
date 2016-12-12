@@ -16,7 +16,7 @@ public class ReportFilingModelValidationImpl implements ReportFilingModelValidat
     private final String message_integer = "Please round up or down to the nearest whole number";
     private final String message_percentagebounds = "This should be a number between 0 and 100";
     private final String message_upperpercentagebounds = "This cannot exceed 100%";
-    private final String message_sumto100 = "Figures A,B and C do not add up to 100";
+    private final String message_sumto100 = "Figures A, B and C do not add up to 100";
     private final String message_invaliddate = "This date is invalid";
     private final String message_future = "Reporting period cannot cover the future";
     private final String message_startbeforeend = "The end date cannot be before the start date";

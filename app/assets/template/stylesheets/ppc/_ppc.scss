@@ -105,21 +105,52 @@ textarea.form-control {
 /*
     FORM LAYOUT
 */
+#file-report {
+    .error-message {
+        min-height:25px;
+    }
+    .fieldcaption {
+        font-weight:bold;
+    }
 
-.fieldcaption {
-    font-weight:bold;
-}
+    fieldset {
+        margin-bottom: 2em;
+    }
 
-fieldset {
-    margin-bottom: 2em;
-}
+    &>.button, &>.heading-large, &>p {
+        margin-left:20px;
+    }
 
-.error-wrapper fieldset {
-    padding-left:20px;
-}
+    &>.form-group {
+        padding-left:20px;
 
-.error fieldset {
-    padding-left:0;
+        fieldset.error {
+            margin-left:-20px;
+        }
+    }
+
+    input[type='text'], textarea {
+        margin:2px;
+    }
+    .error>input[type='text'], .error>textarea {
+        margin:0;
+    }
+
+    &>.form-group.error {
+        padding-left:15px;
+    }
+
+    .error fieldset {
+        padding-left:0;
+    }
+
+    .number-unit {
+        font-size: 18px;
+        display: inline-block;
+        padding: 0 10px;
+        transform: translateX(-100%);
+    }
+
 }
 
 .input-float-left {
@@ -138,12 +169,6 @@ fieldset {
     }
 }
 
-.number-unit {
-    font-size: 18px;
-    display: inline-block;
-    padding: 0 10px;
-    transform: translateX(-100%);
-}
 
 .check-answers {
     margin-bottom: 60px;
