@@ -1,6 +1,6 @@
 /* Gradual disclosure */
 
-(function gradualDisclosure() {
+function gradualDisclosure() {
     var panel1 = document.getElementById("show-if-payment-codes");
     var panel2 = document.getElementById("show-if-payment-changes");
     var panel3 = document.getElementById("show-if-payment-changes-notified");
@@ -35,12 +35,11 @@
     subscribeToChange(panel1, "HasPaymentCodes");
     subscribeToChange(panel2, "PaymentTermsChanged");
     subscribeToChange(panel3, "PaymentTermsChangedNotified");
-}());
+};
 
 
 /* Validation */
-
-(function validation() {
+function Validation() {
     function findErrorMessage(parent) {
         if (!parent) return null;
         if(parent.className && parent.className.indexOf("error-message") != -1) return parent;
@@ -87,40 +86,32 @@
         subscribe(e, "onkeydown", callbackClear)
     }
 
-    function validateMultiple(names, message, validate) {
+    function validateMultiple(names, container, validate) {
         var elements = [];
         for (var i = 0; i<names.length; i++) {
             var es = document.getElementsByName(names[i]);
             if (!es || es.length < 1) return;
             elements.push(es[0]);
         }
-        var callbackClear = function() {
-            message.innerHTML = "&nbsp;"
-            message.parentElement.className = "form-group"
-            return true;
-        };
+        var message = findErrorMessage(container);
+
 
         for (var i = 0; i<elements.length; i++) {
             subscribe(elements[i], "onblur", function() {
                 var values = [];
                 for (var j = 0; j<elements.length; j++) {
-                    if (elements[j].value === "") return callbackClear();
+                    if (elements[j].value === "") return true;
                     values.push(elements[j].value);
                 }
                 var invalidation = validate(values);
                 if (invalidation) {
                     message.innerHTML =invalidation;
                     message.parentElement.parentElement.className = "form-group error";
-                } else {
-                    message.innerHTML = "&nbsp;"
-                    message.parentElement.parentElement.className = "form-group"
                 }
                 return true;
             });
-            subscribe(elements[i], "onkeydown", callbackClear);
         }
     }
-
 
     function validateDateInput(namePrefix, validate) {
         var years = document.getElementsByName(namePrefix + "year");
@@ -167,11 +158,9 @@
     }
 
     var messages = {
-        required: "Please answer this question",
         integer: "Please round up or down to the nearest whole number",
         nonnegative: "This should be a non-negative number",
         percentagebounds: "This should be a number between 0 and 100",
-        //upperpercentagebounds: "This cannot exceed 100%",
         sumto100: "Figures A, B and C do not add up to 100",
         date: "This date is invalid",
         future: "Reporting period cannot cover the future",
@@ -201,7 +190,7 @@
         return new Date().getTime() < new Date(asInteger(year), asInteger(month), asInteger(day),0,0,0,0).getTime() && messages.future;
     }
 
-    function dateStartBeforeEnd(inputs) {
+    function multiStartBeforeEnd(inputs) {
         var startYear = inputs[0], startMonth = inputs[1], startDay = inputs[2],
             year = inputs[3], month = inputs[4], day = inputs[5];
 
@@ -214,42 +203,54 @@
         }
     }
 
+    function multiSumTo100(x) {
+        if (textPercentage(x[0]) || textPercentage(x[1]) || textPercentage(x[2])) {
+            return false;
+        } else {
+            var numberOne = asInteger(x[0]), numberTwo = asInteger(x[1]), numberThree = asInteger(x[2]);
+            return (numberOne + numberTwo + numberThree > 102 || numberOne + numberTwo + numberThree < 98) && messages.sumto100;
+        }
+    }
 
-    function textRequired(text) {return !text && messages.required; }
     function textNonNegative(text) {return asNumber(text) < 0 && messages.nonnegative; }
     function textInteger(text) {return asInteger(text) === null && messages.integer;}
     function textPercentageBounds(text) {return (asNumber(text) < 0 || asNumber(text) > 100) && messages.percentagebounds; }
-    function fieldsSumTo100(numberOne, numberTwo, numberThree) {return (numberOne + numberTwo + numberThree > 102 || numberOne + numberTwo + numberThree < 98) && messages.sumto100; }
 
-    function textPositiveInteger(x) {return textRequired(x) || textNonNegative(x) || textInteger(x); }
-    function textPercentage (x) {return textRequired(x) || textInteger(x) || textPercentageBounds(x); }
+    function textPositiveInteger(x) {return textNonNegative(x) || textInteger(x); }
+    function textPercentage (x) {return textPercentageBounds(x) || textInteger(x); }
 
-    validateDateInput("StartDate_", function(y,m,d) {return dateValid(y,m,d) || dateFuture(y,m,d)});
-    validateDateInput("EndDate_", function(y,m,d) {return dateValid(y,m,d) || dateFuture(y,m,d); });
+    this.validateTextInput = validateTextInput;
+    this.validateMultiple = validateMultiple;
+    this.validateDateInput = validateDateInput;
 
-    var endDateMessage = findErrorMessage(document.getElementsByName("EndDate_year")[0].parentElement.parentElement);
-    validateMultiple(["StartDate_year", "StartDate_month", "StartDate_day", "EndDate_year", "EndDate_month", "EndDate_day"],
-        endDateMessage,
-        dateStartBeforeEnd);
+    this.validations = {
+        dateValid: function(y,m,d) {return dateValid(y,m,d) || dateFuture(y,m,d)},
 
-    validateTextInput("AverageTimeToPay", textPositiveInteger);
-    validateTextInput("PercentInvoicesPaidBeyondAgreedTerms",  textPercentage);
-    validateTextInput("PercentInvoicesWithin30Days",  textPercentage);
-    validateTextInput("PercentInvoicesWithin60Days",  textPercentage);
-    validateTextInput("PercentInvoicesBeyond60Days",  textPercentage);
+        textPositiveInteger: textPositiveInteger,
+        textPercentage: textPercentage,
 
-    var tripletMessage = findErrorMessage(document.getElementsByName("PercentInvoicesWithin30Days")[0].parentElement.parentElement);
-    validateMultiple(["PercentInvoicesWithin30Days", "PercentInvoicesWithin60Days", "PercentInvoicesBeyond60Days"],
-        tripletMessage,
-        function(x) { return !textPercentage(x[0]) && !textPercentage(x[1]) && !textPercentage(x[2]) && fieldsSumTo100(asInteger(x[0]), asInteger(x[1]), asInteger(x[2])); });
+        multiSumTo100: multiSumTo100,
+        multiStartBeforeEnd: multiStartBeforeEnd
+    }
+};
 
+function validationPlumbing() {
+    var v = new Validation();
 
-    validateTextInput("PaymentTerms", textRequired);
-    validateTextInput("MaximumContractPeriod", textRequired);
-    validateTextInput("PaymentTermsChangedComment", function(x) {return isSetTrue("PaymentTermsChanged") && textRequired(x); });
-    validateTextInput("PaymentTermsChangedNotifiedComment", function(x) {return isSetTrue("PaymentTermsChanged") && isSetTrue("PaymentTermsChangedNotified") && textRequired(x); });
+    v.validateDateInput("StartDate_", v.validations.dateValid);
+    v.validateDateInput("EndDate_", v.validations.dateValid);
 
-    validateTextInput("DisputeResolution", textRequired);
-    validateTextInput("PaymentCodes", function(x) {return isSetTrue("HasPaymentCodes") && textRequired(x); });
+    v.validateMultiple(["StartDate_year", "StartDate_month", "StartDate_day", "EndDate_year", "EndDate_month", "EndDate_day"],
+        document.getElementsByName("EndDate_year")[0].parentElement.parentElement,
+        v.validations.multiStartBeforeEnd);
 
-}());
+    v.validateTextInput("AverageTimeToPay", v.validations.textPositiveInteger);
+    v.validateTextInput("PercentInvoicesPaidBeyondAgreedTerms",  v.validations.textPercentage);
+    v.validateTextInput("PercentInvoicesWithin30Days",  v.validations.textPercentage);
+    v.validateTextInput("PercentInvoicesWithin60Days",  v.validations.textPercentage);
+    v.validateTextInput("PercentInvoicesBeyond60Days",  v.validations.textPercentage);
+
+    v.validateMultiple(["PercentInvoicesWithin30Days", "PercentInvoicesWithin60Days", "PercentInvoicesBeyond60Days"],
+        document.getElementsByName("PercentInvoicesWithin30Days")[0].parentElement.parentElement,
+        v.validations.multiSumTo100);
+}''
