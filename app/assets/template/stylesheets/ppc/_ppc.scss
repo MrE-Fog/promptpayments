@@ -156,7 +156,11 @@ textarea.form-control {
 
     .number-unit {
         font-size: 18px;
+        float:right;
+        padding-right:10px;
+        transform: translateY(-130%);
         @media screen and (min-width:641px) {
+            float:none;
             padding: 0 10px;
             display: inline-block;
             transform: translateX(-100%);
