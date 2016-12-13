@@ -96,14 +96,16 @@
                 <div class="output">
                     @if(calculator.showsFuture()) {
                     <p>
-                        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. Since that year starts before <span class="nowrap">6 April 2017</span>, you do not yet have to report for this period. Provided you do not change your financial year dates, these are your next @calculator.getReportingPeriods().size() reporting deadlines:
+                        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. Since that year starts before <span class="nowrap">6 April 2017</span>, you do not have to report for this period.
+                    </p>
+                    <p>
+                        However, provided you do not change your financial year dates, the following are your first @(calculator.getReportingPeriods().size() match{ case 1 => "reporting deadline" case n => n + " reporting deadlines"}):
                     </p>
                     } else {
                     <p>
-                        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. This year is covered by @calculator.getReportingPeriods().size() reporting periods with the following deadlines:
+                        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. This year is covered by @calculator.getReportingPeriods().size() reporting @(calculator.getReportingPeriods().size() match{ case 1 => "period" case n => "periods"}) with the following @(calculator.getReportingPeriods().size() match{ case 1 => "deadline" case n => "deadlines"}):
                     </p>
                     }
-                    <p class="bold-small">You must publish @(calculator.getReportingPeriods().size() match { case 1 => "1 report" case n => n + " reports"}) in the stated period.</p>
                     @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
                         <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
                         <p>
