@@ -71,7 +71,13 @@ public class CalculatorModel{
         }
 
         if (showsFuture()) {
-            return Lists.emptyList();
+            int days = Math.round((endDate.getTimeInMillis() - startDate.getTimeInMillis())/ (1000 * 3600 * 24));
+            do {
+                startDate = endDate;
+                startDate.add(Calendar.DATE, 1);
+                endDate = (Calendar) startDate.clone();
+                endDate.add(Calendar.DATE, days);
+            } while(startDate.getTime().getTime() - cutoff.getTime().getTime() < -100);
         }
 
         int months = countMonths(startDate, endDate);

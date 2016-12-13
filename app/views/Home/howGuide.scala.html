@@ -94,24 +94,23 @@
                 <input class="button" type="submit" value="Calculate your reporting periods">
                 @if(calculator.isValid() && !calculator.isEmpty()) {
                 <div class="output">
-                    @if(calculator.getReportingPeriods().isEmpty()) {
-                        <h3 class="bold-medium">You don't have to report for that financial year.</h3>
-                        <p>
-                            You only need to report for financial years starting on or after <span class="bold-small nowrap">6 April 2017</span>.
-                        </p>
-                        <p>
-                            You may determine your first reporting period by entering the first financial year starting on or after <span class="bold-small nowrap">6 April 2017</span>.
-                        </p>
+                    @if(calculator.showsFuture()) {
+                    <p>
+                        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. Since that year starts before <span class="nowrap">6 April 2017</span>, you do not yet have to report for this period. Provided you do not change your financial year dates, these are your next @calculator.getReportingPeriods().size() reporting deadlines:
+                    </p>
                     } else {
-                        <p class="bold-small">You must publish @(calculator.getReportingPeriods().size() match { case 1 => "1 report" case n => n + " reports"}) in the stated period.</p>
-                        @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
-                            <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
-                            <p>
-                                Covers the period <span class="bold-small"><span clas="nowrap">@x.StartDate.ToDateString()</span> to <span class="nowrap">@x.EndDate.ToDateString()</span></span>
-                                <br>
-                                You must submit this report by <span class="bold-small nowrap">@x.FilingDeadline.ToDateString()</span>
-                            </p>
-                        }
+                    <p>
+                        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. This year is covered by @calculator.getReportingPeriods().size() reporting periods with the following deadlines:
+                    </p>
+                    }
+                    <p class="bold-small">You must publish @(calculator.getReportingPeriods().size() match { case 1 => "1 report" case n => n + " reports"}) in the stated period.</p>
+                    @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
+                        <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
+                        <p>
+                            Covers the period <span class="bold-small"><span clas="nowrap">@x.StartDate.ToDateString()</span> to <span class="nowrap">@x.EndDate.ToDateString()</span></span>
+                            <br>
+                            You must submit this report by <span class="bold-small nowrap">@x.FilingDeadline.ToDateString()</span>
+                        </p>
                     }
                 </div>
                 }

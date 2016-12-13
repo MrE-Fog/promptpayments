@@ -21,9 +21,13 @@ public class CalculatorModelTest {
 
     @Test
     public void getReportingPeriods_preCutoff() throws Exception {
-        List<CalculatorModel.ReportingPeriod> reportingPeriods = new CalculatorModel("2017", "1", "1", "2017", "12", "31").getReportingPeriods();
+        CalculatorModel calculatorModel = new CalculatorModel("2017", "1", "1", "2017", "12", "31");
+        List<CalculatorModel.ReportingPeriod> reportingPeriods = calculatorModel.getReportingPeriods();
 
-        assertEquals(0, reportingPeriods.size());
+        assertTrue(calculatorModel.showsFuture());
+        assertEquals(2, reportingPeriods.size());
+        assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
+        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "30 January 2018");
     }
 
     @Test
