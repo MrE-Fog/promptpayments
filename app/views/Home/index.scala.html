@@ -3,16 +3,17 @@
         @shared._name()
     </h1>
     <p class="lede">
-        Large businesses must publish information about their payment terms and how well they meet their own targets for payment.
+        From 2017 onwards, large businesses are required to publish information about their payment terms and how well they meet their own targets for payment. Use this service to read or publish these reports.
     </p>
 </div>
-<h2 class="heading-medium">Enter business name or company number</h2>
-@shared._search("")
-<h3 class="heading-medium">Use this service to:</h3>
-<ul class="list list-bullet">
-    <li><a href="@routes.Home.ifGuide()">find out if your business needs to report</a> on its payment practices</li>
-    <li><a href="@routes.Home.howGuide(0)">find out how to report on your payment practices</a> if you're a large business</li>
-    <li><a href="@routes.SearchReport.search()">search for a large business's payment reports</a> if you're planning to do business with them</li>
+<h3 class="heading-medium">Publish reports</h3>
+<ul class="list">
+    <li><a href="@routes.Questionnaire.start()">Get prepared</a>: find out if, when and how your business needs to publish reports</li>
+    <li><a href="@routes.SearchReport.search()">Publish a report</a>: once your report data s fully prepated</li>
+</ul>
+<h3 class="heading-medium">Read reports</h3>
+<ul class="list">
+    <li><a href="@routes.SearchReport.search()">Search for a report</a>: enter a business name or company number</li>
 </ul>
 
 
