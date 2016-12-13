@@ -1,0 +1,71 @@
+@(model: QuestionnaireModel, calculator: CalculatorModel)
+@import utils.Ordinals
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
+    </ol>
+</div>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">Find out if, how and when your business needs to publish reports</h1>
+    <div class="govuk-box-highlight left-align">
+        <h3 class="bold-medium">Your business is required to publish payment practice reports. Please follow the instructions in this guide</h3>
+        <ul class="list">
+            <li><a href="#">Email this guide</a></li>
+            <li><a href="#" onclick="window.print()">Print this guide</a></li>
+        </ul>
+    </div>
+    <h3 class="heading-medium underline">Your deadlines</h3>
+    @if(calculator.showsFuture()) {
+        <p>
+            You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. Since that year starts before <span class="nowrap">6 April 2017</span>, you do not yet have to report for this period. Provided you do not change your financial year dates, these are your next @calculator.getReportingPeriods().size() reporting deadlines:
+        </p>
+    } else {
+        <p>
+            You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. This year is covered by @calculator.getReportingPeriods().size() reporting periods with the following deadlines:
+        </p>
+    }
+    @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
+        <h3 class="bold-medium">Your @(new Ordinals(i+1).get()) report:</h3>
+        <p>
+            Covers the period <span class="bold-small"><span clas="nowrap">@x.StartDate.ToDateString()</span> to <span class="nowrap">@x.EndDate.ToDateString()</span></span>
+            <br>
+            You must submit this report by <span class="bold-small nowrap">@x.FilingDeadline.ToDateString()</span>
+        </p>
+    }
+
+    <div class="notice">
+        <i class="icon icon-important">
+            <span class="visually-hidden">Warning</span>
+        </i>
+        <strong>Each report must be signed off by a director or designated member. You must submit each report before the deadline, and the report must be accurate and truthful. Otherwise, the business and every director or designated member may bbe liable to a fine.</strong>
+    </div>
+
+    @if(model.getAnswer().showGroupGuidance) {
+        <h3 class="heading-medium underline">Guidance for parent companies</h3>
+        <p>
+            Lorem ipsum bla bla bla
+        </p>
+    }
+
+    <h3 class="heading-medium underline">Types of invoices you need to include in your report data</h3>
+    <p>
+        Lorem ipsum bla bla bla
+    </p>
+
+    <h3 class="heading-medium underline">What you need to report</h3>
+    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <ul class="list list-bullet">
+        <li>Each description is written as one or more bullet points below the field label</li>
+    </ul>
+
+    <h3 class="heading-medium underline">How to publsh your report</h3>
+    <p>Complete the following steps</p>
+    <ul class="list list-bullet">
+        <li>one</li>
+        <li>two</li>
+        <li>three</li>
+    </ul>
+
+    ONce you have followed all of the above guidance, you can return to this website and <a href="@routes.SearchReport.search()">publish your report</a>.
+
+</div>

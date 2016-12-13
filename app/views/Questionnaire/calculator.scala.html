@@ -1,0 +1,33 @@
+@(model: QuestionnaireModel, calculator: CalculatorModel)
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
+    </ol>
+</div>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">Find out if, how and when your business needs to publish reports</h1>
+    <h3 class="heading-medium">
+        Consider the dates of your business's financial year
+    </h3>
+    <p class="form-hint">This allows us to work out your deadlines for publishing reports</p>
+    <form method="GET" action="">
+        @for(q <- model.questions) {
+        <input type="hidden" name="@q.id" value="@q.getAnswer()">
+        }
+        <fieldset class='@(!calculator.isValid() match {case true => "error" case false => ""})'>
+            @if(!calculator.isValid()) {
+                <span class="error-message">
+                    These dates are not valid
+                </span>
+            }
+
+            <p class="heading-small">Enter the start date of your financial year</p>
+            @shared._dateinput("start-", calculator.startDay, calculator.startMonth, calculator.startYear)
+
+            <p class="heading-small">Enter the end date of your financial year</p>
+            @shared._dateinput("end-", calculator.endDay, calculator.endMonth, calculator.endYear)
+        </fieldset>
+
+        <input type="submit" class="button" value="Continue">
+    </form>
+</div>

@@ -1,0 +1,35 @@
+@(model: QuestionnaireModel)
+<div class="breadcrumbs">
+    <ol>
+        <li><a href="@routes.Home.index()">@shared._name()</a></li>
+    </ol>
+</div>
+<div class="scannable-wrapper">
+    <h1 class="heading-xlarge">Find out if, how and when your business needs to publish reports</h1>
+    <h3 class="heading-medium">
+        @model.getNextQuestion().questionText
+    </h3>
+    <p class="form-hint">
+        @model.getNextQuestion().hintText
+    </p>
+    <form method="GET" action="">
+        @for(q <- model.questions) {
+            @if(q.hasAnswer()) {
+                <input type="hidden" name="@q.id" value="@q.getAnswer()">
+            }
+        }
+
+        @defining(model.getNextQuestion()) { q =>
+        <fieldset class='form-group @(q.inline match {case true => "inline" case false => ""})'>
+            @for((opt, i) <- q.questionOptions.zipWithIndex) {
+                <label class="block-label" for='@(q.id + "_" + i)'>
+                    <input type="radio" class="form-control" id='@(q.id + "_" + i)' name="@q.id" value="@i">
+                    @opt
+                </label>
+            }
+        </fieldset>
+        }
+
+        <input type="submit" class="button" value="Continue">
+    </form>
+</div>

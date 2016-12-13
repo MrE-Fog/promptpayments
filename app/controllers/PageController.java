@@ -1,6 +1,7 @@
 package controllers;
 
 import orchestrators.OrchestratorResult;
+import play.mvc.Call;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.twirl.api.Html;
@@ -35,6 +36,22 @@ class PageController extends Controller {
         } catch (NullPointerException ignored) {
             return null;
         }
+    }
+
+    protected String getQueryParameter(String key) {
+        try {
+            String[] values = request().queryString().get(key);
+            return values.length > 0
+                    ? values[values.length - 1]
+                    : "";
+        } catch (NullPointerException ignored) {
+            return null;
+        }
+    }
+
+    protected String withCurrentQuery(Call call) {
+        String queryString = request().uri().substring(request().path().length());
+        return call.absoluteURL(request()) + queryString;
     }
 
     protected interface OrchestratorResultMapper<T> {

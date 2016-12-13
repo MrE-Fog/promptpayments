@@ -16,6 +16,8 @@ public class CalculatorModel{
     public final String endMonth;
     public final String endDay;
 
+    private static final Calendar cutoff = UtcConverter.tryMakeUtcDate("2017", "4", "6");
+
     public CalculatorModel() {
         this.startYear = null;
         this.startMonth = null;
@@ -42,6 +44,16 @@ public class CalculatorModel{
         return startDate != null && endDate != null && startDate.getTime().getTime() < endDate.getTime().getTime();
     }
 
+    public String getStartDate() {return new UiDate(UtcConverter.tryMakeUtcDate(startYear, startMonth, startDay)).ToDateString(); }
+    public String getEndDate() {return new UiDate(UtcConverter.tryMakeUtcDate(endYear, endMonth, endDay)).ToDateString(); }
+
+    public boolean showsFuture() {
+        if (!isValid()) return false;
+
+        Calendar startDate = UtcConverter.tryMakeUtcDate(startYear,startMonth,startDay);
+        return startDate.getTime().getTime() - cutoff.getTime().getTime() < -100;
+    }
+
     public boolean isEmpty() {
         return nullOrEmpty(startYear) && nullOrEmpty(startMonth) && nullOrEmpty(startDay)
                 && nullOrEmpty(endYear) && nullOrEmpty(endMonth) && nullOrEmpty(endDay);
@@ -54,13 +66,11 @@ public class CalculatorModel{
         Calendar startDate = UtcConverter.tryMakeUtcDate(startYear, startMonth, startDay);
         Calendar endDate = UtcConverter.tryMakeUtcDate(endYear, endMonth, endDay);
 
-        Calendar cutoff = UtcConverter.tryMakeUtcDate("2017", "4", "6");
-
         if (!isValid()) {
             return Lists.emptyList();
         }
 
-        if (startDate.getTime().getTime() - cutoff.getTime().getTime() < -100) {
+        if (showsFuture()) {
             return Lists.emptyList();
         }
 

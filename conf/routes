@@ -9,6 +9,12 @@ GET     /HowToReport                controllers.Home.howGuide(page:Int = 0, prin
 GET     /HowToReport/:page          controllers.Home.howGuide(page:Int, print: Int ?= 0)
 POST    /HowToReport/1              controllers.Home.calculatePeriod()
 
+GET     /Guide                      controllers.Questionnaire.start()
+GET     /Guide/Questions            controllers.Questionnaire.ask()
+GET     /Guide/Deadlines            controllers.Questionnaire.calculator()
+GET     /Guide/Result               controllers.Questionnaire.answer()
+GET     /Guide/Exempt               controllers.Questionnaire.disqualified()
+
 GET     /Data                       controllers.Home.accessData()
 GET     /Data/Export                controllers.Home.export()
 
