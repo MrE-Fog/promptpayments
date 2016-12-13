@@ -21,12 +21,8 @@
         <li>it is large enough, but it's not yet required to publish its first report yet, as companies have different reporting dates</li>
     </ul>
     <h3 class="heading-medium">Do you work for this business?</h3>
-    <p>
-        Your business may be required to publish information about its payment practices and performance.
-    </p>
     <ul class="list">
-        <li><a href="@routes.Home.ifGuide()">Find out if your business needs to report</a></li>
-        <li><a href="@routes.Home.howGuide(0)">How to report</a></li>
+        <li><a href="@routes.Questionnaire.start()">Find out if, how and when</a> your business needs to publish reports</li>
     </ul>
     <a class="button" href="@routes.FileReport.startForCompany(model.Info.CompaniesHouseIdentifier)">Publish a report</a>
 </div>
@@ -68,9 +64,8 @@
         <div class="separator"></div>
         <h3 class="heading-sidebar">Do you work for this business?</h3>
         <ul class="list">
-            <li><a href="@routes.Home.ifGuide()">Find out if your business needs to report</a></li>
-            <li><a href="@routes.Home.howGuide(0)">How to report</a></li>
-            <li><a href="@routes.FileReport.startForCompany(model.Info.CompaniesHouseIdentifier)">Publish a report</a></li>
+            <li><a href="@routes.Questionnaire.start()">Get prepared</a>: find out if, when and how your business needs to publish reports</li>
+            <li><a href="@routes.SearchReport.search()">Publish a report</a>: once your report data is fully prepared</li>
         </ul>
     </div>
 }
