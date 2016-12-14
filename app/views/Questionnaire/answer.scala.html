@@ -20,7 +20,7 @@
         You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. Since that year starts before <span class="nowrap">6 April 2017</span>, you do not have to report for this period.
     </p>
     <p>
-        However, provided you do not change your financial year dates, the following @(calculator.getReportingPeriods().size() match{ case 1 => "is your first reporting deadline" case n => "is your first " + n + " reporting deadlines"}):
+        However, provided you do not change your financial year dates, the following @(calculator.getReportingPeriods().size() match{ case 1 => "is your first reporting deadline" case n => "are your first " + n + " reporting deadlines"}):
     </p>
     } else {
     <p>

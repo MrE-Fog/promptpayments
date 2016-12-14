@@ -73,10 +73,9 @@ public class CalculatorModel{
         if (showsFuture()) {
             int days = Math.round((endDate.getTimeInMillis() - startDate.getTimeInMillis())/ (1000 * 3600 * 24));
             do {
-                startDate = endDate;
+                startDate = (Calendar) endDate.clone();
                 startDate.add(Calendar.DATE, 1);
-                endDate = (Calendar) startDate.clone();
-                endDate.add(Calendar.DATE, days);
+                endDate.add(Calendar.YEAR, 1);
             } while(startDate.getTime().getTime() - cutoff.getTime().getTime() < -100);
         }
 
@@ -101,7 +100,6 @@ public class CalculatorModel{
             startDateOffset += 6;
             months -=6;
         }
-
 
         Calendar finalStartDate = (Calendar) startDate.clone();
         finalStartDate.add(Calendar.MONTH, startDateOffset);

@@ -75,8 +75,9 @@ function Validation() {
         };
 
         subscribe(e, "onblur", function() {
+            if(e.value === "") {return;}
             var invalidation = validate(e.value)
-            if (e.value !== "" && invalidation) {
+            if (invalidation) {
                 message.innerHTML = invalidation;
                 formGroup.className = "form-group error";
             } else {
@@ -107,8 +108,15 @@ function Validation() {
                 if (invalidation) {
                     message.innerHTML =invalidation;
                     message.parentElement.parentElement.className = "form-group error";
+                } else {
+                    message.innerHTML = "&nbsp;"
+                    message.parentElement.parentElement.className = "form-group";
                 }
                 return true;
+            });
+            subscribe(elements[i], "onkeydown", function() {
+                    message.innerHTML = "&nbsp;"
+                    message.parentElement.parentElement.className = "form-group";
             });
         }
     }
@@ -130,8 +138,9 @@ function Validation() {
             message.parentElement.parentElement.className = "form-group";
         }
         var callback = function() {
+            if (year.value === "" || month.value === "" || day.value === "" ) return;
             var invalidation = validate(year.value, month.value, day.value);
-            if (year.value !== "" && month.value !== "" && day.value !== "" && invalidation) {
+            if (invalidation) {
                 message.innerHTML = invalidation;
                 message.parentElement.parentElement.className = "form-group error";
             } else {

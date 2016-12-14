@@ -27,7 +27,18 @@ public class CalculatorModelTest {
         assertTrue(calculatorModel.showsFuture());
         assertEquals(2, reportingPeriods.size());
         assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
-        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "30 January 2018");
+        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "30 January 2019");
+    }
+
+    @Test
+    public void getReportingPeriods_twicePreCutoff() throws Exception {
+        CalculatorModel calculatorModel = new CalculatorModel("2016", "1", "1", "2016", "12", "31");
+        List<CalculatorModel.ReportingPeriod> reportingPeriods = calculatorModel.getReportingPeriods();
+
+        assertTrue(calculatorModel.showsFuture());
+        assertEquals(2, reportingPeriods.size());
+        assertPeriod(reportingPeriods.get(0), "1 January 2018", "30 June 2018", "30 July 2018");
+        assertPeriod(reportingPeriods.get(1), "1 July 2018", "31 December 2018", "30 January 2019");
     }
 
     @Test
