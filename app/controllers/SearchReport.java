@@ -22,16 +22,16 @@ public class SearchReport extends PageController {
     @Inject
     private FileReportOrchestrator orchestrator;
 
-    public Result search() {
-        return ok(page(views.html.Reports.results.render("", new PagedList<>(new ArrayList<>(),0,0,0))));
+    public Result search(boolean intentToFile) {
+        return ok(page(views.html.Reports.results.render(intentToFile, "", new PagedList<>(new ArrayList<>(),0,0,0))));
     }
 
-    public Result handleSearch(int page) {
+    public Result handleSearch(boolean intentToFile, int page) {
         String company = getPostParameter("companyname");
         OrchestratorResult<PagedList<CompanySearchResult>> companies = orchestrator.trySearchCompanies(company, page, 25);
 
         return renderOrchestratorResult(companies, d ->
-                ok(page(views.html.Reports.results.render(company, d))));
+                ok(page(views.html.Reports.results.render(intentToFile, company, d))));
     }
 
     public Result company(String company, int page) {

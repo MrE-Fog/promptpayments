@@ -132,7 +132,7 @@
             <i class="icon icon-important">
                 <span class="visually-hidden">Warning</span>
             </i>
-            <strong>You must <a href="@routes.SearchReport.search()">publish your report online</a> by your submission date.</strong>
+            <strong>You must <a href="@routes.SearchReport.search(true)">publish your report online</a> by your submission date.</strong>
         </div>
         @if(!print) {
             @_pagination(1, "Overview", "What you must report")
@@ -188,7 +188,7 @@
                 <span class="visually-hidden">Warning</span>
             </i>
             
-            <strong>You must <a href="@routes.SearchReport.search()">publish your report online</a> by your submission date.</strong>
+            <strong>You must <a href="@routes.SearchReport.search(true)">publish your report online</a> by your submission date.</strong>
         </div>
         
         @if(!print) {
@@ -210,7 +210,7 @@
     <h3 class="heading-sidebar">Information for large businesses</h3>
     <ul class="list">
         <li><a href="@routes.Home.ifGuide()">Find out if your business needs to report</a></li>
-        <li><a href="@routes.SearchReport.search()">Publish a report</a></li>
+        <li><a href="@routes.SearchReport.search(true)">Publish a report</a></li>
     </ul>
 </div>
 </div>

@@ -18,15 +18,20 @@ GET     /Guide/Exempt               controllers.Questionnaire.disqualified()
 GET     /Data                       controllers.Home.accessData()
 GET     /Data/Export                controllers.Home.export()
 
-GET     /Reports/Search controllers.SearchReport.search()
-POST    /Reports/Search controllers.SearchReport.handleSearch(page: Int ?= 0)
+GET     /Reports/Search controllers.SearchReport.search(intentToFile: Boolean = false)
+POST    /Reports/Search controllers.SearchReport.handleSearch(intentToFile: Boolean = false, page: Int ?= 0)
+
+GET     /Reports/Publish controllers.SearchReport.search(intentToFile: Boolean = true)
+POST    /Reports/Publish controllers.SearchReport.handleSearch(intentToFile: Boolean = true, page: Int ?= 0)
+
 GET     /Reports/Company/:company   controllers.SearchReport.company(company: String, page: Int ?= 0)
 GET     /Reports/Company/:company/Report/:report controllers.SearchReport.view(company: String, report: Int)
 
-GET     /Reports/Company/:company/File controllers.FileReport.startForCompany(company: String)
-GET     /Reports/Company/:company/CreateReport controllers.FileReport.doFile(company: String)
-GET     /Reports/Company/:company/PreLogIn controllers.FileReport.signInInterstitial(company: String)
-POST    /Reports/Company/:company/LogIn    controllers.FileReport.login(company: String)
+GET     /Reports/Company/:company/File                  controllers.FileReport.startForCompany(company: String)
+GET     /Reports/Company/:company/CreateReport          controllers.FileReport.doFile(company: String)
+GET     /Reports/Company/:company/PreLogIn              controllers.FileReport.signInInterstitial(company: String)
+POST    /Reports/Company/:company/LogIn                 controllers.FileReport.login(company: String)
+POST    /Reports/Company/:company/CompaniesHouseOptions controllers.FileReport.companiesHouseOptionsResult(company: String)
 
 GET     /FileReport/cb    controllers.FileReport.loginCallback(state: String, code: String)
 POST    /FileReport/ReviewFiling    controllers.FileReport.reviewFiling(confirm: Boolean = false)

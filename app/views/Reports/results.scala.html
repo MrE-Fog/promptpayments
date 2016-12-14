@@ -1,14 +1,20 @@
 @import components.PagedList
-@(searchTerm: String, results: PagedList[CompanySearchResult])
+@(intentToFile: scala.Boolean, searchTerm: String, results: PagedList[CompanySearchResult])
 <div class="breadcrumbs">
     <ol>
         <li><a href="@routes.Home.index()">@shared._name()</a></li>
     </ol>
 </div>
 
-<h1 class="heading-xlarge">Search for a business</h1>
+<h1 class="heading-xlarge">
+    @if(intentToFile) {
+        Publish a report
+    } else {
+        Search for a report
+    }
+</h1>
 <p class="lede">Enter business name or company number</p>
-@shared._search(searchTerm)
+@shared._search(intentToFile, searchTerm)
 
 @if(results.isEmpty() && searchTerm != "") {
     <div class="scannable-wrapper">
@@ -19,13 +25,13 @@
 @if(!results.isEmpty()) {
     <ul class="searchresults">
         @for(result <- results) {
-            @views.html.shared._companySummary(result, routes.SearchReport.company(result.CompaniesHouseIdentifier, 0))
+            @views.html.shared._companySummary(result, intentToFile match {case true => routes.FileReport.startForCompany(result.CompaniesHouseIdentifier) case false => routes.SearchReport.company(result.CompaniesHouseIdentifier, 0)})
         }
     </ul>
     @if(results.canPage()) {
         <div class="paging">
             @if(results.canGoBack()) {
-                <form method="POST" class="page" action="@routes.SearchReport.handleSearch(results.pageNumber()-1)">
+                <form method="POST" class="page" action="@routes.SearchReport.handleSearch(intentToFile, results.pageNumber()-1)">
                     <input type="hidden" name="companyname" value="@searchTerm" />
                     <input type="submit" class="link" value="Previous">
                 </form>
@@ -36,14 +42,14 @@
                     <span class="page thispage" >@(i+1)</span>
                 }
                 @if(i != results.pageNumber && results.canGo(i)) {
-                    <form method="POST" class="page" action="@routes.SearchReport.handleSearch(i)">
+                    <form method="POST" class="page" action="@routes.SearchReport.handleSearch(intentToFile,i)">
                         <input type="hidden" name="companyname" value="@searchTerm" />
                         <input type="submit" class="link"  value="@(i+1)">
                     </form>
                 }
             }
             @if(results.canGoNext()) {
-                <form method="POST" class="page" action="@routes.SearchReport.handleSearch(results.pageNumber()+1)">
+                <form method="POST" class="page" action="@routes.SearchReport.handleSearch(intentToFile, results.pageNumber()+1)">
                     <input type="hidden" name="companyname" value="@searchTerm"/>
                     <input type="submit" class="link" value="Next">
                 </form>

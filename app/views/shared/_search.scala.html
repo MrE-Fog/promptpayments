@@ -1,6 +1,6 @@
-@(value: String)
+@(intentToFile: Boolean, value: String)
 <div class="search-bar-active">
-    <form method="POST" action="@routes.SearchReport.handleSearch(0)" class="searchfield">
+    <form method="POST" action="@routes.SearchReport.handleSearch(intentToFile, 0)" class="searchfield">
         <label class="hidden" for="site-search-text">Enter business name or company number</label>
         <input autocomplete="off" name="companyname" id="site-search-text" title="Search" value="@value" placeholder="Start here..." autofocus="autofocus" class="js-search-focus" type="search">
         <button type="submit" id="search-submit" class="search-submit" aria-label="Search">Search</button>

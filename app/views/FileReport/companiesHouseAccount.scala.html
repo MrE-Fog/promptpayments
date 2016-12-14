@@ -1,15 +1,25 @@
+@(company: CompanySummary, useDelegate: Boolean)
 <div class="breadcrumbs">
     <ol>
         <li><a href="@routes.Home.index()">@shared._name()</a></li>
     </ol>
 </div>
 <div class="scannable-wrapper">
-    <h1 class="heading-xlarge">You need to register a Companies House account</h1>
-    <h3 class="heading-medium">How this works</h3>
-    <ul class="list list-bullet">
-        <li>Fill in the online registration form.</li>
-        <li>Companies House will post a letter to your business address to verify your identity - this will take a few days.</li>
-        <li>You can then sign in to file your report.</li>
-    </ul>
-    <a class="button button-start" href="https://beta.companieshouse.gov.uk/signin">Apply for a Companies House account</a>
+    <h1 class="heading-xlarge">Publish a report for @company.Name</h1>
+    @if(useDelegate) {
+        <h3 class="heading-medium">How to delegate the publishing activity</h3>
+        <ol class="list list-number">
+            <li><span class="bold-small">Find the relevant person in your organisation who has a Companies House account.</span> This kind of account is normally used by administrative staff to file Annual Reports with Companies House.</li>
+            <li><span class="bold-small">Provide them with the report data</span> that has been signed-off by the board of directors</li>
+            <li><span class="bold-small">Tell them to go to this website</span> and follow the steps to <a href="@routes.FileReport.startForCompany(company.CompaniesHouseIdentifier)">Publish a report</a></li>
+        </ol>
+    } else {
+        <h3 class="heading-medium">How to create a Companies House Account</h3>
+        <ul class="list list-bullet">
+            <li>Fill in the online registration form.</li>
+            <li>Companies House will post a letter to your business address to verify your identity - this will take a few days.</li>
+            <li>You can then sign in to file your report.</li>
+        </ul>
+        <a class="button button-start" href="https://beta.companieshouse.gov.uk/signin">Apply for a Companies House account</a>
+    }
 </div>

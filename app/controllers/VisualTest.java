@@ -91,12 +91,15 @@ public class VisualTest extends PageController {
                 views.html.Reports.report.render(healthyReportModel, healthyCompanySearchResult),
                 views.html.Reports.report.render(emptyReportModel, healthyCompanySearchResult),
 
-                views.html.Reports.results.render("cod", new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 0, 3)),
+                views.html.Reports.results.render(true, "cod", new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 0, 3)),
+                views.html.Reports.results.render(false, "cod", new PagedList<>(Arrays.asList(healthyCompanySearchResult, healthyCompanySearchResult, healthyCompanySearchResult), 100, 0, 3)),
                 views.html.Reports.company.render(healthyCompanyModel),
 
                 views.html.FileReport.start.render(new CompanySummary("EIGENCODE LTD", "12345678")),
                 views.html.FileReport.signInInterstitial.render("123"),
-                views.html.FileReport.companiesHouseAccount.render(),
+                views.html.FileReport.companiesHouseOptions.render(new CompanySummary("EIGENCODE LTD", "12345678")),
+                views.html.FileReport.companiesHouseAccount.render(new CompanySummary("EIGENCODE LTD", "12345678"), true),
+                views.html.FileReport.companiesHouseAccount.render(new CompanySummary("EIGENCODE LTD", "12345678"), false),
 
                 views.html.FileReport.file.render(reportForm.fill(newReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time)),
                 views.html.FileReport.file.render(reportForm.fill(completeReportFilingModel), new AllOkReportFilingModelValidation(), healthyCompanySearchResult, new UiDate(time)),

@@ -24,7 +24,6 @@
     <ul class="list">
         <li><a href="@routes.Questionnaire.start()">Find out if, how and when</a> your business needs to publish reports</li>
     </ul>
-    <a class="button" href="@routes.FileReport.startForCompany(model.Info.CompaniesHouseIdentifier)">Publish a report</a>
 </div>
 } else {
 <div class="grid-row">
@@ -65,7 +64,7 @@
         <h3 class="heading-sidebar">Do you work for this business?</h3>
         <ul class="list">
             <li><a href="@routes.Questionnaire.start()">Get prepared</a>: find out if, when and how your business needs to publish reports</li>
-            <li><a href="@routes.SearchReport.search()">Publish a report</a>: once your report data is fully prepared</li>
+            <li><a href="@routes.SearchReport.search(true)">Publish a report</a>: once your report data is fully prepared</li>
         </ul>
     </div>
 }

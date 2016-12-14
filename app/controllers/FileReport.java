@@ -41,8 +41,15 @@ public class FileReport extends PageController {
         if (getPostParameter("account").equals("1")) {
             return redirect(fileReportOrchestrator.getAuthorizationUri(companiesHouseIdentifier));
         } else {
-            return ok(page(companiesHouseAccount.render()));
+            OrchestratorResult<CompanyModel> companyModel = fileReportOrchestrator.getCompanyModel(companiesHouseIdentifier, 0, 0);
+            return renderOrchestratorResult(companyModel, m -> ok(page(companiesHouseOptions.render(m.Info))));
         }
+    }
+
+    public Result companiesHouseOptionsResult(String companiesHouseIdentifier) {
+        OrchestratorResult<CompanyModel> company = fileReportOrchestrator.getCompanyModel(companiesHouseIdentifier, 0, 0);
+        return renderOrchestratorResult(company, c ->
+                ok(page(companiesHouseAccount.render(c.Info, getPostParameter("nextstep").equals("0")))));
     }
 
     public Result loginCallback(String state, String code) {
