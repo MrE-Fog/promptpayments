@@ -8,6 +8,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+/**
+ * Takes a start and end date of a financial year and determines the correct reporting periods for that year.
+ *
+ * If a year prior to 6 April 2017 is specified, the reporting periods for the first year that starts on or after 6 April 2017 is provided instead. In that case, showsFuture() returns true.
+ */
 public class CalculatorModel{
     public final String startYear;
     public final String startMonth;

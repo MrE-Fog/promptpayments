@@ -1,5 +1,8 @@
 package models;
 
+/**
+ * Container object that holds enough information to render a report page
+ */
 public class CompanySummaryAndReport {
     public final CompanySummary company;
     public final ReportModel report;

@@ -1,5 +1,8 @@
 package models;
 
+/**
+ * Container object that holds enough information about a company to render a search result.
+ */
 public class CompanySearchResult extends CompanySummaryWithAddress {
     public int ReportCount;
 

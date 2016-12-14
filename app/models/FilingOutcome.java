@@ -1,5 +1,8 @@
 package models;
 
+/**
+ * Container object for the info to render the result of a filing attempt
+ */
 public class FilingOutcome {
     public final CompanySummary company;
     public final int reportId;

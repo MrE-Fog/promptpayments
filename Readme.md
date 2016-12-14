@@ -9,10 +9,10 @@ Code stolen shamelessly from [lite-play-common](https://github.com/BISDigital/li
 ## How?!?!
 
 You'll need to set the following environment variables for running the server or the tests:
-- JDBC_DATABASE_URL, JDBC_DATABASE_USERNAME, JDBC_DATABASE_PASSWORD -- connection details to your postgres database
-- COMPANIESHOUSE_API -- the API key for companies house
-- COMPANIESHOUSE_CLIENTID and COMPANIESHOUSE_CLIENTSECRET -- the public and private identifiers for using Companies House as an OAuth 2.0 server
-- GOVUKNOTIFY_API -- the API key for the GOV.UK notify service (used to send emails)
+- `JDBC_DATABASE_URL`, `JDBC_DATABASE_USERNAME`, `JDBC_DATABASE_PASSWORD` -- connection details to your postgres database
+- `COMPANIESHOUSE_API` -- the API key for companies house
+- `COMPANIESHOUSE_CLIENTID` and `COMPANIESHOUSE_CLIENTSECRET` -- the public and private identifiers for using Companies House as an OAuth 2.0 server
+- `GOVUKNOTIFY_API` -- the API key for the GOV.UK notify service (used to send emails)
 
 Your PC needs the following components
 
@@ -36,6 +36,12 @@ Once the views are compiled, you can start the project. Create a build configura
 In IntelliJ IDEA Community edition, you do this as follows:
 1. Make sure the Scala Plugin is enabled (File -> Settings -> Plugins -> search "Scala" -> install if necessary)
 2. Go to Run -> Edit Configurations... -> "Plus" button -> SBT Task. enter "run" into the Tasks field and apply 
+
+## Tests
+
+There are two kinds of tests:
+- JUnit tests of the server code. Run these with any jUnit test runner.
+- QUinit tests of the javascript. Run these by opening the file `qunitFixture.html` locally.
 
 ## Making Play play nice with Windows
 

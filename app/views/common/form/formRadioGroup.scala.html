@@ -1,8 +1,0 @@
-@import utils.common.SelectOption
-@(field: Field, options: List[SelectOption])(prompt: Html)
-
-@formRadioGroupContainer(field)(prompt) {
-  @for(option <- options) {
-    @formRadio(field, Html(option.prompt), option.value)
-  }
-}

@@ -3,7 +3,7 @@ package models;
 /**
  * Created by daniel.rothig on 18/10/2016.
  *
- * Signifies whether a field is valid or not
+ * Signifies whether a single form field is valid or not
  */
 public class FieldValidation {
     private final boolean isValid;
