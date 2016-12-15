@@ -80,8 +80,6 @@ function Validation() {
             if (invalidation) {
                 message.innerHTML = invalidation;
                 formGroup.className = "form-group error";
-            } else {
-                callbackClear();
             }
         })
         subscribe(e, "onkeydown", callbackClear)
@@ -108,9 +106,6 @@ function Validation() {
                 if (invalidation) {
                     message.innerHTML =invalidation;
                     message.parentElement.parentElement.className = "form-group error";
-                } else {
-                    message.innerHTML = "&nbsp;"
-                    message.parentElement.parentElement.className = "form-group";
                 }
                 return true;
             });
@@ -143,8 +138,6 @@ function Validation() {
             if (invalidation) {
                 message.innerHTML = invalidation;
                 message.parentElement.parentElement.className = "form-group error";
-            } else {
-                callbackClear();
             }
         }
 

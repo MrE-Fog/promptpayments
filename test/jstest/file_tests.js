@@ -85,12 +85,6 @@ QUnit.test("textfield validation", function(assert) {
     assert.ok(message.innerHTML === "&nbsp;");
     assert.ok(fieldset.className.indexOf("error") === -1);
 
-    //test good input
-    invalidation = function(val) {assert.ok(val === "val"); return null};
-    input.onblur();
-    assert.ok(message.innerHTML === "&nbsp;");
-    assert.ok(fieldset.className.indexOf("error") === -1);
-
     //test tolerates empty fields
     invalidation = function() {assert.notOk("shouldn't validate empty field")}
     input.setAttribute("value", "");
@@ -115,11 +109,6 @@ QUnit.test("date validation",  function(assert) {
     assert.ok(document.getElementById("pprtest-fieldset").className.indexOf("error") > -1);
 
     document.getElementById("pprtest-input-month").onkeydown();
-    assert.ok(document.getElementById("pprtest-error").innerHTML === "&nbsp;");
-    assert.ok(document.getElementById("pprtest-fieldset").className.indexOf("error") === -1);
-
-    invalidation = function() {return null;};
-    document.getElementById("pprtest-input-month").onblur();
     assert.ok(document.getElementById("pprtest-error").innerHTML === "&nbsp;");
     assert.ok(document.getElementById("pprtest-fieldset").className.indexOf("error") === -1);
 
@@ -151,12 +140,6 @@ QUnit.test("multi validation", function(assert) {
     assert.ok(document.getElementById("pprtest-fieldset").className.indexOf("error") > -1);
 
     document.getElementById("pprtest-input-one").onkeydown();
-    assert.ok(document.getElementById("pprtest-error").innerHTML === "&nbsp;");
-    assert.ok(document.getElementById("pprtest-fieldset").className.indexOf("error") === -1);
-
-
-    invalidation = function() {return null;};
-    document.getElementById("pprtest-input-two").onblur();
     assert.ok(document.getElementById("pprtest-error").innerHTML === "&nbsp;");
     assert.ok(document.getElementById("pprtest-fieldset").className.indexOf("error") === -1);
 
