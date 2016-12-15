@@ -8,7 +8,7 @@
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">Find out if, how and when your business needs to publish reports</h1>
     <div class="govuk-box-highlight left-align">
-        <h3 class="bold-medium">Your business is required to publish payment practice reports. Please follow the instructions in this guide</h3>
+        <h3 class="bold-medium">Your business is required to publish payment practice reports.</h3>
         <ul class="list">
             <li><a href="#">Email this guide</a></li>
             <li><a href="#" onclick="window.print()">Print this guide</a></li>
@@ -17,14 +17,14 @@
     <h3 class="heading-medium underline">Your deadlines</h3>
     @if(calculator.showsFuture()) {
     <p>
-        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. Since that year starts before <span class="nowrap">6 April 2017</span>, you do not have to report for this period.
+        You told us that your financial year runs from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. You do not have to report for this period.
     </p>
     <p>
-        However, provided you do not change your financial year dates, the following @(calculator.getReportingPeriods().size() match{ case 1 => "is your first reporting deadline" case n => "are your first " + n + " reporting deadlines"}):
+        If you don't change your financial year dates, @(calculator.getReportingPeriods().size() match{ case 1 => "this is your first reporting period" case n => "these are your first " + n + " reporting periods"}):
     </p>
     } else {
     <p>
-        You stated that your financial year is from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. This year is covered by @(calculator.getReportingPeriods().size() match {case 1 => "one reporting period with the following deadline" case n => n + " reporting periods with the following deadlines"}):
+        You told us that your financial year runs from <span class="nowrap">@calculator.getStartDate()</span> to <span class="nowrap">@calculator.getEndDate()</span>. This year is covered by @(calculator.getReportingPeriods().size() match {case 1 => "a single reporting period" case n => n + " reporting periods"}):
     </p>
     }
     @for((x,i) <- calculator.getReportingPeriods().zipWithIndex) {
@@ -40,16 +40,13 @@
         <i class="icon icon-important">
             <span class="visually-hidden">Warning</span>
         </i>
-        <strong>Each report must be signed off by a director or a designated member of a Limited Liability Partnership. You must submit each report before the deadline and the report must be accurate and truthful. If not, the business and every director or designated member may be liable to a fine.</strong>
+        <strong>Each report must be signed off by a company director or a designated member of a Limited Liability Partnership. Reports must be complete, accurate and truthful: if not, the business and every director or designated member may be liable to a fine.</strong>
     </div>
 
     @if(model.getAnswer().showGroupGuidance) {
         <h3 class="heading-medium underline">Guidance for parent companies</h3>
         <p>
-            You stated that your business is the parent of a group of subsidiary companies. Because of this, there are some important things to bear in mind:
-        </p>
-        <p>
-            If any of your subsidiary companies are large, they also need to need to publish reports. A subsidiary company is defined as large if it exceeded at least two of these thresholds on its the last two balance sheet dates:
+            You told us that your business has subsidiary companies. They will also need to report if they are large.We define a large company as one that exceeded at least two of these thresholds on the last two balance sheet dates:
         </p>
         <ul class="list list-bullet">
             <li>Turnover of £36 million</li>
@@ -57,64 +54,95 @@
             <li>250 employees</li>
         </ul>
         <p>
-            This applies to companies formed and registered under the Companies Act 2006 or previous legislation. It also applies to LLPs registered under the Limited Liablity Partnerships Act 2000.
-        </p>
-        <p>
             Any other business can choose to report if they want.
         </p>
     }
 
-    <h3 class="heading-medium underline">Types of invoices you need to include in your report data</h3>
+    <h3 class="heading-medium underline">Which invoices you need to report on</h3>
     <p>
-        Write a piece on contracts for financial services / contracts which don’t have a significant connection the UK)
-    </p>
-    <p>
-        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien.
+        You need to report on all invoices apart from those involving contracts for financial services, and those where <a href="http://www.legislation.gov.uk/ukpga/1998/20/section/12" rel="external">the contracts don’t have a significant connection to the UK</a>.
     </p>
 
     <h3 class="heading-medium underline">What you need to report</h3>
 
     <h4 class="heading-small">Start and end date of reporting period</h4>
     <ul class="list list-bullet">
-        <li>Refer to the ‘Your deadlines’ section above and make a note of the relevant start and end dates.</li>
+        <li>These will be the dates given above under ‘Your Deadlines’.</li>
     </ul>
+
+    <h4 class="heading-small">Average time to pay in days</h4>
+    <ul class="list list-bullet">
+        <li>Out all of the payments you have made in the reporting period, the average time it took to pay. This must be rounded up or down to the nearest whole number.</li>
+    </ul>
+
+    <h4 class="heading-small">Percentage of invoices not paid within agreed terms</h4>
+    <ul class="list list-bullet">
+        <li>This relates to the number of invoices, not their value. This must be rounded up or down to the nearest whole number.</li>
+    </ul>
+
+    <h4 class="heading-small">Percentage of invoices paid</h4>
+    <ul class="list list-bullet">
+        <li>Within 30 days</li>
+        <li>In 31 to 60 days</li>
+        <li>In more than 60 days</li>
+    </ul>
+    <p>Round these to the nearest whole number. </p>
 
     <h4 class="heading-small">Standard Payment Terms</h4>
     <ul class="list list-bullet">
-        <li>Write a narrative that describes your standard payment terms, including your standard payment period. If you have multiple payment terms (e,g, by supplier category) then please describe them all here. Most companies write a few paragraphs in this field.</li>
+        <li>This should include your standard payment period, an explain any special terms and requirements. If you have different terms for different types of supplier, explain them here. Most companies write a couple of paragraphs here. You can include a link to the relevant page or PDF on your website.</li>
     </ul>
 
-    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <h4 class="heading-small">Your maximum contractual payment period</h4>
     <ul class="list list-bullet">
-        <li>Each description is written as one or more bullet points below the field label</li>
+        <li>The longest payment terms you demanded from a supplier in this reporting period. You can simply enter the number of days, or can add an explanation as well.</li>
     </ul>
 
-    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <h4 class="heading-small">Changes to standard terms</h4>
     <ul class="list list-bullet">
-        <li>Each description is written as one or more bullet points below the field label</li>
+        <li>This should include details of exactly what has changed – be sure to include the ‘before’ and ‘after’ situation. You’ll also need to tell us whether you consulted with suppliers before making changes, and informed them of the changes before they took effect.</li>
     </ul>
 
-    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <h4 class="heading-small">How do you handle complaints and queries from your suppliers about payments under qualifying contracts?</h4>
     <ul class="list list-bullet">
-        <li>Each description is written as one or more bullet points below the field label</li>
+        <li>Most companies write a couple of paragraphs</li>
     </ul>
 
-    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <h4 class="heading-small">Does your business offer E-invoicing?</h4>
     <ul class="list list-bullet">
-        <li>Each description is written as one or more bullet points below the field label</li>
+        <li>State if you allow suppliers to electronically submit invoices.</li>
+        <li>Select ‘yes’ or ‘no’.</li>
     </ul>
 
-    <h3 class="heading-medium underline">How to publsh your report</h3>
-    <p>Complete the following steps</p>
+    <h4 class="heading-small">Does your business offer supply chain finance options?</h4>
+    <ul class="list list-bullet">
+        <li>State whether you have a system where a supplier's invoice can be paid quickly by a third-party company, who you then pay at a later date.</li>
+        <li>Select ‘yes’ or ‘no’.</li>
+    </ul>
+
+    <h4 class="heading-small">Does your business have a policy of deducting sums from payments as a charge for remaining on a supplier list?</h4>
+    <ul class="list list-bullet">
+        <li>Select ‘yes’ or ‘no’.</li>
+    </ul>
+
+    <h4 class="heading-small">In this reporting period, has your business deducted sums from payments as a charge for remaining on a supplier list?</h4>
+    <ul class="list list-bullet">
+        <li>You need to answer this even if you answer ‘no’ to the above question.</li>
+        <li>Select ‘yes’ or ‘no’.</li>
+    </ul>
+
+
+    <h4 class="heading-small">Is your business a signatory to a code of practice for payment? An example is the Prompt Payment Code</h4>
+    <ul class="list list-bullet">
+        <li>Select ‘yes’ or ‘no’.</li>
+    </ul>
+
+
+    <h3 class="heading-medium underline">Before you start</h3>
 
     <ul class="list list-bullet">
-        <li>When you your report data is ready, it must be signed-off by your board of directors</li>
-        <li>You will need a Companies House log-in that is authorised to publish reports for your company</li>
-        <li>If you don’t have one, you may want to to delegate this task to someone in your organisation who does have one</li>
-        <li>Alternatively you can register your own account on Companies House. The authorisation process involves a paper letter being sent to your Company’s registered address, which can take weeks. Be sure to do this well in advance of your deadline</li>
+        <li>Make sure your complete report data is signed off by a company director or partner in an LLP</li>
+        <li>You'll need to be authorised with <a href="https://beta.companieshouse.gov.uk/" rel="external">Companies House</a> to publish reports for your company</li>
+        <li>The authorisation process can take several weeks. You can then return to this website and <a href="@routes.SearchReport.search(true)">publish your report</a></li>
     </ul>
-
-    <p>
-        Once you have followed all of the above guidance, you can return to this website and <a href="@routes.SearchReport.search(true)">publish your report</a>.
-    </p>
 </div>
