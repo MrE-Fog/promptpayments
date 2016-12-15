@@ -40,22 +40,65 @@
         <i class="icon icon-important">
             <span class="visually-hidden">Warning</span>
         </i>
-        <strong>Each report must be signed off by a director or designated member. You must submit each report before the deadline, and the report must be accurate and truthful. Otherwise, the business and every director or designated member may bbe liable to a fine.</strong>
+        <strong>Each report must be signed off by a director or a designated member of a Limited Liability Partnership. You must submit each report before the deadline and the report must be accurate and truthful. If not, the business and every director or designated member may be liable to a fine.</strong>
     </div>
 
     @if(model.getAnswer().showGroupGuidance) {
         <h3 class="heading-medium underline">Guidance for parent companies</h3>
         <p>
-            Lorem ipsum bla bla bla
+            You stated that your business is the parent of a group of subsidiary companies. Because of this, there are some important things to bear in mind:
+        </p>
+        <p>
+            If any of your subsidiary companies are large, they also need to need to publish reports. A subsidiary company is defined as large if it exceeded at least two of these thresholds on its the last two balance sheet dates:
+        </p>
+        <ul class="list list-bullet">
+            <li>Turnover of £36 million</li>
+            <li>£18 million on its balance sheet</li>
+            <li>250 employees</li>
+        </ul>
+        <p>
+            This applies to companies formed and registered under the Companies Act 2006 or previous legislation. It also applies to LLPs registered under the Limited Liablity Partnerships Act 2000.
+        </p>
+        <p>
+            Any other business can choose to report if they want.
         </p>
     }
 
     <h3 class="heading-medium underline">Types of invoices you need to include in your report data</h3>
     <p>
-        Lorem ipsum bla bla bla
+        Write a piece on contracts for financial services / contracts which don’t have a significant connection the UK)
+    </p>
+    <p>
+        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci magna rhoncus neque, id pulvinar odio lorem non turpis. Nullam sit amet enim. Suspendisse id velit vitae ligula volutpat condimentum. Aliquam erat volutpat. Sed quis velit. Nulla facilisi. Nulla libero. Vivamus pharetra posuere sapien.
     </p>
 
     <h3 class="heading-medium underline">What you need to report</h3>
+
+    <h4 class="heading-small">Start and end date of reporting period</h4>
+    <ul class="list list-bullet">
+        <li>Refer to the ‘Your deadlines’ section above and make a note of the relevant start and end dates.</li>
+    </ul>
+
+    <h4 class="heading-small">Standard Payment Terms</h4>
+    <ul class="list list-bullet">
+        <li>Write a narrative that describes your standard payment terms, including your standard payment period. If you have multiple payment terms (e,g, by supplier category) then please describe them all here. Most companies write a few paragraphs in this field.</li>
+    </ul>
+
+    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <ul class="list list-bullet">
+        <li>Each description is written as one or more bullet points below the field label</li>
+    </ul>
+
+    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <ul class="list list-bullet">
+        <li>Each description is written as one or more bullet points below the field label</li>
+    </ul>
+
+    <h4 class="heading-small">Each field is shown as a subheading</h4>
+    <ul class="list list-bullet">
+        <li>Each description is written as one or more bullet points below the field label</li>
+    </ul>
+
     <h4 class="heading-small">Each field is shown as a subheading</h4>
     <ul class="list list-bullet">
         <li>Each description is written as one or more bullet points below the field label</li>
@@ -63,12 +106,15 @@
 
     <h3 class="heading-medium underline">How to publsh your report</h3>
     <p>Complete the following steps</p>
+
     <ul class="list list-bullet">
-        <li>one</li>
-        <li>two</li>
-        <li>three</li>
+        <li>When you your report data is ready, it must be signed-off by your board of directors</li>
+        <li>You will need a Companies House log-in that is authorised to publish reports for your company</li>
+        <li>If you don’t have one, you may want to to delegate this task to someone in your organisation who does have one</li>
+        <li>Alternatively you can register your own account on Companies House. The authorisation process involves a paper letter being sent to your Company’s registered address, which can take weeks. Be sure to do this well in advance of your deadline</li>
     </ul>
 
-    Once you have followed all of the above guidance, you can return to this website and <a href="@routes.SearchReport.search(true)">publish your report</a>.
-
+    <p>
+        Once you have followed all of the above guidance, you can return to this website and <a href="@routes.SearchReport.search(true)">publish your report</a>.
+    </p>
 </div>
