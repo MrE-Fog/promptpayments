@@ -2,22 +2,17 @@ package components;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
-import com.typesafe.config.ConfigException;
 import models.CompanySummary;
 import models.CompanySummaryWithAddress;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import play.libs.Json;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -59,6 +54,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
         post.setHeader("Content-Type", "application/x-www-form-urlencoded");
         post.setHeader("Charset", "utf-8");
 
+        String targetScope = "http://ch.gov.uk/company/" + companiesHouseIdentifier;
         String body = String.format("client_id=%s&client_secret=%s&grant_type=authorization_code" +
                         "&code=%s" +
                         "&redirect_uri=%s" +
@@ -68,7 +64,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
                 urlEncode(clientSecret),
                 urlEncode(authCode),
                 urlEncode(redirectUri),
-                urlEncode("http://ch.gov.uk/company/" + companiesHouseIdentifier),
+                urlEncode(targetScope),
                 urlEncode(companiesHouseIdentifier)
         );
 
@@ -80,10 +76,25 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
             return null;
         }
 
-        //todo: confirm access token scope
-
         String access_token = json.get("access_token").asText();
-        return access_token;
+
+        HttpPost verifyPost = new HttpPost("https://account.companieshouse.gov.uk/oauth2/verify");
+        verifyPost.setHeader("Authorization", "Bearer " + access_token);
+        verifyPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        verifyPost.setHeader("Charset", "utf-8");
+
+
+
+        JsonNode verifyJson = httpWrapper.get("https://account.companieshouse.gov.uk/oauth2/verify", "Bearer " + access_token);
+        if (!verifyJson.has("scope")) {
+            return null;
+        }
+
+        if (verifyJson.get("scope").asText().equals(targetScope)) {
+            return access_token;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -144,8 +155,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
 
 class HttpWrapper {
     public JsonNode post(HttpPost post) throws IOException {
-        HttpClient client = new DefaultHttpClient();
-        HttpResponse response = client.execute(post);
+        HttpResponse response = HttpClients.createDefault().execute(post);
         try {
             return Json.parse(response.getEntity().getContent());
         } catch (Exception e) {
@@ -154,13 +164,14 @@ class HttpWrapper {
     }
 
     public JsonNode get(String url, String authorization) throws IOException {
-        HttpUriRequest request = new HttpGet(url);
+        HttpGet request = new HttpGet(url);
         if (authorization != null) request.setHeader("Authorization", authorization);
-        HttpResponse response = new DefaultHttpClient().execute(request);
+        HttpResponse response = HttpClients.createDefault().execute(request);
         try {
             return Json.parse(response.getEntity().getContent());
         } catch (Exception e) {
             throw new IOException("Could not parse response", e);
         }
+
     }
 }

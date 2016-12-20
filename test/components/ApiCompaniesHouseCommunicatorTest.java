@@ -2,14 +2,23 @@ package components;
 
 import models.CompanySummary;
 import models.CompanySummaryWithAddress;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import play.libs.Json;
 
-import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -87,18 +96,73 @@ public class ApiCompaniesHouseCommunicatorTest {
         assertNull(noCompany);
     }
 
-    //@Test
+    /**
+     * Complex integration test for oAuth protocol
+     */
+    @Test
     public void oauth() throws Exception {
-        String url = new ApiCompaniesHouseCommunicator(httpWrapper).getAuthorizationUri("https://paymentdutyregister.herokuapp.com/FileReport/cb", "10203299");
 
-        //String token = new ApiCompaniesHouseCommunicator().verifyAuthCode(
-        //        "b3D4vFtvsmXyh14UwzG78uJkf1un8k6EEMTAdm5JId4",
-        //        "https://paymentdutyregister.herokuapp.com/FileReport/cb",
-        //        "10203299"
-        //);
+        ApiCompaniesHouseCommunicator communicator = new ApiCompaniesHouseCommunicator(new HttpWrapper());
 
-        String token = "jAPoPSyvWWu8bz-f4o59eFbs0MhiRI87ZQzgGFHSLgBWlzaspGxuW1Sq6jZmpkeld67qnWDCnkr627nTGaRLZg";
-        String result = new ApiCompaniesHouseCommunicator(httpWrapper).getEmailAddress(token);
+        String validUsername = System.getenv().get("TESTCH_USER");
+        String validPassword = System.getenv().get("TESTCH_PASSWORD");
+        String validAuthCode = System.getenv().get("TESTCH_AUTHCODE");
 
+        // STEP 1 - GET request to the authorization URL
+        String url = communicator.getAuthorizationUri("https://paymentdutyregister.herokuapp.com/FileReport/cb", "10203299");
+        String signInHtml = IOUtils.toString(new DefaultHttpClient().execute(new HttpGet(url)).getEntity().getContent(), "UTF-8");
+
+        // STEP 2 - extract the "Request" parameter from the returned HTML
+        Matcher requestRegex = Pattern.compile("href=\"/user/register\\?request=([^\"]*)\"").matcher(signInHtml);
+        requestRegex.find();
+        String request = requestRegex.group(1);
+
+        // STEP 3 - use the "request" parameter to put together a post request for user authentication
+        HttpPost userSigninPost = new HttpPost("https://account.companieshouse.gov.uk/oauth2/user/signin");
+        userSigninPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        userSigninPost.setHeader("Charset", "utf-8");
+        userSigninPost.setEntity(new ByteArrayEntity(String.format("signin_email=%s&password=%s&request=%s",
+                URLEncoder.encode(validUsername, "utf-8"),
+                URLEncoder.encode(validPassword, "utf-8"),
+                URLEncoder.encode(request, "utf-8")).getBytes("utf-8")));
+        HttpResponse signInExecute = new DefaultHttpClient().execute(userSigninPost);
+
+        // STEP 4 - follow the redirect that the previous POST returns
+        HttpGet authGet = new HttpGet("https://account.companieshouse.gov.uk" + signInExecute.getHeaders("Location")[0].getValue());
+        authGet.setHeader(new BasicHeader("Cookie", signInExecute.getHeaders("Set-Cookie")[1].getValue()));
+        String authHtml = IOUtils.toString(new DefaultHttpClient().execute(authGet).getEntity().getContent(), "UTF-8");
+
+        // STEP 5 - extract the "request" parameter from the HTML of that GET
+        requestRegex = Pattern.compile("href=\"/company/10203299/authcode/request\\?request=([^\"]*)\"").matcher(authHtml);
+        requestRegex.find();
+        request = requestRegex.group(1);
+
+        // STEP 6 - use the "request" parameter to put together a POST request for company authentication
+        HttpPost companySigninPost = new HttpPost("https://account.companieshouse.gov.uk/oauth2/company/signin");
+        companySigninPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        companySigninPost.setHeader("Charset", "utf-8");
+        companySigninPost.setHeader(new BasicHeader("Cookie", signInExecute.getHeaders("Set-Cookie")[1].getValue()));
+        companySigninPost.setEntity(new ByteArrayEntity(String.format("auth_code=%s&request=%s",
+                URLEncoder.encode(validAuthCode, "utf-8"),
+                URLEncoder.encode(request, "utf-8")).getBytes("utf-8")));
+        HttpResponse companySignInExecute = new DefaultHttpClient().execute(companySigninPost);
+
+        // STEP 7 - extract the authentication code from the redirect location that a succcessful company authentication returns
+        companySignInExecute.getHeaders("Location")[0].getValue();
+        Matcher codeRegex = Pattern.compile("code=([^&]+)").matcher(companySignInExecute.getHeaders("Location")[0].getValue());
+        codeRegex.find();
+        String code = codeRegex.group(1);
+
+        // STEP 8 - the actual test: now that we have been given an authentication code, try and convert it into an Authentication Token and verify the scope
+        String token = communicator.verifyAuthCode(
+                code,
+                "https://paymentdutyregister.herokuapp.com/FileReport/cb",
+                "10203299"
+        );
+
+        // STEP 9 - an additional test to check that the email address is correctly returned, thus coming full circle
+        String result = communicator.getEmailAddress(token);
+
+        assertEquals(validUsername, result);
     }
 }
