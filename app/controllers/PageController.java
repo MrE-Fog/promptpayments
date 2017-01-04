@@ -3,6 +3,7 @@ package controllers;
 import orchestrators.OrchestratorResult;
 import play.mvc.Call;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import play.twirl.api.Html;
 import scala.Option;
@@ -16,7 +17,10 @@ import scala.Option;
  */
 class PageController extends Controller {
 
-    protected <T> Result renderOrchestratorResult(OrchestratorResult<T> result, OrchestratorResultMapper<T> mapper) {
+    protected <T> Result applyOrchestratorResult(OrchestratorResult<T> result, OrchestratorResultMapper<T> mapper) {
+        if(result.auth() != null) {
+            response().setCookie(Http.Cookie.builder("auth", result.auth()).build());
+        }
         if (result.success()) {
             return mapper.map(result.get());
         } else {

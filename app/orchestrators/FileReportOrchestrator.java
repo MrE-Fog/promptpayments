@@ -1,10 +1,7 @@
 package orchestrators;
 
 import com.google.inject.Inject;
-import components.CompaniesHouseCommunicator;
-import components.GovUkNotifyEmailer;
-import components.PagedList;
-import components.ReportsRepository;
+import components.*;
 import models.*;
 import play.mvc.Http;
 import scala.Option;
@@ -35,15 +32,11 @@ public class FileReportOrchestrator {
         this.timeProvider = timeProvider;
     }
 
-    public OrchestratorResult<FilingData> tryMakeReportFilingModel(String token, String companiesHouseIdentifier) {
+    public OrchestratorResult<FilingData> tryMakeReportFilingModel(String companiesHouseIdentifier) {
         OrchestratorResult<CompanySummary> company = getCompanySummary(companiesHouseIdentifier);
         if (!company.success()) {
             return OrchestratorResult.fromFailure(company.message());
         }
-
-        //if (!reportsRepository.mayFileForCompany(token,companiesHouseIdentifier)) {
-        //    return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
-        //}
 
         ReportFilingModel rfm = ReportFilingModel.MakeEmptyModelForTarget(companiesHouseIdentifier);
 
@@ -75,20 +68,28 @@ public class FileReportOrchestrator {
             return OrchestratorResult.fromFailure(company.message());
         }
 
-        //if (!reportsRepository.mayFileForCompany(oAuthToken, model.getTargetCompanyCompaniesHouseIdentifier())) {
-        //    return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company");
-        //}
+        RefreshTokenAndValue<Boolean> authorized;
+        try {
+            authorized = companiesHouseCommunicator.isInScope(model.getTargetCompanyCompaniesHouseIdentifier(), oAuthToken);
+        } catch(IOException ignored) {
+            authorized = new RefreshTokenAndValue<>(oAuthToken, false);
+        }
+
+        if (!authorized.value) {
+            return OrchestratorResult.fromFailure("You are not authorised to submit a filing for this company", authorized.refreshToken);
+        }
 
         Calendar now = timeProvider.Now();
         ReportSummary summary = reportsRepository.tryFileReport(model, company.get(), now);
 
-        String emailAddress = sendConfirmation(oAuthToken, company.get(), summary, urlMapper.getUrlFromReportId(summary.Identifier));
+        RefreshTokenAndValue<String> emailAddress = sendConfirmation(authorized.refreshToken, company.get(), summary, urlMapper.getUrlFromReportId(summary.Identifier));
+
 
         return OrchestratorResult.fromSucccess(new FilingOutcome(
                 company.get(),
                 summary.Identifier,
-                emailAddress
-        ));
+                emailAddress != null ? emailAddress.value : null
+        ), emailAddress != null ? emailAddress.refreshToken : authorized.refreshToken);
     }
 
     public OrchestratorResult<PagedList<CompanySummaryWithAddress>> findRegisteredCompanies(String company, int page, int itemsPerPage) {
@@ -108,13 +109,12 @@ public class FileReportOrchestrator {
         }
     }
 
-    public OrchestratorResult<Http.Cookie> tryAuthorize(String code, String companiesHouseIdentifier) {
+    public OrchestratorResult<String> tryAuthorize(String code, String companiesHouseIdentifier) {
         try {
-            String authTokenCookieName = "auth";
             String authToken = companiesHouseCommunicator.verifyAuthCode(code, authorizedCallbackUri, companiesHouseIdentifier);
             if (authToken != null) {
                 //reportsRepository.linkAuthTokenToCompany(authToken, companiesHouseIdentifier);
-                return OrchestratorResult.fromSucccess(Http.Cookie.builder(authTokenCookieName, authToken).build());
+                return OrchestratorResult.fromSucccess(authToken, authToken);
             }
             return OrchestratorResult.fromFailure("Could not authenticate user");
 
@@ -175,20 +175,20 @@ public class FileReportOrchestrator {
     }
 
 
-    private String sendConfirmation(String auth, CompanySummary company, ReportSummary reportSummary, String url) {
-        String email = getUserEmail(auth);
-        if (email == null) {
+    private RefreshTokenAndValue<String> sendConfirmation(String auth, CompanySummary company, ReportSummary reportSummary, String url) {
+        RefreshTokenAndValue<String> email = getUserEmail(auth);
+        if (email == null || email.value == null) {
             return null;
         }
 
-        if(emailer.sendConfirmationEmail(email, company, reportSummary, url)) {
+        if(emailer.sendConfirmationEmail(email.value, company, reportSummary, url)) {
             return email;
         } else {
             return null;
         }
     }
 
-    private String getUserEmail(String auth) {
+    private RefreshTokenAndValue<String> getUserEmail(String auth) {
         try {
             return companiesHouseCommunicator.getEmailAddress(auth);
         } catch (IOException e) {

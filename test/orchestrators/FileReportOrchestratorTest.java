@@ -73,7 +73,7 @@ public class FileReportOrchestratorTest {
         //when(reportsRepository.mayFileForCompany("somestuff", "122")).thenReturn(true);
         when(communicator.getCompany("122")).thenReturn(companyModel.Info);
         
-        OrchestratorResult<FilingData> filingData = orchestrator.tryMakeReportFilingModel("somestuff", "122");
+        OrchestratorResult<FilingData> filingData = orchestrator.tryMakeReportFilingModel("122");
 
         verify(communicator, times(1)).getCompany("122");
 
@@ -88,7 +88,7 @@ public class FileReportOrchestratorTest {
     public void tryMakeReportFilingModel_nocompany() throws Exception {
         when(communicator.getCompany("122")).thenReturn(null);
         
-        OrchestratorResult<FilingData> filingData = orchestrator.tryMakeReportFilingModel("somestuff", "122");
+        OrchestratorResult<FilingData> filingData = orchestrator.tryMakeReportFilingModel("122");
 
         verify(communicator, times(1)).getCompany("122");
 
@@ -100,7 +100,7 @@ public class FileReportOrchestratorTest {
         when(communicator.getCompany("1234")).thenReturn(new CompanySummary("New corp", "1234"));
         //when(reportsRepository.mayFileForCompany("data", "1234")).thenReturn(true);
 
-        OrchestratorResult<FilingData> data = orchestrator.tryMakeReportFilingModel("data", "1234");
+        OrchestratorResult<FilingData> data = orchestrator.tryMakeReportFilingModel("1234");
         assertTrue(data.success());
         assertEquals("New corp", data.get().company.Name);
         assertEquals("1234", data.get().model.getTargetCompanyCompaniesHouseIdentifier());
@@ -147,7 +147,8 @@ public class FileReportOrchestratorTest {
 
     @Test
     public void tryFileReport() throws Exception {
-        when(communicator.getEmailAddress("somestuff")).thenReturn("foo@bar.com");
+        when(communicator.isInScope(any(), eq("somestuff"))).thenReturn(new RefreshTokenAndValue<>("somestuff2",true));
+        when(communicator.getEmailAddress("somestuff2")).thenReturn(new RefreshTokenAndValue<>("somestuff3","foo@bar.com"));
         when(emailer.sendConfirmationEmail(any(), any(), any(), any())).thenReturn(true);
         testReportFiling(companyModel.Info);
         verify(emailer, times(1)).sendConfirmationEmail(eq("foo@bar.com"), eq(companyModel.Info), any(), eq("42"));
@@ -157,14 +158,16 @@ public class FileReportOrchestratorTest {
     public void tryFileReport_newcompany() throws Exception {
         CompanySummary newCorp = new CompanySummary("new corp", "1234");
 
-        when(communicator.getEmailAddress("somestuff")).thenReturn("foo@bar.com");
+        when(communicator.isInScope(any(), eq("somestuff"))).thenReturn(new RefreshTokenAndValue<>("somestuff2",true));
+        when(communicator.getEmailAddress("somestuff2")).thenReturn(new RefreshTokenAndValue<>("somestuff3","foo@bar.com"));
         testReportFiling(newCorp);
         verify(emailer, times(1)).sendConfirmationEmail(eq("foo@bar.com"), eq(newCorp), any(), eq("42"));
     }
 
     @Test
     public void tryFileReport_emailfail1() throws Exception {
-        when(communicator.getEmailAddress("somestuff")).thenThrow(IOException.class);
+        when(communicator.isInScope(any(), eq("somestuff"))).thenReturn(new RefreshTokenAndValue<>("somestuff2",true));
+        when(communicator.getEmailAddress("somestuff2")).thenThrow(IOException.class);
         OrchestratorResult<FilingOutcome> result = testReportFiling(companyModel.Info);
 
         verify(emailer, times(0)).sendConfirmationEmail(any(),any(),any(),any());
@@ -175,7 +178,8 @@ public class FileReportOrchestratorTest {
 
     @Test
     public void tryFileReport_emailfail2() throws Exception {
-        when(communicator.getEmailAddress("somestuff")).thenReturn(null);
+        when(communicator.isInScope(any(), eq("somestuff"))).thenReturn(new RefreshTokenAndValue<>("somestuff2",true));
+        when(communicator.getEmailAddress("somestuff2")).thenReturn(null);
         OrchestratorResult<FilingOutcome> result = testReportFiling(companyModel.Info);
 
         verify(emailer, times(0)).sendConfirmationEmail(any(),any(),any(),any());
@@ -186,7 +190,8 @@ public class FileReportOrchestratorTest {
 
     @Test
     public void tryFileReport_sendfail() throws Exception {
-        when(communicator.getEmailAddress("somestuff")).thenReturn("foo@bar.com");
+        when(communicator.isInScope(any(), eq("somestuff"))).thenReturn(new RefreshTokenAndValue<>("somestuff2",true));
+        when(communicator.getEmailAddress("somestuff2")).thenReturn(new RefreshTokenAndValue<>("somestuff3", "foo@bar.com"));
         when(emailer.sendConfirmationEmail(any(),any(),any(),any())).thenReturn(false);
 
         OrchestratorResult<FilingOutcome> result = testReportFiling(companyModel.Info);
@@ -258,17 +263,17 @@ public class FileReportOrchestratorTest {
     @Test
     public void tryAuthorise_success() throws Exception {
         when(communicator.verifyAuthCode(eq("code"), any(), eq("123"))).thenReturn("expected-cookie");
-        OrchestratorResult<Http.Cookie> result = orchestrator.tryAuthorize("code", "123");
+        OrchestratorResult<String> result = orchestrator.tryAuthorize("code", "123");
         assertTrue(result.success());
-        assertEquals("expected-cookie", result.get().value());
+        assertEquals("expected-cookie", result.get());
     }
 
     @Test
     public void tryAuthorise_failure() throws Exception {
         when(communicator.verifyAuthCode(eq("code"), any(), eq("123"))).thenReturn(null);
         when(communicator.verifyAuthCode(eq("code"), any(), eq("456"))).thenThrow(IOException.class);
-        OrchestratorResult<Http.Cookie> result1 = orchestrator.tryAuthorize("code", "123");
-        OrchestratorResult<Http.Cookie> result2 = orchestrator.tryAuthorize("code", "456");
+        OrchestratorResult<String> result1 = orchestrator.tryAuthorize("code", "123");
+        OrchestratorResult<String> result2 = orchestrator.tryAuthorize("code", "456");
 
         assertFalse(result1.success());
         assertFalse(result2.success());

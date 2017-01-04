@@ -2,21 +2,32 @@ package orchestrators;
 
 public class OrchestratorResult<T> {
     private T Data;
+    private String OAuthToken;
     private String Message;
     private Boolean Success;
 
-    private OrchestratorResult(T data, String message, Boolean success) {
+    private OrchestratorResult(T data, String message, Boolean success, String oAuthToken) {
         Data = data;
         Message = message;
         Success = success;
+        OAuthToken = oAuthToken;
     }
 
     static <U> OrchestratorResult<U> fromSucccess(U data) {
-        return new OrchestratorResult<> (data, null, true);
+        return new OrchestratorResult<> (data, null, true, null);
     }
 
+    static <U> OrchestratorResult<U> fromSucccess(U data, String oAuthToken) {
+        return new OrchestratorResult<> (data, null, true, oAuthToken);
+    }
+
+
     static <U> OrchestratorResult<U> fromFailure(String message) {
-        return new OrchestratorResult<>(null, message, false);
+        return new OrchestratorResult<>(null, message, false, null);
+    }
+
+    static <U> OrchestratorResult<U> fromFailure(String message, String oAuthToken) {
+        return new OrchestratorResult<>(null, message, false, oAuthToken);
     }
 
     public Boolean success() {return Success;}
@@ -29,4 +40,8 @@ public class OrchestratorResult<T> {
     }
 
     public String message() {return Message; }
+
+    public String auth() {
+        return OAuthToken;
+    }
 }

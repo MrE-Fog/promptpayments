@@ -42,7 +42,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
                 "&state=%s",
                 urlEncode(clientId),
                 urlEncode(callbackUri),
-                urlEncode("http://ch.gov.uk/company/" + companiesHouseIdentifier),
+                urlEncode(getTargetScope(companiesHouseIdentifier)),
                 urlEncode(companiesHouseIdentifier));
     }
 
@@ -54,7 +54,8 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
         post.setHeader("Content-Type", "application/x-www-form-urlencoded");
         post.setHeader("Charset", "utf-8");
 
-        String targetScope = "http://ch.gov.uk/company/" + companiesHouseIdentifier;
+        String targetScope = getTargetScope(companiesHouseIdentifier);
+
         String body = String.format("client_id=%s&client_secret=%s&grant_type=authorization_code" +
                         "&code=%s" +
                         "&redirect_uri=%s" +
@@ -72,38 +73,68 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
 
         JsonNode json = httpWrapper.post(post);
 
-        if (!json.has("access_token")) {
+        if (!json.has("access_token") || !json.has("refresh_token")) {
             return null;
         }
 
         String access_token = json.get("access_token").asText();
+        String refresh_token = json.get("refresh_token").asText();
 
-        HttpPost verifyPost = new HttpPost("https://account.companieshouse.gov.uk/oauth2/verify");
-        verifyPost.setHeader("Authorization", "Bearer " + access_token);
-        verifyPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
-        verifyPost.setHeader("Charset", "utf-8");
-
-
-
-        JsonNode verifyJson = httpWrapper.get("https://account.companieshouse.gov.uk/oauth2/verify", "Bearer " + access_token);
-        if (!verifyJson.has("scope")) {
-            return null;
-        }
-
-        if (verifyJson.get("scope").asText().equals(targetScope)) {
-            return access_token;
+        if (doesOauthTokenHaveScope(companiesHouseIdentifier, access_token)) {
+            return refresh_token;
         } else {
             return null;
         }
     }
 
-    @Override
-    public String getEmailAddress(String token) throws IOException {
-        JsonNode parsed = httpWrapper.get("https://account.companieshouse.gov.uk/user/profile", "Bearer " + token);
-        if (!parsed.has("email")) {
-            return null;
+
+    private RefreshTokenAndValue<String> getOauthToken(String refreshToken) throws IOException {
+        HttpPost post = new HttpPost("https://account.companieshouse.gov.uk/oauth2/token");
+
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode((clientId+":"+clientSecret).getBytes()));
+        post.setHeader("Authorization", basicAuth);
+        post.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        post.setHeader("Charset", "utf-8");
+
+        String body = String.format("client_id=%s&client_secret=%s&grant_type=refresh_token" +
+                        "&refresh_token=%s",
+                urlEncode(clientId),
+                urlEncode(clientSecret),
+                urlEncode(refreshToken)
+        );
+
+        post.setEntity(new ByteArrayEntity(body.getBytes("UTF-8")));
+
+        JsonNode json = httpWrapper.post(post);
+
+        if (!json.has("access_token") && !json.has("refresh_token")) {
+            return new RefreshTokenAndValue<>(null,null);
         }
-        return parsed.get("email").asText();
+
+        return new RefreshTokenAndValue<>(json.get("refresh_token").asText(), json.get("access_token").asText());
+    }
+
+    @Override
+    public RefreshTokenAndValue<Boolean> isInScope(String companiesHouseIdentifier, String refreshToken) throws IOException {
+        RefreshTokenAndValue<String> oauthToken = getOauthToken(refreshToken);
+        return new RefreshTokenAndValue<>(oauthToken.refreshToken, doesOauthTokenHaveScope(companiesHouseIdentifier, oauthToken.value));
+    }
+
+    private boolean doesOauthTokenHaveScope(String companiesHouseIdentifier, String oAuthToken) throws IOException {
+        String targetScope = getTargetScope(companiesHouseIdentifier);
+        JsonNode verifyJson = httpWrapper.get("https://account.companieshouse.gov.uk/oauth2/verify", "Bearer " + oAuthToken);
+        return verifyJson.has("scope") && verifyJson.get("scope").asText().equals(targetScope);
+    }
+
+    private String getTargetScope(String companiesHouseIdentifier) {
+        return "http://ch.gov.uk/company/" + companiesHouseIdentifier;
+    }
+
+    @Override
+    public RefreshTokenAndValue<String> getEmailAddress(String refreshToken) throws IOException {
+        RefreshTokenAndValue<String> token = getOauthToken(refreshToken);
+        JsonNode parsed = httpWrapper.get("https://account.companieshouse.gov.uk/user/profile", "Bearer " + token.value);
+        return new RefreshTokenAndValue<>(token.refreshToken, parsed.has("email") ? parsed.get("email").asText() : null);
     }
 
     private static String urlEncode(String authCode) throws UnsupportedEncodingException {

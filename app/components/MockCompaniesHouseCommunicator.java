@@ -25,8 +25,13 @@ public class MockCompaniesHouseCommunicator implements CompaniesHouseCommunicato
     }
 
     @Override
-    public String getEmailAddress(String token) throws IOException {
-        return "daniel.rothig@digital.beis.gov.uk";
+    public RefreshTokenAndValue<Boolean> isInScope(String companiesHouseIdentifier, String oAuthToken) throws IOException {
+        return new RefreshTokenAndValue<>(oAuthToken, true);
+    }
+
+    @Override
+    public RefreshTokenAndValue<String> getEmailAddress(String token) throws IOException {
+        return new RefreshTokenAndValue<>(token, "daniel.rothig@digital.beis.gov.uk");
     }
 
     @Override

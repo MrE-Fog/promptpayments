@@ -45,9 +45,10 @@ public class ApiCompaniesHouseCommunicatorTest {
 
     @Test
     public void verifyAuthCode() throws Exception {
-        when(httpWrapper.post(any())).thenReturn(Json.parse("{\"access_token\": \"sometoken\"}"));
+        when(httpWrapper.post(any())).thenReturn(Json.parse("{\"access_token\": \"sometoken\", \"refresh_token\": \"somerefreshtoken\"}"));
+        when(httpWrapper.get(any(), any())).thenReturn(Json.parse("{\"scope\": \"http://ch.gov.uk/company/123\"}"));
         String sometoken = new ApiCompaniesHouseCommunicator(httpWrapper).verifyAuthCode("somecode", "http://example.com", "123");
-        assertEquals("sometoken", sometoken);
+        assertEquals("somerefreshtoken", sometoken);
     }
 
     @Test
@@ -59,16 +60,17 @@ public class ApiCompaniesHouseCommunicatorTest {
 
     @Test
     public void getEmailAddress() throws Exception {
-        when(httpWrapper.get(any(), eq("Bearer sometoken"))).thenReturn(Json.parse("{\"email\": \"foo@bar.com\"}"));
-        String emailAddress = new ApiCompaniesHouseCommunicator(httpWrapper).getEmailAddress("sometoken");
+        when(httpWrapper.post(any())).thenReturn(Json.parse("{\"access_token\": \"somenewtoken\", \"refresh_token\": \"somerefreshtoken\"}"));
+        when(httpWrapper.get(any(), eq("Bearer somenewtoken"))).thenReturn(Json.parse("{\"email\": \"foo@bar.com\"}"));
+        String emailAddress = new ApiCompaniesHouseCommunicator(httpWrapper).getEmailAddress("sometoken").value;
 
         assertEquals("foo@bar.com", emailAddress);
     }
 
     @Test
     public void getEmailAddress_fail() throws Exception {
-        when(httpWrapper.get(any(), eq("Bearer sometoken"))).thenReturn(Json.parse("{\"error\": \"computer says no\"}"));
-        String emailAddress = new ApiCompaniesHouseCommunicator(httpWrapper).getEmailAddress("sometoken");
+        when(httpWrapper.post(any())).thenReturn(Json.parse("{\"access_token\": \"somenewtoken\", \"refresh_token\": \"somerefreshtoken\"}"));when(httpWrapper.get(any(), eq("Bearer somenewtoken"))).thenReturn(Json.parse("{\"error\": \"computer says no\"}"));
+        String emailAddress = new ApiCompaniesHouseCommunicator(httpWrapper).getEmailAddress("sometoken").value;
 
         assertNull(emailAddress);
     }
@@ -161,7 +163,7 @@ public class ApiCompaniesHouseCommunicatorTest {
         );
 
         // STEP 9 - an additional test to check that the email address is correctly returned, thus coming full circle
-        String result = communicator.getEmailAddress(token);
+        String result = communicator.getEmailAddress(token).value;
 
         assertEquals(validUsername, result);
     }

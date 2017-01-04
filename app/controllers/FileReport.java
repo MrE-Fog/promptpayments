@@ -30,7 +30,7 @@ public class FileReport extends PageController {
 
     public Result startForCompany(String company) {
         OrchestratorResult<CompanyModel> companyModel = fileReportOrchestrator.getCompanyModel(company, 0, 0);
-        return renderOrchestratorResult(companyModel, x -> ok(page(start.render(x.Info))));
+        return applyOrchestratorResult(companyModel, x -> ok(page(start.render(x.Info))));
     }
 
     public Result signInInterstitial(String company) {
@@ -42,29 +42,26 @@ public class FileReport extends PageController {
             return redirect(fileReportOrchestrator.getAuthorizationUri(companiesHouseIdentifier));
         } else {
             OrchestratorResult<CompanyModel> companyModel = fileReportOrchestrator.getCompanyModel(companiesHouseIdentifier, 0, 0);
-            return renderOrchestratorResult(companyModel, m -> ok(page(companiesHouseOptions.render(m.Info))));
+            return applyOrchestratorResult(companyModel, m -> ok(page(companiesHouseOptions.render(m.Info))));
         }
     }
 
     public Result companiesHouseOptionsResult(String companiesHouseIdentifier) {
         OrchestratorResult<CompanyModel> company = fileReportOrchestrator.getCompanyModel(companiesHouseIdentifier, 0, 0);
-        return renderOrchestratorResult(company, c ->
+        return applyOrchestratorResult(company, c ->
                 ok(page(companiesHouseAccount.render(c.Info, getPostParameter("nextstep").equals("0")))));
     }
 
     public Result loginCallback(String state, String code) {
-        OrchestratorResult<Http.Cookie> orchestratorResult = fileReportOrchestrator.tryAuthorize(code, state);
-        return renderOrchestratorResult(orchestratorResult,
-        result -> {
-            response().setCookie(result);
-            return redirect(routes.FileReport.doFile(state));
-        });
+        OrchestratorResult<String> orchestratorResult = fileReportOrchestrator.tryAuthorize(code, state);
+        return applyOrchestratorResult(orchestratorResult,
+            x -> redirect(routes.FileReport.doFile(state)));
     }
 
     public Result doFile(String company) {
         String auth = request().cookie("auth").value();
-        OrchestratorResult<FilingData> orchestratorResult = fileReportOrchestrator.tryMakeReportFilingModel(auth, company);
-        return renderOrchestratorResult(orchestratorResult,
+        OrchestratorResult<FilingData> orchestratorResult = fileReportOrchestrator.tryMakeReportFilingModel(company);
+        return applyOrchestratorResult(orchestratorResult,
                 model -> ok(page(file.render(
                         reportForm.fill(model.model),
                         new AllOkReportFilingModelValidation(),
@@ -76,7 +73,7 @@ public class FileReport extends PageController {
 
     public Result reviewFiling(boolean needsConfirmationReminder) {
         OrchestratorResult<ValidatedFilingData> orchestratorResult = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
-        return renderOrchestratorResult(orchestratorResult, data -> data.validation.isValid()
+        return applyOrchestratorResult(orchestratorResult, data -> data.validation.isValid()
                 ? ok(page(review.render(reportForm.fill(data.model), data.company, data.date, needsConfirmationReminder)))
                 : ok(page(file.render(reportForm.fill(data.model), data.validation, data.company, data.date)))
         );
@@ -94,7 +91,7 @@ public class FileReport extends PageController {
 
     private Result editFiling() {
         OrchestratorResult<ValidatedFilingData> data = fileReportOrchestrator.tryValidateReportFilingModel(reportForm.bindFromRequest(request()).get());
-        return renderOrchestratorResult(data, d ->
+        return applyOrchestratorResult(data, d ->
                 ok(page(file.render(reportForm.fill(d.model), d.validation, d.company, d.date))));
     }
 
@@ -104,7 +101,7 @@ public class FileReport extends PageController {
 
         OrchestratorResult<FilingOutcome> outcome = fileReportOrchestrator.tryFileReport(auth, model, getReportUrlMapper(model));
 
-        return renderOrchestratorResult(outcome, d ->
+        return applyOrchestratorResult(outcome, d ->
                 ok(page(filingSuccess.render(d.company.CompaniesHouseIdentifier, d.reportId, d.confirmationEmailRecipient))));
     }
 
