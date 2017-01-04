@@ -8,6 +8,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import play.libs.Json;
 
@@ -186,7 +187,7 @@ class ApiCompaniesHouseCommunicator implements CompaniesHouseCommunicator {
 
 class HttpWrapper {
     public JsonNode post(HttpPost post) throws IOException {
-        HttpResponse response = HttpClients.createDefault().execute(post);
+        HttpResponse response = new DefaultHttpClient().execute(post);
         try {
             return Json.parse(response.getEntity().getContent());
         } catch (Exception e) {
@@ -197,7 +198,7 @@ class HttpWrapper {
     public JsonNode get(String url, String authorization) throws IOException {
         HttpGet request = new HttpGet(url);
         if (authorization != null) request.setHeader("Authorization", authorization);
-        HttpResponse response = HttpClients.createDefault().execute(request);
+        HttpResponse response = new DefaultHttpClient().execute(request);
         try {
             return Json.parse(response.getEntity().getContent());
         } catch (Exception e) {
