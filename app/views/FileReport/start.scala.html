@@ -7,17 +7,12 @@
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">Publish a report for @company.Name</h1>
     <p class="bold-medium">Company number: @company.CompaniesHouseIdentifier</p>
-    <p class="lede">Large businesses must publish payment reports</p>
     <div class="notice">
         <i class="icon icon-important">
             <span class="visually-hidden">Warning</span>
         </i>
         <strong>
-            You could be fined if:
-            <ul class="list list-bullet">
-                <li>you don’t publish your payment report by the deadline</li>
-                <li>your report is false or misleading</li>
-            </ul>
+            You could be fined if you publish a false or misleading report.
         </strong>
     </div>
     <a href="@routes.FileReport.signInInterstitial(company.CompaniesHouseIdentifier)" class="button button-start">File a payment report</a>
@@ -25,8 +20,7 @@
     <h2 class="heading-medium">Before you start</h2>
 	<p>You need to:</p>
     <ul class="list list-bullet">
-        <li>check your business counts as a <a href="@routes.Home.ifGuide()">large business</a>, and find out <a href="@routes.Home.howGuide(2)">what you need to report</a></li>
-        <li>register an <a href="https://beta.companieshouse.gov.uk/signin">account with Companies House</a> &ndash; you’ll need to make sure you’re authorised to file reports for your business.</li>
-        <li>prepare your report data in advance</li>
+        <li>have an online <a rel="exteral" href="https://beta.companieshouse.gov.uk/signin">account with Companies House</a> and an authentication code to publish reports for your business. This is the same code you’d use to file your annual accounts online.</li>
+        <li><a href="@routes.Questionnaire.calculator()">prepare your report data</a> in advance</li>
     </ul>
 </div>

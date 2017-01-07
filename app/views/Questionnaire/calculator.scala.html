@@ -5,14 +5,16 @@
     </ol>
 </div>
 <div class="scannable-wrapper">
-    <h1 class="heading-xlarge">Find out if, how and when your business needs to publish reports</h1>
+    <h1 class="heading-xlarge">Find out how to report</h1>
     <h3 class="heading-medium">
-        Consider the dates of your business's financial year
+        Enter the start and end dates of your financial year
     </h3>
-    <p class="form-hint">This allows us to work out your deadlines for publishing reports</p>
+    <p class="form-hint">This will tell you your next reporting periods and your deadlines for reporting.</p>
     <form method="GET" action="">
         @for(q <- model.questions) {
-        <input type="hidden" name="@q.id" value="@q.getAnswer()">
+            @if(q.hasAnswer()) {
+                <input type="hidden" name="@q.id" value="@q.getAnswer()">
+            }
         }
         <fieldset class='@(!calculator.isValid() match {case true => "error" case false => ""})'>
             @if(!calculator.isValid()) {

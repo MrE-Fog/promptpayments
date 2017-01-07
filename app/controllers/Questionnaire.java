@@ -19,7 +19,7 @@ public class Questionnaire extends PageController {
         QuestionnaireModel model = QuestionnaireModel.withAnswers(request().queryString());
         if (model.getAnswer() != null) {
             return model.getAnswer().shouldFile
-                ? redirect(withCurrentQuery(routes.Questionnaire.calculator()))
+                ? redirect(withCurrentQuery(routes.Questionnaire.qualified()))
                 : redirect(withCurrentQuery(routes.Questionnaire.disqualified()));
         } else {
             return ok(page(question.render(model)));
@@ -46,6 +46,12 @@ public class Questionnaire extends PageController {
     public Result disqualified() {
         QuestionnaireModel.Answer answer = QuestionnaireModel.withAnswers(request().queryString()).getAnswer();
         return ok(page(disqualified.render(answer)));
+    }
+
+    public Result qualified() {
+        QuestionnaireModel questions = QuestionnaireModel.withAnswers(request().queryString());
+        return ok(page(qualified.render(questions.getAnswer(), questions)));
+
     }
 
     public Result answer() {

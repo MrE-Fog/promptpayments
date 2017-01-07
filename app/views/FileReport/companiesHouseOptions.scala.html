@@ -6,22 +6,22 @@
 </div>
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">Publish a report for @company.Name</h1>
-    <p class="lede">Since you do not have a Companies House online account, you have two options.</p>
+    <p class="lede">If you don’t have a Companies House authentication code, you have two options.</p>
     <h3 class="heading-medium">Select an option</h3>
     <form action="@routes.FileReport.companiesHouseOptionsResult(company.CompaniesHouseIdentifier)" method="POST">
         <fieldset class="form-group">
             <label class="block-label" for="nextstep_0">
                 <input type="radio" name="nextstep" id="nextstep_0" value="0">
-                <span class="bold-small">Find someone in your business who has a Companies House account and ask them to publish the report</span>
+                <span class="bold-small">Get a colleague who has an authentication code to publish the report</span>
                 <br>
-                <span>This kind of account is normally used by administrative staff to file Annual Reports with Companies House.</span>
+                <span>This kind of account is normally used to file Annual Reports with Companies House.</span>
             </label>
 
             <label class="block-label" for="nextstep_1">
                 <input type="radio" name="nextstep" id="nextstep_1" value="1">
-                <span class="bold-small">Register a new account with Companies House</span>
+                <span class="bold-small">Request a new authentication code with Companies House</span>
                 <br>
-                <span>This involves a paper letter being sent to your company's registered address. It can take weeks to set up.</span>
+                <span>Once you’ve registered, they’ll post a letter to your business's registered office with a special code. This can take a few weeks.</span>
             </label>
         </fieldset>
         <input type="submit" class="button" value="Continue">

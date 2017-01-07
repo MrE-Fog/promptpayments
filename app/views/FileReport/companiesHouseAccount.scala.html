@@ -7,19 +7,25 @@
 <div class="scannable-wrapper">
     <h1 class="heading-xlarge">Publish a report for @company.Name</h1>
     @if(useDelegate) {
-        <h3 class="heading-medium">How to delegate the publishing activity</h3>
+        <p class="lede">If you want a colleague who has a Companies House authentication code to publish the report, follow these steps.</p>
         <ol class="list list-number">
-            <li><span class="bold-small">Find the relevant person in your organisation who has a Companies House account.</span> This kind of account is normally used by administrative staff to file Annual Reports with Companies House.</li>
-            <li><span class="bold-small">Provide them with the report data</span> that has been signed-off by the board of directors</li>
-            <li><span class="bold-small">Tell them to go to this website</span> and follow the steps to <a href="@routes.FileReport.startForCompany(company.CompaniesHouseIdentifier)">Publish a report</a></li>
+            <li>Give them the report data, approved by a director, or a designated member if the business is a Limited Liability Partnership.</li>
+            <li>Make sure you also give them the deadline to publish the report.</li>
+            <li>They will need to use their Companies House authentication code to <a href="@routes.FileReport.startForCompany(company.CompaniesHouseIdentifier)">publish the report</a>.</li>
         </ol>
     } else {
-        <h3 class="heading-medium">How to create a Companies House Account</h3>
-        <ul class="list list-bullet">
-            <li>Fill in the online registration form.</li>
-            <li>Companies House will post a letter to your business address to verify your identity - this will take a few days.</li>
-            <li>You can then sign in to file your report.</li>
+        <p class="lede">You need a Companies House account and authentication code before you can publish your payment report. To request an authentication code from Companies House:</p>
+        <ul class="list list-number">
+            <li>Sign in to your Companies House online account. If you don't have one, you can register online.</li>
+            <li>When asked to enter your authentication code, click <span class="bold-small">Request an authentication code</span></li>
         </ul>
-        <a class="button button-start" href="https://beta.companieshouse.gov.uk/signin">Apply for a Companies House account</a>
+        <p>
+            Companies House will post a letter to your business address to verify your identity - this will take a few days. You can then return to file your report.
+        </p>
+
+        <form method="post" action="@routes.FileReport.login(company.CompaniesHouseIdentifier)">
+            <input type="hidden" name="account" value="1">
+            <input type="submit" class="button button-start" value="Apply for an authentication code">
+        </form>
     }
 </div>

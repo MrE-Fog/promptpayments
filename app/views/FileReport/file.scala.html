@@ -14,8 +14,10 @@
     <i class="icon icon-important">
         <span class="visually-hidden">Warning</span>
     </i>
-    <strong><a href="@routes.Home.howGuide(0)">You should prepare</a> before filling in this form.</strong>
+    <strong><a href="@routes.Questionnaire.calculator()">You should prepare</a> before filling in this form.</strong>
 </div>
+
+@shared._coverageInformation()
 
 @if(!validation.isValid()) {
     <div class="error-summary" role="group" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -42,7 +44,6 @@
     <fieldset class="form-group @validation.validateStartDate().cssClass()">
         <label class="form-label">
             <span class="bold-medium">Start date of reporting period</span>
-            <span class="form-hint">This is the first day of the financial year in which you are required to report. Your next reporting period starts straight after the end of this reporting period.</span>
             <span class="error-message">@validation.validateStartDate().errorMessage()</span>
         </label>
         @_dateinput("StartDate_", model.get().getStartDate_day(), model.get().getStartDate_month(), model.get().getStartDate_year())
@@ -50,14 +51,13 @@
     <fieldset class="form-group @validation.validateEndDate().cssClass()">
         <label class="form-label">
             <span class="bold-medium">End date of reporting period </span>
-            <span class="form-hint">For your first report of the year, this will be 6 months from the start date, unless your financial year runs for less than 9 months. For your second report, this will be the final day of your financial year.</span>
             <span class="error-message">@validation.validateEndDate().errorMessage()</span>
         </label>
         @_dateinput("EndDate_", model.get().getEndDate_day(), model.get().getEndDate_month(), model.get().getEndDate_year())
     </fieldset>
 
     <h2 class="heading-large">Payment statistics</h2>
-    <p>Numbers in this section must be whole numbers</p>
+    <p>Round up or down to the nearest whole number</p>
     <fieldset class="form-group @validation.validateAverageTimeToPay().cssClass()">
         <label class="form-label" for="RecordOne">
             <span class="bold-medium">Average time to pay in days</span>
@@ -108,7 +108,6 @@
     <fieldset class="form-group @validation.validatePaymentTerms().cssClass()">
         <label class="form-label" for="RecordSix">
             <span class="bold-medium">Describe your standard payment terms, including your standard payment period</span>
-            <span class="form-hint">You can include a link the relevant page on your website.</span>
             <span class="error-message">@validation.validatePaymentTerms().errorMessage()</span>
         </label>
         <textarea class="form-control" id="RecordSix" name="PaymentTerms">@model.get().getPaymentTerms()</textarea>

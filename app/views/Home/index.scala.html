@@ -3,17 +3,24 @@
         @shared._name()
     </h1>
     <p class="lede">
-        From 2017 onwards, large businesses are required to publish information about their payment terms and how well they meet their own targets for payment. Use this service to read or publish these reports.
+        Large businesses must publish information about their payment terms and how they keep to them.
     </p>
 </div>
-<h3 class="heading-medium">Publish reports</h3>
-<ul class="list">
-    <li><a href="@routes.Questionnaire.start()">Get prepared</a>: find out if, when and how your business needs to publish reports</li>
-    <li><a href="@routes.SearchReport.search(true)">Publish a report</a>: once your report data is fully prepared</li>
-</ul>
-<h3 class="heading-medium">Read reports</h3>
-<ul class="list">
-    <li><a href="@routes.SearchReport.search(false)">Search for a report</a>: enter a business name or company number</li>
-</ul>
-
+<div class="grid-row">
+    <div class="column-half">
+        <h3 class="heading-medium">Search for a report</h3>
+        <p><a href="@routes.SearchReport.search(false)">Search for a report</a> to learn about the payment practices of a large business.</p>
+    </div>
+    <div class="column-half">
+        <h3 class="heading-medium">Publish reports</h3>
+        <p>
+            You’ll need to <a href="@routes.Questionnaire.start()">find out if you need to publish a report</a>.
+        </p>
+        <p>If you do, <a href="@routes.Questionnaire.calculator()">determine the dates</a> your reports must cover and your deadlines to publish them. You’ll also get a customised checklist of the data you’ll need to assemble.
+        </p>
+        <p>
+            Once you’ve prepared all your report data, you must <a href="@routes.SearchReport.search(true)">publish your report</a>. All reports are published online, where anyone will be able to read them.
+        </p>
+    </div>
+</div>
 
