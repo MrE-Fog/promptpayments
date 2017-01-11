@@ -35,17 +35,29 @@ public class QuestionnaireModel {
 
         qs.add(0, Question.yesNo("q0", "Is your business a company or Limited Liability Partnership incorporated in the UK?", null));
 
-        //"normal" questions
-        qs.add(1, Question.yesNo("q1","Did your business have a turnover of more than £36 million on its last 2 balance sheet dates?", businessOnlyHint));
-        qs.add(2, Question.yesNo("q2","Did your business have a balance sheet total greater than £18 million at its last 2 financial year ends?", businessOnlyHint));
-        qs.add(3, Question.yesNo("q3","Did your business have an average of at least 250 employees during both of its last 2 financial years?", businessOnlyHint));
+        qs.add(1, new Question("q1", "In which year of operations is your business, currently?", null, Arrays.asList("First year", "Second year", "Third year or later"), false));
 
-        qs.add(4, Question.yesNo("q4", "Does your business have subsidiaries?", null));
+        //"normal" questions for second year
+        qs.add(2, Question.yesNo("q2","Did your business have a turnover of more than £36 million on its last sheet dates?", businessOnlyHint));
+        qs.add(3, Question.yesNo("q3","Did your business have a balance sheet total greater than £18 million at its last financial year end?", businessOnlyHint));
+        qs.add(4, Question.yesNo("q4","Did your business have an average of at least 250 employees during its last financial year?", businessOnlyHint));
+
+        //"normal" questions
+        qs.add(5, Question.yesNo("q5","Did your business have a turnover of more than £36 million on its last 2 balance sheet dates?", businessOnlyHint));
+        qs.add(6, Question.yesNo("q6","Did your business have a balance sheet total greater than £18 million at its last 2 financial year ends?", businessOnlyHint));
+        qs.add(7, Question.yesNo("q7","Did your business have an average of at least 250 employees during both of its last 2 financial years?", businessOnlyHint));
+
+        qs.add(8, Question.yesNo("q8", "Does your business have subsidiaries?", null));
+
+        //"subsidiaries" questions for second year
+        qs.add(9, Question.yesNo("q9","Did you and your subsidiaries have an total turnover of at least £36 million net or £43.2 million gross on their last balance sheet date?", netGrossHint));
+        qs.add(10, Question.yesNo("q10","Did you and your subsidiaries have a combined balance sheet total of £18 million net or £21.6 million gross on their last balance sheet date?", netGrossHint));
+        qs.add(11, Question.yesNo("q11","Did the you and your subsidiaries have a combined workforce of at least 250 on the last 2 balance sheet date?", null));
 
         //"subsidiaries" questions
-        qs.add(5, Question.yesNo("q5","Did you and your subsidiaries have an total turnover of at least £36 million net or £43.2 million gross on both of the last 2 balance sheet dates?", netGrossHint));
-        qs.add(6, Question.yesNo("q6","Did you and your subsidiaries have a combined balance sheet total of £18 million net or £21.6 million gross on both of the last 2 balance sheet dates?", netGrossHint));
-        qs.add(7, Question.yesNo("q7","Did the you and your subsidiaries have a combined workforce of at least 250 on both of the last 2 balance sheet dates?", null));
+        qs.add(12, Question.yesNo("q12","Did you and your subsidiaries have an total turnover of at least £36 million net or £43.2 million gross on both of the last 2 balance sheet dates?", netGrossHint));
+        qs.add(13, Question.yesNo("q13","Did you and your subsidiaries have a combined balance sheet total of £18 million net or £21.6 million gross on both of the last 2 balance sheet dates?", netGrossHint));
+        qs.add(14, Question.yesNo("q14","Did the you and your subsidiaries have a combined workforce of at least 250 on both of the last 2 balance sheet dates?", null));
 
         return new QuestionnaireModel(qs);
     }
@@ -55,14 +67,24 @@ public class QuestionnaireModel {
         int q1 = questions.get(0).answer;
         if(q1 == 1) return Answer.no(null);
 
-        long companyNos = questions.subList(1,4).stream().filter(x -> x.answer == 1).count();
-        if (companyNos >= 2) return Answer.no("Your business isn’t large enough to have to report. You should check once a year to see if this has changed.");
+        int q2 = questions.get(1).answer;
+        if (q2 == 0) return Answer.no("Your business doesn't have to report in its first year of operations. You should check at the beginning of your second financial year to see if you have to report.");
 
-        long parentCompanyNos = questions.subList(5,8).stream().filter(x -> x.answer == 1).count();
-        if (parentCompanyNos >= 2) return Answer.no("Your group isn’t large enough to have to report. You should check once a year to see if this has changed.");
+        long companyNos = Math.max(questions.subList(2,5).stream().filter(x -> x.answer == 1).count(),
+                                   questions.subList(5,8).stream().filter(x -> x.answer == 1).count());
 
-        long companyYesses = questions.subList(1,4).stream().filter(x -> x.answer == 0).count();
-        long parentCompanyYesses = questions.subList(5,8).stream().filter(x -> x.answer == 0).count();
+        if (companyNos >= 2) return Answer.no("Your business isn’t large enough to have to report. You should check at the beginning of every financial year to see if this has changed.");
+
+        long parentCompanyNos = Math.max(questions.subList(9,12).stream().filter(x -> x.answer == 1).count(),
+                                         questions.subList(12,15).stream().filter(x -> x.answer == 1).count());
+
+        if (parentCompanyNos >= 2) return Answer.no("Your group isn’t large enough to have to report. You should check at the beginning of every financial year to see if this has changed.");
+
+        long companyYesses = Math.max(questions.subList(2,5).stream().filter(x -> x.answer == 0).count(),
+                                      questions.subList(5,8).stream().filter(x -> x.answer == 0).count());
+
+        long parentCompanyYesses = Math.max(questions.subList(9,12).stream().filter(x -> x.answer == 0).count(),
+                                            questions.subList(12,15).stream().filter(x -> x.answer == 0).count());
 
         switch (questions.get(4).answer) {
             case  0: return parentCompanyYesses >= 2 && companyYesses >= 2 ? Answer.yes(true) : null;
@@ -76,8 +98,17 @@ public class QuestionnaireModel {
 
         for (int i = 0; i < questions.size(); i++) {
             Question question = questions.get(i);
-            if (i == 3 && questions.get(2).answer == 0 && questions.get(1).answer == 0) continue;
+
+            if (i == 2 && questions.get(1).answer == 2) {i=4; continue;}
+            if (i == 4 && questions.get(3).answer == 0 && questions.get(2).answer == 0) continue;
+            if (i == 5 && questions.get(1).answer == 1) {i=7; continue;}
             if (i == 7 && questions.get(6).answer == 0 && questions.get(5).answer == 0) continue;
+
+            if (i == 9  && questions.get(1).answer == 2) {i=11; continue;}
+            if (i == 11 && questions.get(10).answer == 0 && questions.get(9).answer == 0) continue;
+            if (i == 12 && questions.get(1).answer == 1) {i=14; continue;}
+            if (i == 14 && questions.get(13).answer == 0 && questions.get(12).answer == 0) continue;
+
             if (!question.hasAnswer()) return question;
         }
 
