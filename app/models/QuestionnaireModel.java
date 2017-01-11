@@ -38,7 +38,7 @@ public class QuestionnaireModel {
         qs.add(1, new Question("q1", "In which year of operations is your business, currently?", null, Arrays.asList("First year", "Second year", "Third year or later"), false));
 
         //"normal" questions for second year
-        qs.add(2, Question.yesNo("q2","Did your business have a turnover of more than £36 million on its last sheet dates?", businessOnlyHint));
+        qs.add(2, Question.yesNo("q2","Did your business have a turnover of more than £36 million on its last balance sheet date?", businessOnlyHint));
         qs.add(3, Question.yesNo("q3","Did your business have a balance sheet total greater than £18 million at its last financial year end?", businessOnlyHint));
         qs.add(4, Question.yesNo("q4","Did your business have an average of at least 250 employees during its last financial year?", businessOnlyHint));
 
@@ -50,9 +50,9 @@ public class QuestionnaireModel {
         qs.add(8, Question.yesNo("q8", "Does your business have subsidiaries?", null));
 
         //"subsidiaries" questions for second year
-        qs.add(9, Question.yesNo("q9","Did you and your subsidiaries have an total turnover of at least £36 million net or £43.2 million gross on their last balance sheet date?", netGrossHint));
-        qs.add(10, Question.yesNo("q10","Did you and your subsidiaries have a combined balance sheet total of £18 million net or £21.6 million gross on their last balance sheet date?", netGrossHint));
-        qs.add(11, Question.yesNo("q11","Did the you and your subsidiaries have a combined workforce of at least 250 on the last 2 balance sheet date?", null));
+        qs.add(9, Question.yesNo("q9","Did you and your subsidiaries have an total turnover of at least £36 million net or £43.2 million gross on the last balance sheet date?", netGrossHint));
+        qs.add(10, Question.yesNo("q10","Did you and your subsidiaries have a combined balance sheet total of £18 million net or £21.6 million gross on the last balance sheet date?", netGrossHint));
+        qs.add(11, Question.yesNo("q11","Did the you and your subsidiaries have a combined workforce of at least 250 on the last balance sheet date?", null));
 
         //"subsidiaries" questions
         qs.add(12, Question.yesNo("q12","Did you and your subsidiaries have an total turnover of at least £36 million net or £43.2 million gross on both of the last 2 balance sheet dates?", netGrossHint));
@@ -103,6 +103,8 @@ public class QuestionnaireModel {
             if (i == 4 && questions.get(3).answer == 0 && questions.get(2).answer == 0) continue;
             if (i == 5 && questions.get(1).answer == 1) {i=7; continue;}
             if (i == 7 && questions.get(6).answer == 0 && questions.get(5).answer == 0) continue;
+
+            if (i == 8 && questions.get(8).answer == 1) {i=14; continue;}
 
             if (i == 9  && questions.get(1).answer == 2) {i=11; continue;}
             if (i == 11 && questions.get(10).answer == 0 && questions.get(9).answer == 0) continue;
