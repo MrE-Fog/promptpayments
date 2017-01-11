@@ -86,7 +86,7 @@ public class QuestionnaireModel {
         long parentCompanyYesses = Math.max(questions.subList(9,12).stream().filter(x -> x.answer == 0).count(),
                                             questions.subList(12,15).stream().filter(x -> x.answer == 0).count());
 
-        switch (questions.get(4).answer) {
+        switch (questions.get(8).answer) {
             case  0: return parentCompanyYesses >= 2 && companyYesses >= 2 ? Answer.yes(true) : null;
             case  1: return companyYesses >= 2 ? Answer.yes(false) : null;
             default: return null;
