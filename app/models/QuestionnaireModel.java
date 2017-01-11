@@ -31,12 +31,14 @@ public class QuestionnaireModel {
         List<Question> qs = new ArrayList<>();
         String netGrossHint = "'Net' here means after any set-offs and other adjustments to exclude group transactions. 'Gross' means without those set-offs and adjustments.";
 
+        String businessOnlyHint = "If your business is part of a group, your answers must be for your business on its own. Every business within the group will need to do this individually";
+
         qs.add(0, Question.yesNo("q0", "Is your business a company or Limited Liability Partnership incorporated in the UK?", null));
 
         //"normal" questions
-        qs.add(1, Question.yesNo("q1","Did your business have a turnover of more than £36 million on its last 2 balance sheet dates?", "Don’t include turnover from your subsidiaries or parent company"));
-        qs.add(2, Question.yesNo("q2","Did your business have more than £18 million balance sheet total at its last 2 financial year ends?", "Don’t include the balance sheet totals of your subsidiaries or parent company"));
-        qs.add(3, Question.yesNo("q3","Did your business have an average of at least 250 employees during both of its last 2 financial years?", "Don’t include employees of your subsidiaries or parent company"));
+        qs.add(1, Question.yesNo("q1","Did your business have a turnover of more than £36 million on its last 2 balance sheet dates?", businessOnlyHint));
+        qs.add(2, Question.yesNo("q2","Did your business have a balance sheet total greater than £18 million at its last 2 financial year ends?", businessOnlyHint));
+        qs.add(3, Question.yesNo("q3","Did your business have an average of at least 250 employees during both of its last 2 financial years?", businessOnlyHint));
 
         qs.add(4, Question.yesNo("q4", "Does your business have subsidiaries?", null));
 
