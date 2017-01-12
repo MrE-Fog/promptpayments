@@ -13,12 +13,12 @@
         Search for a report
     }
 </h1>
-<p class="lede">Enter business name or company number</p>
+<p class="lede">Enter company number or business name</p>
 @shared._search(intentToFile, searchTerm)
 
 @if(results.isEmpty() && searchTerm != "") {
     <div class="scannable-wrapper">
-        <p class="bold-medium">We didn’t find any businesses with that name or company number.</p>
+        <p class="bold-medium">We didn’t find any businesses with that company number or name.</p>
         <p>Please try searching again using different search terms.</p>
     </div>
 }
