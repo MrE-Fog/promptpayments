@@ -5,7 +5,7 @@ version := "1.0-SNAPSHOT"
 resolvers += "GOV.UK Notify" at "https://dl.bintray.com/gov-uk-notify/maven/"
 
 libraryDependencies ++= Seq(
-  "redis.clients" % "jedis" % "2.8.1",
+//  "redis.clients" % "jedis" % "2.8.1",
   javaWs,
   filters,
   "org.assertj" % "assertj-core" % "3.4.1",
