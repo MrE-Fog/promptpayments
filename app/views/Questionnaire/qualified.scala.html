@@ -14,9 +14,9 @@
     </p>
     <ul class="list list-bullet">
         @if(m.questions.get(0).getAnswer() == 0) { <li>is a company or LLP incorporated in the UK</li> }
-        @if(m.questions.get(1).getAnswer() == 0) { <li>had a turnover of more than £36 million on its last 2 balance sheet dates</li> }
-        @if(m.questions.get(2).getAnswer() == 0) { <li>had more than £18 million balance sheet total at its last 2 financial year ends</li> }
-        @if(m.questions.get(3).getAnswer() == 0) { <li>had an average of at least 250 employees during both of its last 2 financial years</li> }
+        @if(m.questions.get(2).getAnswer() == 0 || m.questions.get(5).getAnswer() == 0) { <li>had a turnover of more than £36 million on its last 2 balance sheet dates</li> }
+        @if(m.questions.get(3).getAnswer() == 0 || m.questions.get(6).getAnswer() == 0) { <li>had more than £18 million balance sheet total at its last 2 financial year ends</li> }
+        @if(m.questions.get(4).getAnswer() == 0 || m.questions.get(7).getAnswer() == 0) { <li>had an average of at least 250 employees during both of its last 2 financial years</li> }
     </ul>
 
     @if(m.questions.get(4).getAnswer() == 0) {
@@ -24,9 +24,9 @@
             You also stated that your business has subsidiaries and:
         </p>
         <ul class="list list-bullet">
-            @if(m.questions.get(5).getAnswer() == 0) { <li>had an total turnover of at least £36 million net or £43.2 million gross</li> }
-            @if(m.questions.get(6).getAnswer() == 0) { <li>had a combined balance sheet total of £18 million net or £21.6 million gross</li> }
-            @if(m.questions.get(7).getAnswer() == 0) { <li>had a combined workforce of at least 250</li> }
+            @if(m.questions.get(9).getAnswer() == 0 || m.questions.get(12).getAnswer() == 0) { <li>had an total turnover of at least £36 million net or £43.2 million gross</li> }
+            @if(m.questions.get(10).getAnswer() == 0 || m.questions.get(13).getAnswer() == 0) { <li>had a combined balance sheet total of £18 million net or £21.6 million gross</li> }
+            @if(m.questions.get(11).getAnswer() == 0 || m.questions.get(14).getAnswer() == 0) { <li>had a combined workforce of at least 250</li> }
         </ul>
         <p>
             on both of the last 2 balance sheet dates.
