@@ -64,7 +64,7 @@
             <span class="form-hint">Out all of the payments you have made in the reporting period, the average time it took to pay.</span>
             <span class="error-message">@validation.validateAverageTimeToPay().errorMessage()</span>
         </label>
-        <input class="form-control" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPay()"><span class="number-unit">days</span>
+        <input class="form-control form-control-number-wide" type="text" id="RecordOne" name="AverageTimeToPay" value="@model.get().getAverageTimeToPay()"><span class="number-unit">days</span>
     </fieldset>
     <fieldset class="form-group @validation.validatePercentInvoicesPaidBeyondAgreedTerms().cssClass()">
         <label class="form-label" for="RecordTwo">
@@ -72,7 +72,7 @@
             <span class="form-hint">The percentage of invoices you failed to pay under the terms of your supplier contracts. This relates to the number of invoices, not their value.</span>
             <span class="error-message">@validation.validatePercentInvoicesPaidBeyondAgreedTerms().errorMessage()</span>
         </label>
-        <input class="form-control" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTerms()"><span class="number-unit">%</span>
+        <input class="form-control form-control-number" type="text" id="RecordTwo" name="PercentInvoicesPaidBeyondAgreedTerms" value="@model.get().getPercentInvoicesPaidBeyondAgreedTerms()"><span class="number-unit">%</span>
     </fieldset>
 
     <div class="form-group @validation.validateTimePercentages().cssClass()" style="margin-bottom:15px;">
@@ -86,21 +86,21 @@
                 <span>A) Percentage of invoices paid within 30 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin30Days().errorMessage()</span>
             </label>
-            <input class="form-control" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30Days()"><span class="number-unit">%</span>
+            <input class="form-control form-control-number" type="text" id="RecordThree" name="PercentInvoicesWithin30Days" value="@model.get().getPercentInvoicesWithin30Days()"><span class="number-unit">%</span>
         </fieldset>
         <fieldset class="form-group @validation.validatePercentInvoicesWithin60Days().cssClass()">
             <label class="form-label" for="RecordFour">
                 <span>B) Percentage of invoices paid between 31 and 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesWithin60Days().errorMessage()</span>
             </label>
-            <input class="form-control" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60Days()"><span class="number-unit">%</span>
+            <input class="form-control form-control-number" type="text" id="RecordFour" name="PercentInvoicesWithin60Days" value="@model.get().getPercentInvoicesWithin60Days()"><span class="number-unit">%</span>
         </fieldset>
         <fieldset class="form-group @validation.validatePercentInvoicesBeyond60Days().cssClass()" style="margin-bottom:15px;">
             <label class="form-label" for="RecordFive">
                 <span>C) Percentage of invoices paid later than 60 days</span>
                 <span class="error-message">@validation.validatePercentInvoicesBeyond60Days().errorMessage()</span>
             </label>
-            <input class="form-control" type="text" id="RecordFive" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60Days()"><span class="number-unit">%</span>
+            <input class="form-control form-control-number" type="text" id="RecordFive" name="PercentInvoicesBeyond60Days" value="@model.get().getPercentInvoicesBeyond60Days()"><span class="number-unit">%</span>
         </fieldset>
     </div>
 
@@ -269,7 +269,7 @@
     <div class="panel" id="show-if-payment-codes">
         <fieldset class="form-group @validation.validatePaymentCodes().cssClass()">
             <label class="form-label" for="PaymentCodes">
-                <span class="bold-medium">If so, enter the name of the code</span>
+                <span class="bold-medium">If so, enter the name of the code of practice</span>
                 <span class="error-message">@validation.validatePaymentCodes().errorMessage()</span>
             </label>
             <textarea class="form-control" id="PaymentCodes" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
