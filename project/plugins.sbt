@@ -1,3 +1,5 @@
+// coursier to speedup downloading dependencies
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15")
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.1")
 addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.2")
