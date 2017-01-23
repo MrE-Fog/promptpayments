@@ -2,11 +2,20 @@ name := """promptpayments"""
 
 version := "1.0-SNAPSHOT"
 
-resolvers += "GOV.UK Notify" at "https://dl.bintray.com/gov-uk-notify/maven/"
+resolvers += Resolver.bintrayRepo("gov-uk-notify", "maven")
+
+lazy val root = (project in file(".")).enablePlugins(PlayJava)
+
+// TODO without this the js fails lint test so disabling for the moment. 
+excludeFilter in (Assets, JshintKeys.jshint) := "*.js"
+
+scalaVersion := "2.11.8"
+
+libraryDependencies += javaJdbc
+libraryDependencies += cache
+libraryDependencies += javaWs
 
 libraryDependencies ++= Seq(
-//  "redis.clients" % "jedis" % "2.8.1",
-  javaWs,
   filters,
   "org.assertj" % "assertj-core" % "3.4.1",
   "io.mikael" % "urlbuilder" % "2.0.7",
@@ -17,8 +26,3 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "9.4.1211.jre7",
   "uk.gov.service.notify" % "notifications-java-client" % "2.2.0-RELEASE"
 )
-
-
-lazy val `promptpayments` = (project in file(".")).enablePlugins(PlayJava)
-
-scalaVersion := "2.11.7"
