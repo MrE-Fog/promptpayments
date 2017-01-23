@@ -50,6 +50,3 @@ tl;dr, the *activator.bat* file is incompatible with Windows. You'll have to do 
 1. Follow the [official instructions](https://playframework.com/documentation/2.5.x/Installing) to installing Play, making sure to use the *offline distribution*
 2. Be sure that the installation is in a path without spaces, e.g. C:\activator, but not C:\Program Files (x86)\activator
 3. Fix up some syntax errors in activator.bat and copy sbtconfig.txt, as described [here](http://stackoverflow.com/a/37153773).
-
-
-
