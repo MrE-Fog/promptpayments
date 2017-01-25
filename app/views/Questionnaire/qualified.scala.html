@@ -10,10 +10,10 @@
         <h3 class="bold-medium">You need to report on your payment practices</h3>
     </div>
     <p>
-        You told us that your business:
+        This is because you told us that your business:
     </p>
     <ul class="list list-bullet">
-        @if(m.questions.get(0).getAnswer() == 0) { <li>is a company or LLP incorporated in the UK</li> }
+        @if(m.questions.get(0).getAnswer() == 0) { <li>is a company or Limited Liability Partnership incorporated in the UK</li> }
         @if(m.questions.get(2).getAnswer() == 0 || m.questions.get(5).getAnswer() == 0) { <li>had a turnover of more than £36 million on its last 2 balance sheet dates</li> }
         @if(m.questions.get(3).getAnswer() == 0 || m.questions.get(6).getAnswer() == 0) { <li>had more than £18 million balance sheet total at its last 2 financial year ends</li> }
         @if(m.questions.get(4).getAnswer() == 0 || m.questions.get(7).getAnswer() == 0) { <li>had an average of at least 250 employees during both of its last 2 financial years</li> }
@@ -32,12 +32,6 @@
             on both of the last 2 balance sheet dates.
         </p>
     }
-    <p>
-        Based on this information, you need to report on your business’s payment practices.
-    </p>
-    <p>
-        You’ll normally have to report twice a year, with each report covering 6 months.
-    </p>
     <form method="GET" action="@routes.Questionnaire.calculator()">
         @for(q <- m.questions) {
             @if(q.hasAnswer()) {
@@ -47,4 +41,7 @@
 
         <input type="submit" class="button button-start" value="Find out how to report">
     </form>
+    <p>
+        You’ll normally have to report twice a year, with each report covering 6 months.
+    </p>
 </div>

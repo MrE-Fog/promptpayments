@@ -272,7 +272,7 @@
                 <span class="bold-medium">If so, enter the name of the code of practice</span>
                 <span class="error-message">@validation.validatePaymentCodes().errorMessage()</span>
             </label>
-            <textarea class="form-control" id="PaymentCodes" name="PaymentCodes">@model.get().getPaymentCodes()</textarea>
+            <input type="text" class="form-control" id="PaymentCodes" name="PaymentCodes" value="@model.get().getPaymentCodes()">
         </fieldset>
     </div>
 

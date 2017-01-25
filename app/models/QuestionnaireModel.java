@@ -35,7 +35,7 @@ public class QuestionnaireModel {
 
         qs.add(0, Question.yesNo("q0", "Is your business a company or Limited Liability Partnership incorporated in the UK?", null));
 
-        qs.add(1, new Question("q1", "In which year of operations is your business, currently?", null, Arrays.asList("First year", "Second year", "Third year or later"), false));
+        qs.add(1, new Question("q1", "Which financial year is your business currently in?", null, Arrays.asList("First year", "Second year", "Third year or later"), false));
 
         //"normal" questions for second year
         qs.add(2, Question.yesNo("q2","Did your business have a turnover of more than £36 million on its last balance sheet date?", businessOnlyHint));

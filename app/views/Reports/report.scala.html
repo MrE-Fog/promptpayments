@@ -14,6 +14,7 @@
     </h1>
 
     <p class="small-aside">Company number: @company.CompaniesHouseIdentifier</p>
+    <p>This information is as reported by the business, and is in their own words.</p>
     <h3 class="heading-medium">Summary</h3>
     <p>Average time taken to pay invoices: <span class="datum">@model.AverageTimeToPay days</span></p>
     <p>Invoices not paid within agreed terms: <span class="datum">@model.PercentInvoicesPaidBeyondAgreedTerms%</span></p>
@@ -27,9 +28,6 @@
     </ul>
 
     <h3 class="heading-medium">Payment terms</h3>
-    <p class="small-aside">
-        All the answers below are in the company's own words.
-    </p>
     <h4 class="heading-small">Standard payment terms</h4>
     <p>
         @shared._multiline(model.PaymentTerms)
@@ -64,7 +62,7 @@
             @shared._multiline(model.PaymentTermsComment)
         }
     </p>
-    <h3 class="heading-medium">Does this business have a dispute resolution policy</h3>
+    <h3 class="heading-medium">What is the business's dispute resolution policy?</h3>
     <p>
         @shared._multiline(model.DisputeResolution)
     </p>
@@ -98,13 +96,14 @@
         @(model.OfferSupplyChainFinance match {case false => "No" case _ => "Yes"})
     </p>
     <h4 class="heading-small">
-        Does this business have a policy of deducting sums from payments as a charge for remaining on a supplier list?
+        Do this business’s terms allow it to charge suppliers to remain on a supplier list?
+        <span class="form-hint">This is sometimes known as ‘pay to play’.</span>
     </h4>
     <p>
         @(model.RetentionChargesInPolicy match {case false => "No" case _ => "Yes"})
     </p>
     <h4 class="heading-small">
-        In this reporting period, did this business deduct sums from payments as a charge for remaining on a supplier list?
+        Did the business actually do this during this reporting period?
     </h4>
     <p>
         @(model.RetentionChargesInPast match {case false => "No" case _ => "Yes"})

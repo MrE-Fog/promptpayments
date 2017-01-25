@@ -255,4 +255,4 @@ function validationPlumbing() {
     v.validateMultiple(["PercentInvoicesWithin30Days", "PercentInvoicesWithin60Days", "PercentInvoicesBeyond60Days"],
         document.getElementsByName("PercentInvoicesWithin30Days")[0].parentElement.parentElement,
         v.validations.multiSumTo100);
-}''
+};
