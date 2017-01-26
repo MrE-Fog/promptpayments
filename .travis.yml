@@ -7,8 +7,6 @@ scala:
 services:
   - postgresql
 env:
-  - JDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/travis_ci_test
-  - JDBC_DATABASE_USERNAME=postgres
-  - JDBC_DATABASE_PASSWORD=
+  - JDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/travis_ci_test JDBC_DATABASE_USERNAME=postgres
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
