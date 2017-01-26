@@ -51,9 +51,12 @@ class MockRepositoryCreator {
     private ReportsRepository CreateMockReportsRepository(TimeProvider timeProvider) throws SQLException {
 
         JdbcReportsRepository jdbcReportsRepository = new JdbcReportsRepository(new JdbcCommunicator(testDb), timeProvider);
-        String fakeData =
-                "DELETE FROM Report;\n" +
-                "DELETE FROM Company;\n" +
+        String removeData =
+				"DELETE FROM Report;\n" +
+                "DELETE FROM Company;";
+                		
+		
+		String fakeData =
                 "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Nicecorp', '120');\n" +
                 "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Cookies Ltd.', '121');\n" +
                 "INSERT INTO Company(Name, CompaniesHouseIdentifier) VALUES ('Eigencode Ltd.', '122');\n" +
@@ -66,6 +69,7 @@ class MockRepositoryCreator {
                 "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('121', '2016-01-01');\n" +
                 "INSERT INTO Report(CompaniesHouseIdentifier, FilingDate) VALUES ('122', '2016-05-01');";
         Connection connection = testDb.getConnection();
+        connection.createStatement().execute(removeData);
         connection.createStatement().execute(fakeData);
 
         connection.close();return jdbcReportsRepository;
