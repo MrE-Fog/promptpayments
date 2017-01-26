@@ -194,7 +194,7 @@ public class JdbcReportsRepositoryTest {
 
     @Test
     public void getReport() throws Exception {
-        ReportModel report = jdbcReportsRepository.getReport("120", 1).get();
+        ReportModel report = jdbcReportsRepository.getReport("120", 333).get();
 
         MockUtcTimeProvider expectedStartDate = new MockUtcTimeProvider(2016, 0, 1);
         MockUtcTimeProvider expectedEndDate = new MockUtcTimeProvider(2016, 4, 31);
