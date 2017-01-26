@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/UKGovernmentBEIS/promptpayments.svg?branch=master)](https://travis-ci.org/UKGovernmentBEIS/promptpayments)
+
 # Prompt Payments Alpha
 
 Published under OGL
