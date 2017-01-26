@@ -1,6 +1,6 @@
 language: scala
 jdk: oraclejdk8
-scala:
+scala: 
    - 2.11.8
 services:
   - postgresql
