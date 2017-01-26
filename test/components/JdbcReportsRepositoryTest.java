@@ -204,7 +204,7 @@ public class JdbcReportsRepositoryTest {
         assertEquals("1 February 2010", report.Info.UiDateString());
         assertEquals("1 January 2016", report.Info.StartDateString());
         assertEquals("31 May 2016", report.Info.EndDateString());
-        assertEquals(1, report.Info.Identifier);
+        assertEquals(333, report.Info.Identifier);
         assertEquals(new BigDecimal("31"), report.AverageTimeToPay);
         assertEquals(new BigDecimal("10"), report.PercentInvoicesPaidBeyondAgreedTerms);
         assertEquals(new BigDecimal("80"), report.PercentInvoicesWithin30Days);
