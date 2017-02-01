@@ -15,6 +15,8 @@ import utils.TimeProvider;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by daniel.rothig on 27/09/2016.
@@ -82,12 +84,41 @@ public class VisualTest extends PageController {
 
         Html html = HtmlFormat.fill(JavaConversions.asScalaBuffer(Arrays.asList(
                 views.html.Home.index.render(),
-                views.html.Home.ifGuide.render(),
-                views.html.Home.howGuide.render(0, false, new CalculatorModel()),
-                views.html.Home.howGuide.render(1, false, new CalculatorModel("2018", "1", "1", "2018", "12", "31")),
-                views.html.Home.howGuide.render(2, false, new CalculatorModel()),
+                //views.html.Home.ifGuide.render(),
+                //views.html.Home.howGuide.render(0, false, new CalculatorModel()),
+                //views.html.Home.howGuide.render(1, false, new CalculatorModel("2018", "1", "1", "2018", "12", "31")),
+                //views.html.Home.howGuide.render(2, false, new CalculatorModel()),
                 views.html.Home.accessData.render(),
 
+                views.html.Questionnaire.start.render(),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel()),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,1, 12,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,1, 12,0, 13,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1)),
+
+                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,0).getAnswer()),
+                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,1, 1,0).getAnswer()),
+                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,1, 1,1, 2,1, 3,1).getAnswer()),
+
+                views.html.Questionnaire.qualified.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1).getAnswer(), makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1)),
+
+                views.html.Questionnaire.calculator.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1), new CalculatorModel()),
+
+                views.html.Questionnaire.answer.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1), new CalculatorModel("2017", "1", "1", "2017", "12", "31")),
+
+
+                views.html.shared._search.render(false, ""), 
                 views.html.Reports.report.render(healthyReportModel, healthyCompanySearchResult),
                 views.html.Reports.report.render(emptyReportModel, healthyCompanySearchResult),
 
@@ -111,6 +142,17 @@ public class VisualTest extends PageController {
         )).toList());
 
         return ok(page(html));
+    }
+
+    private QuestionnaireModel makeQuestionnaireModel(Object... answers) {
+        Map<String, String[]> answerMap = new HashMap<>();
+
+        for (int i = 0; i<answers.length; i += 2) {
+            answerMap.put("q" + answers[i], new String[] {answers[i+1].toString()});
+        }
+
+        QuestionnaireModel model = QuestionnaireModel.withAnswers(answerMap);
+        return model;
     }
 
     private ReportFilingModel getCompleteFilingModel() {
