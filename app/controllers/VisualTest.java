@@ -100,16 +100,16 @@ public class VisualTest extends PageController {
                 views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0)),
                 views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1)),
                 views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0)),
-                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,1)),
-                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,1, 12,0)),
-                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,1, 12,0, 13,1)),
-                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1)),
-                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0)),
-                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,0, 12,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,2, 5,0, 6,1, 7,0, 8,0, 12,0, 13,1)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,0, 9,0)),
+                views.html.Questionnaire.question.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,0, 9,0, 10,1)),
 
-                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,0).getAnswer()),
-                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,1, 1,0).getAnswer()),
-                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,1, 1,1, 2,1, 3,1).getAnswer()),
+                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,1).getAnswer()),
+                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,0, 1,0).getAnswer()),
+                views.html.Questionnaire.disqualified.render(makeQuestionnaireModel(0,0, 1,1, 2,1, 3,1).getAnswer()),
 
                 views.html.Questionnaire.qualified.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1).getAnswer(), makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1)),
 
@@ -118,7 +118,7 @@ public class VisualTest extends PageController {
                 views.html.Questionnaire.answer.render(makeQuestionnaireModel(0,0, 1,1, 2,0, 3,1, 4,0, 8,1, 9,0, 10,1), new CalculatorModel("2017", "1", "1", "2017", "12", "31")),
 
 
-                views.html.shared._search.render(false, ""), 
+                views.html.shared._search.render(false, ""),
                 views.html.Reports.report.render(healthyReportModel, healthyCompanySearchResult),
                 views.html.Reports.report.render(emptyReportModel, healthyCompanySearchResult),
 
