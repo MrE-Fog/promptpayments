@@ -14,7 +14,7 @@ function gradualDisclosure() {
             }
         }
 
-        if (val == "1") {
+        if (val === "1") {
             elem.style.display = '';
         } else {
             elem.style.display = 'none';
@@ -41,12 +41,18 @@ function gradualDisclosure() {
 /* Validation */
 function Validation() {
     function findErrorMessage(parent) {
-        if (!parent) return null;
-        if(parent.className && parent.className.indexOf("error-message") != -1) return parent;
+        if (!parent) {
+            return null;
+        }
+        if(parent.className && parent.className.indexOf("error-message") !== -1) {
+        return parent;
+        }
 
         for(var i = 0; i<parent.childNodes.length; i++) {
             var found = findErrorMessage(parent.childNodes[i]);
-            if (found) return found;
+            if (found) return {
+                found;
+            }
         }
         return null;
     }
@@ -54,20 +60,26 @@ function Validation() {
     function subscribe(obj, eventname, callback) {
         var old = obj[eventname];
         obj[eventname] = function(x) {
-            if (old) old(x);
+            if (old) {
+                old(x);
+            }
             return callback(x);
-        }
+        };
     }
 
     function validateTextInput(name, validate) {
         var allElements = document.getElementsByName(name);
-        if (!allElements || allElements.length <= 0) return;
+        if (!allElements || allElements.length <= 0) {
+            return;
+        }
 
         var e = allElements[0];
         var formGroup = e.parentElement;
         var message = findErrorMessage(formGroup);
 
-        if(!message) return;
+        if(!message) {
+            return;
+        }
 
         var callbackClear = function() {
             message.innerHTML = "&nbsp;";
@@ -81,25 +93,30 @@ function Validation() {
                 message.innerHTML = invalidation;
                 formGroup.className = "form-group error";
             }
-        })
-        subscribe(e, "onkeydown", callbackClear)
+        });
+
+        subscribe(e, "onkeydown", callbackClear);
     }
 
     function validateMultiple(names, container, validate) {
         var elements = [];
-        for (var i = 0; i<names.length; i++) {
-            var es = document.getElementsByName(names[i]);
-            if (!es || es.length < 1) return;
+        for (var i1 = 0; i1<names.length; i1++) {
+            var es = document.getElementsByName(names[i1]);
+            if (!es || es.length < 1) {
+                return;
+            }
             elements.push(es[0]);
         }
+
         var message = findErrorMessage(container);
 
-
-        for (var i = 0; i<elements.length; i++) {
-            subscribe(elements[i], "onblur", function() {
+        for (var i2 = 0; i2<elements.length; i2++) {
+            subscribe(elements[i2], "onblur", function() {
                 var values = [];
                 for (var j = 0; j<elements.length; j++) {
-                    if (elements[j].value === "") return true;
+                    if (elements[j].value === "") {
+                        return true;
+                    }
                     values.push(elements[j].value);
                 }
                 var invalidation = validate(values);
@@ -107,9 +124,11 @@ function Validation() {
                     message.innerHTML =invalidation;
                     message.parentElement.parentElement.className = "form-group error";
                 }
-                return true;
+                return {
+                    true;
+                }
             });
-            subscribe(elements[i], "onkeydown", function() {
+            subscribe(elements[i2], "onkeydown", function() {
                     message.innerHTML = "&nbsp;"
                     message.parentElement.parentElement.className = "form-group";
             });
@@ -120,26 +139,31 @@ function Validation() {
         var years = document.getElementsByName(namePrefix + "year");
         var months = document.getElementsByName(namePrefix + "month");
         var days = document.getElementsByName(namePrefix + "day");
-        if(!years || !years[0] || !months || !months[0] || !days || !days[0]) return;
+        if(!years || !years[0] || !months || !months[0] || !days || !days[0]) {
+            return;
+        }
 
         var year = years[0];
         var month = months[0];
         var day = days[0];
 
-        var message = findErrorMessage(year.parentElement.parentElement)
+        var message = findErrorMessage(year.parentElement.parentElement);
 
         var callbackClear = function() {
             message.innerHTML = "&nbsp;"
             message.parentElement.parentElement.className = "form-group";
-        }
+        };
+
         var callback = function() {
-            if (year.value === "" || month.value === "" || day.value === "" ) return;
+            if (year.value === "" || month.value === "" || day.value === "" ) {
+                return;
+            }
             var invalidation = validate(year.value, month.value, day.value);
             if (invalidation) {
                 message.innerHTML = invalidation;
                 message.parentElement.parentElement.className = "form-group error";
             }
-        }
+        };
 
         subscribe(year, "onblur", callback);
         subscribe(month, "onblur", callback);
@@ -152,9 +176,13 @@ function Validation() {
 
     function isSetTrue(name) {
         var e = document.getElementsByName(name);
-        if (!e) return false;
+        if (!e) {
+            return false;
+        }
         for (var i = 0; i<e.length; i++) {
-            if (e[i].checked && e[i].value == "1") { return true; }
+            if (e[i].checked && e[i].value === "1") {
+                return true;
+            }
         }
         return false;
     }
@@ -172,46 +200,24 @@ function Validation() {
     function asInteger(text) {
         var trimmed = text.replace(/^\s+|\s+$/gm,'');
         var match = /^(-?[0-9]+)(\.0+)?[^0-9]*$/.exec(trimmed);
-        return !!match ? parseInt(match[1]) : null;
+        return match ? parseInt(match[1]) : null;
     }
 
     function asNumber(text) {
         var trimmed = text.replace(/^\s+|\s+$/gm,'');
         var match = /^(-?[0-9]+(\.[0-9]+)?)[^0-9]*$/.exec(trimmed);
-        return !!match ? parseInt(match[1]) : null;
+        return match ? parseInt(match[1]) : null;
     }
 
     function dateValid(year, month, day) {
         var date = new Date(asInteger(year), asInteger(month) - 1, asInteger(day),0,0,0,0);
-        return (!date.getFullYear() || date.getFullYear() != asInteger(year)
-            || date.getMonth() != asInteger(month) - 1
-            || date.getDate() != asInteger(day)) && messages.date;
+        return (!date.getFullYear() || date.getFullYear() !== asInteger(year)
+            || date.getMonth() !== asInteger(month) - 1
+            || date.getDate() !== asInteger(day)) && messages.date;
     }
 
     function dateFuture(year, month, day) {
         return new Date().getTime() < new Date(asInteger(year), asInteger(month), asInteger(day),0,0,0,0).getTime() && messages.future;
-    }
-
-    function multiStartBeforeEnd(inputs) {
-        var startYear = inputs[0], startMonth = inputs[1], startDay = inputs[2],
-            year = inputs[3], month = inputs[4], day = inputs[5];
-
-        if (dateValid(startYear, startMonth, startDay) || dateFuture(startYear,startMonth,startDay) || dateValid(year, month, day) || dateFuture(year,month,day)) {
-            return false;
-        } else {
-            var start = new Date(asInteger(startYear), asInteger(startMonth) - 1, asInteger(startDay),0,0,0,0);
-            var end = new Date(asInteger(year),asInteger(month)-1,asInteger(day), 0,0,0,0);
-            return start.getTime() > end.getTime() && messages.startbeforeend;
-        }
-    }
-
-    function multiSumTo100(x) {
-        if (textPercentage(x[0]) || textPercentage(x[1]) || textPercentage(x[2])) {
-            return false;
-        } else {
-            var numberOne = asInteger(x[0]), numberTwo = asInteger(x[1]), numberThree = asInteger(x[2]);
-            return (numberOne + numberTwo + numberThree > 102 || numberOne + numberTwo + numberThree < 98) && messages.sumto100;
-        }
     }
 
     function textNonNegative(text) {return asNumber(text) < 0 && messages.nonnegative; }
@@ -221,19 +227,43 @@ function Validation() {
     function textPositiveInteger(x) {return textNonNegative(x) || textInteger(x); }
     function textPercentage (x) {return textPercentageBounds(x) || textInteger(x); }
 
+    function multiStartBeforeEnd(inputs) {
+        var startYear = inputs[0], startMonth = inputs[1], startDay = inputs[2],
+            year = inputs[3], month = inputs[4], day = inputs[5];
+
+        if (dateValid(startYear, startMonth, startDay) || dateFuture(startYear,startMonth,startDay) || dateValid(year, month, day) || dateFuture(year,month,day)) {
+            return {
+                false;
+            }
+        } else {
+            var start = new Date(asInteger(startYear), asInteger(startMonth) - 1, asInteger(startDay),0,0,0,0);
+            var end = new Date(asInteger(year),asInteger(month)-1,asInteger(day), 0,0,0,0);
+            return start.getTime() > end.getTime() && messages.startbeforeend;
+        }
+    }
+
+    function multiSumTo100(x) {
+        if (textPercentage(x[0]) || textPercentage(x[1]) || textPercentage(x[2])) {
+            return {
+                false;
+            }
+        } else {
+            var numberOne = asInteger(x[0]), numberTwo = asInteger(x[1]), numberThree = asInteger(x[2]);
+            return (numberOne + numberTwo + numberThree > 102 || numberOne + numberTwo + numberThree < 98) && messages.sumto100;
+        }
+    }
+
     this.validateTextInput = validateTextInput;
     this.validateMultiple = validateMultiple;
     this.validateDateInput = validateDateInput;
 
-    this.validations = {
-        dateValid: function(y,m,d) {return dateValid(y,m,d) || dateFuture(y,m,d)},
+    this.validations = {};
 
-        textPositiveInteger: textPositiveInteger,
-        textPercentage: textPercentage,
-
-        multiSumTo100: multiSumTo100,
-        multiStartBeforeEnd: multiStartBeforeEnd
-    }
+    validations.dateValid: function(y,m,d) {return dateValid(y,m,d) || dateFuture(y,m,d)};
+    validations.textPositiveInteger: textPositiveInteger;
+    validations.textPercentage: textPercentage;
+    validations.multiSumTo100: multiSumTo100;
+    validations.multiStartBeforeEnd: multiStartBeforeEnd;
 };
 
 function validationPlumbing() {
